@@ -1,11 +1,7 @@
-// Auth middleware
-import { Request, Response, NextFunction } from "express"
+import { Response, NextFunction } from "express"
 import jwt from "jsonwebtoken"
 import { config } from "../utils/config.utils";
-
-interface CustomRequest extends Request {
-  user?: any,
-}
+import { CustomRequest } from "../types/auth.type";
 
 export const authenticate = (req: CustomRequest, res: Response, next: NextFunction) => {
   const token = req.cookies.token;
