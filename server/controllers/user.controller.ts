@@ -11,7 +11,7 @@ export const getUsers = async (req: Request, res: Response) => {
 };
 
 export const registerUser = async (req: Request, res: Response) => {
-  const { name, username, password } = req.body;
+  const { name, username, password, email } = req.body;
 
   try {
     const hashedPassword = await bcrypt.hash(
@@ -30,6 +30,7 @@ export const registerUser = async (req: Request, res: Response) => {
           name: name,
           username: username,
           password: hashedPassword,
+          email: email
         },
       });
       res.send({
