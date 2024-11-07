@@ -14,14 +14,14 @@ datasource db {
 }
 
 model User {
-  id Int @id @default(autoincrement())
-  name String
-  username String @unique
-  password String
-  email String @unique
-  createdAt DateTime @default(now()) @map("created_at")
-  updatedAt DateTime @updatedAt @map("updated_at")
-  itinerary Itinerary[]
+  id            Int            @id @default(autoincrement())
+  name          String
+  username      String         @unique
+  password      String
+  email         String         @unique
+  createdAt     DateTime       @default(now()) @map("created_at")
+  updatedAt     DateTime       @updatedAt @map("updated_at")
+  itinerary     Itinerary[]
   collaborators Collaborator[]
   notifications Notifaction[]
 
@@ -29,70 +29,70 @@ model User {
 }
 
 model Itinerary {
-  id Int @id @default(autoincrement())
-  title String
-  description String
-  startDate DateTime
-  endDate DateTime
-  createdById Int @unique @map("created_by_id")
-  createdAt DateTime @default(now()) @map("created_at")
-  updatedAt DateTime @updatedAt @map("updated_at")
-  createdBy User @relation(fields: [createdById], references: [id])
+  id            Int            @id @default(autoincrement())
+  title         String
+  description   String
+  startDate     DateTime
+  endDate       DateTime
+  createdById   Int            @unique @map("created_by_id")
+  createdAt     DateTime       @default(now()) @map("created_at")
+  updatedAt     DateTime       @updatedAt @map("updated_at")
+  createdBy     User           @relation(fields: [createdById], references: [id])
   collaborators Collaborator[]
-  destinations Destination[]
-  notifactions Notifaction[]
-  activities Activity[]
+  destinations  Destination[]
+  notifactions  Notifaction[]
+  activities    Activity[]
 
   @@map("itineraries")
 }
 
 model Collaborator {
-  id Int @id @default(autoincrement())
-  userId Int @map("user_id")
-  itineraryId Int @map("itinerary_id")
-  itinerary Itinerary @relation(fields: [itineraryId], references: [id])
-  user User @relation(fields: [userId], references: [id])
+  id          Int       @id @default(autoincrement())
+  userId      Int       @map("user_id")
+  itineraryId Int       @map("itinerary_id")
+  itinerary   Itinerary @relation(fields: [itineraryId], references: [id])
+  user        User      @relation(fields: [userId], references: [id])
 
   @@map("collaborators")
 }
 
 model Destination {
-  id Int @id @default(autoincrement())
+  id           Int        @id @default(autoincrement())
   locationName String
-  address String
-  itineraryId Int @map("itinerary_id")
-  createdAt DateTime @default(now()) @map("created_at")
-  updatedAt DateTime @updatedAt @map("updated_at")
-  itinerary Itinerary @relation(fields: [itineraryId], references: [id])
-  activities Activity[]
+  address      String
+  itineraryId  Int        @map("itinerary_id")
+  createdAt    DateTime   @default(now()) @map("created_at")
+  updatedAt    DateTime   @updatedAt @map("updated_at")
+  itinerary    Itinerary  @relation(fields: [itineraryId], references: [id])
+  activities   Activity[]
 
   @@map("destinations")
 }
 
 model Activity {
-  id Int @id @default(autoincrement())
-  itineraryId Int @map("itinerary_id")
-  destinationId Int @map("destination_id")
-  activityName String @map("activity_name")
-  startTime DateTime @map("start_time")
-  endTime DateTime @map("end_time")
-  createdAt DateTime @default(now()) @map("created_at")
-  updatedAt DateTime @updatedAt @map("updated_at")
-  itinerary Itinerary @relation(fields: [itineraryId], references: [id])
-  destination Destination @relation(fields: [destinationId], references: [id])
+  id            Int         @id @default(autoincrement())
+  itineraryId   Int         @map("itinerary_id")
+  destinationId Int         @map("destination_id")
+  activityName  String      @map("activity_name")
+  startTime     DateTime    @map("start_time")
+  endTime       DateTime    @map("end_time")
+  createdAt     DateTime    @default(now()) @map("created_at")
+  updatedAt     DateTime    @updatedAt @map("updated_at")
+  itinerary     Itinerary   @relation(fields: [itineraryId], references: [id])
+  destination   Destination @relation(fields: [destinationId], references: [id])
 
   @@map("activities")
 }
 
 model Notifaction {
-  id Int @id @default(autoincrement())
-  userId Int @map("user_id")
-  itineraryId Int @map("itinerary_id")
-  message String
-  isRead Boolean @default(false) @map("is_read")
-  createdAt DateTime @default(now()) @map("created_at")
-  user User @relation(fields: [userId], references: [id])
-  itinerary Itinerary @relation(fields: [itineraryId], references: [id])
+  id          Int       @id @default(autoincrement())
+  userId      Int       @map("user_id")
+  itineraryId Int       @map("itinerary_id")
+  message     String
+  isRead      Boolean   @default(false) @map("is_read")
+  createdAt   DateTime  @default(now()) @map("created_at")
+  user        User      @relation(fields: [userId], references: [id])
+  itinerary   Itinerary @relation(fields: [itineraryId], references: [id])
 
   @@map("notifaction")
 }
