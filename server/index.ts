@@ -1,9 +1,11 @@
 import express from "express";
 import { config } from "./utils/config.utils";
-import userRouter from "./routes/user.routes";
 import cors from "cors"
 import cookieParser from "cookie-parser";
 import helmet from "helmet";
+
+import userRouter from "./routes/user.routes";
+import itineraryRouter from "./routes/itineraries.routes";
 
 const app = express();
 app.use(express.json());
@@ -15,6 +17,7 @@ app.use(cors({
 app.use(cookieParser());
 app.use(helmet());
 app.use(userRouter);
+app.use(itineraryRouter);
 
 app.listen(config.PORT, () => {
   console.log(`Server is running in port ${config.PORT}`);
