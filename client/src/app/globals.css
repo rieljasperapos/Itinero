@@ -1,3 +1,11 @@
+@font-face {
+  font-family: 'Montserrat';
+  src: url('./fonts/static/Montserrat-Bold.ttf') format('truetype');
+  font-weight: 700;
+  font-style: normal;
+}
+
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -23,5 +31,12 @@ body {
 @layer utilities {
   .text-balance {
     text-wrap: balance;
+  }
+}
+
+@layer components {
+  .heading {
+    font-family: 'Montserrat';
+    font-size: 32px;
   }
 }
