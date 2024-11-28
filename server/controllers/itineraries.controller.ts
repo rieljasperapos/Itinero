@@ -23,6 +23,29 @@ export const getItineraryById = async (req: Request, res: Response) => {
   return;
 };
 
+export const getActivitiesByItineraryId = async (req: Request, res: Response) => {
+  const { itineraryId } = req.params;
+  console.log(itineraryId);
+
+  try {
+    const activities = await prisma.activity.findMany({
+      where: {
+        itineraryId: Number(itineraryId),
+      },
+    });
+
+    if (!activities || activities.length === 0) {
+      res.status(404).send({ message: "No activities found for this itinerary" });
+    }
+
+    res.send({ data: activities });
+  } catch (error) {
+    console.error(error);
+    res.status(500).send({ error: "An error occurred while fetching activities" });
+  }
+  return;
+};
+
 export const createItinerary = async (req: CustomRequest, res: Response) => {
   try {
     const { title, description, startDate, endDate } = req.body;

@@ -6,6 +6,7 @@ import helmet from "helmet";
 
 import userRouter from "./routes/user.routes";
 import itineraryRouter from "./routes/itineraries.routes";
+import activityRouter from "./routes/activities.routes";
 
 const app = express();
 app.use(express.json());
@@ -18,6 +19,7 @@ app.use(cookieParser());
 app.use(helmet());
 app.use(userRouter);
 app.use(itineraryRouter);
+app.use(activityRouter);
 
 app.listen(config.PORT, () => {
   console.log(`Server is running in port ${config.PORT}`);
