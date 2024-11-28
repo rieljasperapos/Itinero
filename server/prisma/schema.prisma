@@ -16,7 +16,8 @@ model User {
   createdAt     DateTime       @default(now()) @map("created_at")
   updatedAt     DateTime       @updatedAt @map("updated_at")
   collaborators Collaborator[]
-  itinerary     Itinerary?
+  itinerary     Itinerary[]
+  activities    Activity[]
   notifications Notifaction[]
 
   @@map("users")
@@ -28,13 +29,12 @@ model Itinerary {
   description   String
   startDate     DateTime
   endDate       DateTime
-  createdById   Int            @unique @map("created_by_id")
+  createdById   Int            @map("created_by_id")
   createdAt     DateTime       @default(now()) @map("created_at")
   updatedAt     DateTime       @updatedAt @map("updated_at")
   activities    Activity[]
   collaborators Collaborator[]
-  destinations  Destination[]
-  createdBy     User?           @relation(fields: [createdById], references: [id])
+  createdBy     User?          @relation(fields: [createdById], references: [id])
   notifactions  Notifaction[]
 
   @@map("itineraries")
@@ -50,30 +50,32 @@ model Collaborator {
   @@map("collaborators")
 }
 
-model Destination {
-  id           Int        @id @default(autoincrement())
-  locationName String
-  address      String
-  itineraryId  Int        @map("itinerary_id")
-  createdAt    DateTime   @default(now()) @map("created_at")
-  updatedAt    DateTime   @updatedAt @map("updated_at")
-  activities   Activity[]
-  itinerary    Itinerary  @relation(fields: [itineraryId], references: [id])
+// model Destination {
+//   id           Int        @id @default(autoincrement())
+//   locationName String
+//   address      String
+//   itineraryId  Int        @map("itinerary_id")
+//   createdAt    DateTime   @default(now()) @map("created_at")
+//   updatedAt    DateTime   @updatedAt @map("updated_at")
+//   activities   Activity[]
+//   itinerary    Itinerary  @relation(fields: [itineraryId], references: [id])
 
-  @@map("destinations")
-}
+//   @@map("destinations")
+// }
 
 model Activity {
-  id            Int         @id @default(autoincrement())
-  activityName  String      @map("activity_name")
-  startTime     DateTime    @map("start_time")
-  endTime       DateTime    @map("end_time")
-  createdAt     DateTime    @default(now()) @map("created_at")
-  updatedAt     DateTime    @updatedAt @map("updated_at")
-  destinationId Int         @map("destination_id")
-  itineraryId   Int         @map("itinerary_id")
-  destination   Destination @relation(fields: [destinationId], references: [id])
-  itinerary     Itinerary   @relation(fields: [itineraryId], references: [id])
+  id           Int       @id @default(autoincrement())
+  activityName String    @map("activity_name")
+  startTime    DateTime  @map("start_time")
+  endTime      DateTime  @map("end_time")
+  locationName String    @map("location_name")
+  address      String    @map("address")
+  createdAt    DateTime  @default(now()) @map("created_at")
+  updatedAt    DateTime  @updatedAt @map("updated_at")
+  itineraryId  Int       @map("itinerary_id")
+  createdById  Int       @map("created_by_id")
+  itinerary    Itinerary @relation(fields: [itineraryId], references: [id])
+  createdBy    User     @relation(fields: [createdById], references: [id])
 
   @@map("activities")
 }
