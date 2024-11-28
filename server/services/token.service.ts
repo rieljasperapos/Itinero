@@ -4,7 +4,11 @@ import { User } from "../types/user.types";
 
 export const generateToken = (user: User) => {
   return jwt.sign(
-    { name: user.name, username: user.username },
+    { 
+      id: user.id,
+      name: user.name, 
+      username: user.username 
+    },
     config.JWT_SECRET,
     { expiresIn: "15m" }
   );
