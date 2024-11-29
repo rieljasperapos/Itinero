@@ -8,6 +8,20 @@ export const getItineraries = async (req: Request, res: Response) => {
   return;
 };
 
+export const getItineraryByUserId = async (req: CustomRequest, res: Response) => {
+  const userId = req.user?.id
+  const data = await prisma.itinerary.findMany({
+    where: {
+      createdById: Number(userId),
+    },
+    include: {
+      activities: true,
+    },
+  });
+
+  res.send({ data: data });
+};
+
 export const getItineraryById = async (req: Request, res: Response) => {
   const { id } = req.params;
   const data = await prisma.itinerary.findUnique({
