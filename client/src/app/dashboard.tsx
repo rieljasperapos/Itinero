@@ -20,7 +20,7 @@ const Dashboard: React.FC = () => {
             <div className = "mediumtext" style={{ marginLeft: '50px' }}>
                 <Button variant="outline"> Upcoming</Button>
                 <Button variant="outline" style={{ marginLeft: '10px' }}>Ongoing</Button>
-                <Button variant="outline" style={{ marginLeft: '10px' }}>Past</Button>  
+                <Button variant="outline" style={{ marginLeft: '10px' }}>Passt</Button>  
 
             </div>  
 
