@@ -6,6 +6,8 @@ export const inviteUser = async (req: CustomRequest, res: Response) => {
   const { itineraryId, email, role } = req.body;
   const inviterId = Number(req.user?.id);
 
+  console.log(req.body);
+
   if (!itineraryId || !email || !role) {
     res.status(400).send({ error: "Missing required fields" });
     return;
@@ -17,6 +19,7 @@ export const inviteUser = async (req: CustomRequest, res: Response) => {
   } catch (error) {
     res.status(500).send({ error: error, message: "An error occurred while inviting the user" });
   }
+  return;
 }
 
 export const getUserNotifications = async (req: CustomRequest, res: Response) => {
