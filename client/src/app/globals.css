@@ -44,10 +44,15 @@ body {
 @layer components {
   .heading {
     font-family: 'Montserrat-head';
-    font-size: 32px;
+    font-size: 37px;
   }
 
-  .tripname {
+  .tripname_big {
+    font-family: 'Montserrat-head';
+    font-size: 21px;
+  }
+
+  .tripname_small {
     font-family: 'Montserrat-head';
     font-size: 16px;
   }
@@ -55,19 +60,19 @@ body {
   .regulartext {
     font-family: 'Montserrat-standard';
     font-weight: 500;
-    font-size: 14px;
+    font-size: 15px;
   }
 
   .mediumtext {
     font-family: 'Montserrat-medium';
     font-weight: 500;
-    font-size: 14px;
+    font-size: 19px;
   }
 
   .smalltext {
     font-family: 'Montserrat-small';
     font-weight: 100;
-    font-size: 12px;
+    font-size: 14px;
   }
 }
 
