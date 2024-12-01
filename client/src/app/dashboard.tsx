@@ -20,13 +20,13 @@ const Dashboard: React.FC = () => {
             <div className = "mediumtext" style={{ marginLeft: '50px' }}>
                 <Button variant="outline"> Upcoming</Button>
                 <Button variant="outline" style={{ marginLeft: '10px' }}>Ongoing</Button>
-                <Button variant="outline" style={{ marginLeft: '10px' }}>Passt</Button>  
+                <Button variant="outline" style={{ marginLeft: '10px' }}>Past</Button>  
 
             </div>  
 
             <div style={{ marginTop: '10px', marginLeft: '35px' }}>
                 <Button variant="ghost" className='mediumtext'>
-                <CirclePlus className="mr-2 size-6 " strokeWidth={1}/>
+                <CirclePlus className="mr-1 size-6" strokeWidth={1} />
                 Add Itinerary
                 </Button>
             </div>
@@ -36,7 +36,7 @@ const Dashboard: React.FC = () => {
                     title="Sample Title" 
                     dateStart="2023-10-01" 
                     dateEnd="2023-10-02"
-                    numPeople={3}
+                    collaborators={3}
                 />
             </div>
             
