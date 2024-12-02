@@ -7,6 +7,10 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+enum Role {
+  VIEWER
+  EDITOR
+}
 model User {
   id            Int            @id @default(autoincrement())
   name          String
@@ -44,24 +48,12 @@ model Collaborator {
   id          Int       @id @default(autoincrement())
   userId      Int       @map("user_id")
   itineraryId Int       @map("itinerary_id")
+  role        Role      @default(VIEWER)
   itinerary   Itinerary @relation(fields: [itineraryId], references: [id])
   user        User      @relation(fields: [userId], references: [id])
 
   @@map("collaborators")
 }
-
-// model Destination {
-//   id           Int        @id @default(autoincrement())
-//   locationName String
-//   address      String
-//   itineraryId  Int        @map("itinerary_id")
-//   createdAt    DateTime   @default(now()) @map("created_at")
-//   updatedAt    DateTime   @updatedAt @map("updated_at")
-//   activities   Activity[]
-//   itinerary    Itinerary  @relation(fields: [itineraryId], references: [id])
-
-//   @@map("destinations")
-// }
 
 model Activity {
   id           Int       @id @default(autoincrement())
