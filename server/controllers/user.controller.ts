@@ -2,8 +2,6 @@ import { prisma } from "../lib/prisma";
 import { Request, Response } from "express";
 import { config, cookieOptions } from "../utils/config.utils";
 import bcrypt from "bcrypt";
-import { generateToken } from "../services/token.service";
-import { User } from "../types/user.types";
 
 export const getUsers = async (req: Request, res: Response) => {
   const data = await prisma.user.findMany();
@@ -48,30 +46,23 @@ export const registerUser = async (req: Request, res: Response) => {
 
 export const loginUser = async (req: Request, res: Response) => {
   const { username, password } = req.body;
+  console.log(`USERNAME: ${username}`);
 
-  try {
-    const user = await prisma.user.findUnique({
-      where: {
-        username: username,
-      },
-    });
-    
-    const passwordMatched = await bcrypt.compare(
-      password,
-      user?.password as string
-    );
-
-    if (!user || !passwordMatched) {
-      res.send({ message: "Invalid Credentials " });
-    } else {
-      const token = generateToken(user as User);
-      res.cookie("token", token, cookieOptions);
-      res.send({ message: "Successfully logged in" });
-    }
-  } catch (error) {
-    res.send({ message: `Server error ${error}` });
+  // Find user in the database
+  const user = await prisma.user.findFirst({ where: { username: username } });
+  if (!user){
+    res.status(401).json({ message: "User not found" });
+    return;
   }
 
+  // Check if the password matches
+  const passwordMatched = await bcrypt.compare(password, user.password);
+  if (!passwordMatched) {
+    res.status(401).json({ message: "Invalid password" });
+    return;
+  }
+
+  res.status(200).json({ user });
   return;
 };
 

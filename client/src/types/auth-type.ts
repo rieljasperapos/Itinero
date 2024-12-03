@@ -11,7 +11,7 @@ export type LoginProps = {
 export type CardWrapperProps = {
   children: React.ReactNode;
   headerTitle: string;
-} & (RegisterProps | LoginProps); // Ensure it's a discriminated union
+} & (RegisterProps | LoginProps);
 
 
 export interface MorphButtonProps {

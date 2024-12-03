@@ -2,6 +2,7 @@ import React from 'react';
 import {Button} from '@/components/button';
 import { CirclePlus } from 'lucide-react';
 import ItineraryCard from '@/components/itinerary_card';
+import { signOut } from 'next-auth/react';
 
 const Dashboard: React.FC = () => {
     return (
@@ -40,7 +41,7 @@ const Dashboard: React.FC = () => {
                 />
             </div>
             
-                   
+            <Button onClick={() => signOut()}>Logout</Button>
         </div>
     );
 };

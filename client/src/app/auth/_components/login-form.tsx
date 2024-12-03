@@ -13,68 +13,87 @@ import {
 } from "@/components/form";
 import { Input } from "@/components/input";
 import { Button } from "@/components/button";
+import { redirect } from "next/navigation";
+import { useSession, signIn } from "next-auth/react";
 
 export const LoginForm = () => {
+  const { data: session, status } = useSession();
+  console.log(session?.user?.email)
+  if (session?.user) {
+    redirect("/")
+  }
   const form = useForm<z.infer<typeof LoginSchema>>({
     resolver: zodResolver(LoginSchema),
     defaultValues: {
-      email: "",
+      username: "",
       password: "",
     },
   });
-
   const onSubmit = async (data: z.infer<typeof LoginSchema>) => {
     console.log(data);
-    // POST Request to server
+    const res = await signIn("credentials", {
+      username: data.username,
+      password: data.password,
+      redirect: false,
+    });
   };
 
   return (
-    <CardWrapper
-      headerTitle="Signin"
-      register="Don't have an account?"
-      registerHref="/auth/signup"
-    >
-      <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)}>
-          <div className="flex flex-col gap-4">
-            <FormField
-              control={form.control}
-              name="email"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Email</FormLabel>
-                  <FormControl>
-                    <Input
-                      type="email"
-                      placeholder="john.doe@sample.com"
-                      {...field}
-                    />
-                  </FormControl>
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="password"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Password</FormLabel>
-                  <FormControl>
-                    <Input
-                      type="password"
-                      placeholder="Enter your password"
-                      {...field}
-                    />
-                  </FormControl>
-                </FormItem>
-              )}
-            />
-            <Button type="submit" className="bg-[#3A86FF] hover:bg-[#77A4EC]">
-              Submit
-            </Button>
-          </div>
-        </form>
-      </Form>
-    </CardWrapper>
+    <>
+      {status === "unauthenticated" ? (
+        <CardWrapper
+          headerTitle="Signin"
+          register="Don't have an account?"
+          registerHref="/auth/signup"
+        >
+          <Form {...form}>
+            <form onSubmit={form.handleSubmit(onSubmit)}>
+              <div className="flex flex-col gap-4">
+                <FormField
+                  control={form.control}
+                  name="username"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Username</FormLabel>
+                      <FormControl>
+                        <Input
+                          type="text"
+                          placeholder="Enter your username"
+                          {...field}
+                        />
+                      </FormControl>
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="password"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Password</FormLabel>
+                      <FormControl>
+                        <Input
+                          type="password"
+                          placeholder="Enter your password"
+                          {...field}
+                        />
+                      </FormControl>
+                    </FormItem>
+                  )}
+                />
+                <Button
+                  type="submit"
+                  className="bg-[#3A86FF] hover:bg-[#77A4EC]"
+                >
+                  Submit
+                </Button>
+              </div>
+            </form>
+          </Form>
+        </CardWrapper>
+      ) : (
+        <></>
+      )}
+    </>
   );
 };
