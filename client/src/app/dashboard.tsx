@@ -48,7 +48,7 @@ const Dashboard: React.FC = () => {
                 />
             </div>
             
-                   
+            <Button onClick={() => signOut()}>Logout</Button>
         </div>
     );
 };
