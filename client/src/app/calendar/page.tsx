@@ -1,8 +1,15 @@
 "use client"
 import FullCalendar from "@fullcalendar/react";
 import dayGridPlugin from "@fullcalendar/daygrid";
+import { redirect } from "next/navigation";
+import { useSession } from "next-auth/react";
 
 const Calendar = () => {
+  const { data: session, status } = useSession();
+  console.log(session?.user?.email)
+  if (!session?.user) {
+    redirect("/auth/signin")
+  }
   return (
     <div className="p-8">
       <div className="border-b py-2">

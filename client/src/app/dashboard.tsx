@@ -2,8 +2,16 @@ import React from 'react';
 import {Button} from '@/components/button';
 import { CirclePlus } from 'lucide-react';
 import ItineraryCard from '@/components/itinerary_card';
+import { signOut } from 'next-auth/react';
+import { useSession } from 'next-auth/react';
+import { redirect } from 'next/navigation';
 
 const Dashboard: React.FC = () => {
+  const { data: session, status } = useSession();
+  console.log(session?.user?.email)
+  if (!session?.user) {
+    redirect("/auth/signin")
+  }
     return (
         <div style={{ 
             backgroundColor: '#F5F7FA', 
