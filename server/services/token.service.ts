@@ -10,18 +10,6 @@ export const generateToken = (user: User) => {
       username: user.username 
     },
     config.JWT_SECRET,
-    { expiresIn: config.ACCESS_TOKEN_EXPIRES_IN }
+    { expiresIn: "15m" }
   );
 };
-
-export const generateRefreshToken = (user: User) => {
-  return jwt.sign(
-    {
-      id: user.id,
-      name: user.name,
-      username: user.username,
-    },
-    config.JWT_SECRET,
-    { expiresIn: config.REFRESH_TOKEN_EXPIRES_IN }
-  )
-}
