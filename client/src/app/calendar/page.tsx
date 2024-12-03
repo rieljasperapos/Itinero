@@ -1,6 +1,7 @@
 "use client"
 import FullCalendar from "@fullcalendar/react";
 import dayGridPlugin from "@fullcalendar/daygrid";
+import { redirect } from "next/navigation";
 import { useSession } from "next-auth/react";
 
 const Calendar = () => {
