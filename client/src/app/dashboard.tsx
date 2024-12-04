@@ -1,17 +1,37 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import {Button} from '@/components/button';
 import { CirclePlus } from 'lucide-react';
 import ItineraryCard from '@/components/itinerary_card';
 import { signOut } from 'next-auth/react';
 import { useSession } from 'next-auth/react';
 import { redirect } from 'next/navigation';
+import axios from 'axios';
 
 const Dashboard: React.FC = () => {
   const { data: session, status } = useSession();
-  console.log(session?.user?.email)
+  console.log({ session });
+  console.log("session access token ", session?.user.accessToken);
   if (!session?.user) {
     redirect("/auth/signin")
   }
+
+  useEffect(() => {
+    const fetchUser = async () => {
+      try {
+        const response = await axios.get("http://localhost:3000/users", {
+          headers: {
+            Authorization: `Bearer ${session?.user.accessToken}`,
+          }
+        });
+        console.log(response.data);
+      } catch (error) {
+        console.error("Error fetching users:", error);
+      }
+    }
+
+    fetchUser();
+  }, [])
+
     return (
         <div style={{ 
             backgroundColor: '#F5F7FA', 

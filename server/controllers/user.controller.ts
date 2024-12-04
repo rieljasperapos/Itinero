@@ -6,8 +6,10 @@ import { generateToken } from "../services/token.service";
 import { User } from "../types/user.types";
 
 export const getUsers = async (req: Request, res: Response) => {
+  // console.log(req.cookies);
   const data = await prisma.user.findMany();
   res.send({ data: data });
+  return;
 };
 
 export const registerUser = async (req: Request, res: Response) => {
@@ -64,7 +66,22 @@ export const loginUser = async (req: Request, res: Response) => {
     return;
   }
 
-  res.status(200).json({ user });
+  // Generate a token for the user
+  const foundUser = {
+    id: user.id,
+    name: user.name,
+    username: user.username,
+    email: user.email
+  }
+  const accessToken = generateToken(foundUser);
+  console.log(`sign token: ${accessToken}`);
+  // console.log(config.NODE_ENV);
+  res.cookie("accessToken", accessToken, { httpOnly: true, secure: process.env.NODE_ENV === "production", sameSite: "strict" });
+  const userResponse = {
+    ...foundUser,
+    accessToken
+  }
+  res.status(200).json({ userResponse });
   return;
 };
 

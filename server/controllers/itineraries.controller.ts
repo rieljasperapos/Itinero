@@ -10,42 +10,48 @@ export const getItineraries = async (req: Request, res: Response) => {
 };
 
 export const getItineraryByUserId = async (req: CustomRequest, res: Response) => {
-  const userId = req.user?.id
+  const userId = req.user?.id;
 
-  // Check if userId is present
   if (!userId) {
     res.status(StatusCodes.UNAUTHORIZED).json({
       success: false,
       message: "Unauthorized access",
     });
-    return;
   }
 
   try {
+    // Fetch itineraries created by the user
     const createdItineraries = await prisma.itinerary.findMany({
-      where: {
-        createdById: Number(userId)
-      },
+      where: { createdById: userId },
       include: {
         activities: true,
-      }
-    });
-  
-    const collaboratedItineraries = await prisma.itinerary.findMany({
-      where: {
         collaborators: {
-          some: { userId: Number(userId)},
+          include: {
+            user: { select: { id: true, name: true, email: true } },
+          },
         },
       },
+    });
+
+    // Fetch itineraries where the user is a collaborator
+    const collaboratedItineraries = await prisma.itinerary.findMany({
+      where: { collaborators: { some: { userId } } },
       include: {
         activities: true,
-      }
-    })
-    // Combine the results and remove duplicates
+        collaborators: {
+          include: {
+            user: { select: { id: true, name: true, email: true } },
+          },
+        },
+      },
+    });
+
+    // Combine results and remove duplicates
     const combinedItineraries = [
       ...createdItineraries,
       ...collaboratedItineraries.filter(
-        (collaborated) => !createdItineraries.some(created => created.id === collaborated.id)
+        (collaborated) =>
+          !createdItineraries.some((created) => created.id === collaborated.id)
       ),
     ];
 
@@ -57,12 +63,13 @@ export const getItineraryByUserId = async (req: CustomRequest, res: Response) =>
     console.error("Error fetching itineraries:", error);
     res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
       success: false,
-      message: "An error occurred while fetching itineraries",
+      message: "An error occurred while fetching itineraries.",
       error: error instanceof Error ? error.message : "Unknown error",
     });
   }
   return;
 };
+
 
 export const getItineraryById = async (req: Request, res: Response) => {
   const { id } = req.params;

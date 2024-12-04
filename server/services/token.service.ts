@@ -7,9 +7,10 @@ export const generateToken = (user: User) => {
     { 
       id: user.id,
       name: user.name, 
+      email: user.email,
       username: user.username 
     },
-    config.JWT_SECRET,
+    config.AUTH_SECRET,
     { expiresIn: "15m" }
   );
 };

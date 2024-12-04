@@ -14,6 +14,7 @@ import {
 } from "@/components/form";
 import { Input } from "@/components/input";
 import { Button } from "@/components/button";
+import axios from "axios";
 
 export const RegisterForm = () => {
   const form = useForm<z.infer<typeof RegisterSchema>>({
@@ -30,6 +31,18 @@ export const RegisterForm = () => {
   const onSubmit = async (data: z.infer<typeof RegisterSchema>) => {
     console.log(data);
     // POST Request to server
+    axios.post("http://localhost:3000/register", {
+      name: data.name,
+      email: data.email,
+      username: data.username,
+      password: data.password,
+    })
+    .then((response) => {
+      console.log(response);
+    })
+    .catch((error) => {
+      console.log(error);
+    })
   };
 
   return (

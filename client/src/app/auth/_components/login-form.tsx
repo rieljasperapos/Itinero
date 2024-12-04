@@ -18,7 +18,7 @@ import { redirect } from "next/navigation";
 
 export const LoginForm = () => {
   const { data: session, status } = useSession();
-  console.log(session?.user?.email)
+  console.log(session?.user?.name)
   if (session?.user) {
     redirect("/")
   }
@@ -36,6 +36,8 @@ export const LoginForm = () => {
       password: data.password,
       redirect: false,
     });
+
+    console.log(res);
   };
 
   return (

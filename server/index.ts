@@ -10,14 +10,16 @@ import activityRouter from "./routes/activities.routes";
 import collabRouter from "./routes/collab.routes";
 
 const app = express();
-app.use(express.json());
 app.use(cors({
   origin: "http://localhost:3001",
   methods: ["GET", "POST", "PUT", "DELETE"],
   credentials: true,
 }))
 app.use(cookieParser());
+app.use(express.json());
 app.use(helmet());
+
+// Routes setup
 app.use(userRouter);
 app.use(itineraryRouter);
 app.use(activityRouter);
