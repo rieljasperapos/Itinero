@@ -101,37 +101,43 @@ const Calendar = () => {
                   right: "dayGridMonth,dayGridWeek,dayGridYear",
                 }}
                 initialDate={new Date()}
+                dayMaxEventRows={3}
                 editable={true}
                 selectable={true}
-                events={activities} // Use the state here
-                eventContent={(eventInfo) => {
-                  const startTime = formatTime(eventInfo.event.start);
-                  const endTime = formatTime(eventInfo.event.end);
-                  return (
-                    <div className="rounded-lg p-2 ease-in-out truncate flex flex-col gap-1">
-                      <div className="text-xs mt-1 italic bg-gray-100 font-bold border-gray-300 p-2">
-                        {eventInfo.event.extendedProps.itinerary}
-                      </div>
-                      <div className="flex items-center">
-                        <CalendarDays className="h-4 w-4 mr-1" />
-                        <span className="text-sm font-medium">
-                          {eventInfo.event.title}
-                        </span>
-                      </div>
-                      <div className="flex items-center mt-1">
-                        <MapPin className="h-4 w-4 mr-1" />
-                        <span className="text-xs">
-                          {eventInfo.event.extendedProps.location}
-                        </span>
-                      </div>
-                      <div className="flex items-center text-xs mt-1">
-                        <Clock className="h-4 w-4 mr-1" />
-                        {startTime} - {endTime}
-                      </div>
-                    </div>
-                  );
+                eventTimeFormat={{
+                  hour: "numeric",
+                  meridiem: "short",
                 }}
+                events={activities} // Use the state here
+                // eventContent={(eventInfo) => {
+                //   const startTime = formatTime(eventInfo.event.start);
+                //   const endTime = formatTime(eventInfo.event.end);
+                //   return (
+                //     <div className="rounded-lg p-2 ease-in-out truncate flex flex-col gap-1">
+                //       <div className="text-xs mt-1 italic bg-gray-100 font-bold border-gray-300 p-2">
+                //         {eventInfo.event.extendedProps.itinerary}
+                //       </div>
+                //       <div className="flex items-center">
+                //         <CalendarDays className="h-4 w-4 mr-1" />
+                //         <span className="text-sm font-medium">
+                //           {eventInfo.event.title}
+                //         </span>
+                //       </div>
+                //       <div className="flex items-center mt-1">
+                //         <MapPin className="h-4 w-4 mr-1" />
+                //         <span className="text-xs">
+                //           {eventInfo.event.extendedProps.location}
+                //         </span>
+                //       </div>
+                //       <div className="flex items-center text-xs mt-1">
+                //         <Clock className="h-4 w-4 mr-1" />
+                //         {startTime} - {endTime}
+                //       </div>
+                //     </div>
+                //   );
+                // }}
               />
+              
             </div>
           </div>
         </div>

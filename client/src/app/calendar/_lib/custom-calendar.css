@@ -8,6 +8,13 @@
   font-size: 14px;
 }
 
+.fc .fc-daygrid-day-frame {
+  max-height: 20px; /* Restrict the maximum height */
+  overflow: hidden; /* Hide overflow content */
+  text-overflow: ellipsis; /* Add "..." for truncated text */
+  white-space: nowrap; /* Prevent text wrapping */
+}
+
 :root {
   --fc-small-font-size: 0.85em; /* Font size */
   --fc-page-bg-color: #f8fafc; /* Light slate background */
