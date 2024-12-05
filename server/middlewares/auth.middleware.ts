@@ -5,7 +5,6 @@ import { CustomRequest } from "../types/auth.type";
 import { User } from "../types/user.types";
 
 export const authenticate = (req: CustomRequest, res: Response, next: NextFunction) => {
-  // Get token from Authorization header (Authorization: Bearer <token>)
   const authHeader = req.headers["authorization"];
   
   if (!authHeader) {
@@ -34,6 +33,6 @@ export const authenticate = (req: CustomRequest, res: Response, next: NextFuncti
   } catch (error) {
     console.error("Error verifying token:", error);
     res.status(401).json({ message: "Unauthorized: Invalid token" });
-    return;
+    return
   }
 };

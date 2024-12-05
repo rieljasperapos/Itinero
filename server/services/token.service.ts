@@ -11,6 +11,6 @@ export const generateToken = (user: User) => {
       username: user.username 
     },
     config.AUTH_SECRET,
-    { expiresIn: "15m" }
+    { expiresIn: config.ACCESS_TOKEN_EXPIRES_IN }
   );
 };

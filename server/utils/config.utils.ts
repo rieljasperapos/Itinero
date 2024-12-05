@@ -7,11 +7,5 @@ export const config = {
   SALT_ROUNDS: process.env.SALT_ROUNDS as string,
   JWT_SECRET: process.env.JWT_SECRET as string,
   AUTH_SECRET: process.env.AUTH_SECRET as string,
+  ACCESS_TOKEN_EXPIRES_IN: process.env.ACCESS_TOKEN_EXPIRES_IN as string,
 };
-
-// export const cookieOptions = {
-//   httpOnly: true,
-//   secure: process.env.NODE_ENV === "production",
-//   sameSite: "lax" as const,
-//   path: '/'
-// };

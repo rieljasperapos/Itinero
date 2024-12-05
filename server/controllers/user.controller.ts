@@ -1,6 +1,6 @@
 import { prisma } from "../lib/prisma";
 import { Request, Response } from "express";
-import { config, cookieOptions } from "../utils/config.utils";
+import { config } from "../utils/config.utils";
 import bcrypt from "bcrypt";
 import { generateToken } from "../services/token.service";
 import { User } from "../types/user.types";
@@ -32,7 +32,7 @@ export const registerUser = async (req: Request, res: Response) => {
           name: name,
           username: username,
           password: hashedPassword,
-          email: email
+          email: email,
         },
       });
       res.send({
@@ -54,7 +54,7 @@ export const loginUser = async (req: Request, res: Response) => {
 
   // Find user in the database
   const user = await prisma.user.findFirst({ where: { username: username } });
-  if (!user){
+  if (!user) {
     res.status(401).json({ message: "User not found" });
     return;
   }
@@ -71,22 +71,29 @@ export const loginUser = async (req: Request, res: Response) => {
     id: user.id,
     name: user.name,
     username: user.username,
-    email: user.email
-  }
+    email: user.email,
+  };
   const accessToken = generateToken(foundUser);
   console.log(`sign token: ${accessToken}`);
-  // console.log(config.NODE_ENV);
-  res.cookie("accessToken", accessToken, { httpOnly: true, secure: process.env.NODE_ENV === "production", sameSite: "strict" });
+  res.cookie("accessToken", accessToken, {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === "production",
+    sameSite: "strict",
+  });
   const userResponse = {
     ...foundUser,
-    accessToken
-  }
+    accessToken,
+  };
   res.status(200).json({ userResponse });
   return;
 };
 
 export const logoutUser = (req: Request, res: Response) => {
-  res.clearCookie("token", cookieOptions);
+  res.clearCookie("token", {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === "production",
+    sameSite: "strict",
+  });
   res.send({ message: "Logged out successfully" });
   return;
 };
