@@ -1,0 +1,41 @@
+.fc .fc-toolbar-title {
+  font-size: 24px;
+  margin: 0;
+}
+
+.fc .fc-button {
+  padding: 8px;
+  font-size: 14px;
+}
+
+:root {
+  --fc-small-font-size: 0.85em; /* Font size */
+  --fc-page-bg-color: #f8fafc; /* Light slate background */
+  --fc-neutral-bg-color: rgba(113, 128, 150, 0.2); /* Lighter slate background */
+  --fc-neutral-text-color: #1f2937; /* Dark slate text color */
+  --fc-border-color: #cbd5e1; /* Light border color */
+  --fc-button-text-color: #ffffff; /* Button text color */
+  --fc-button-bg-color: #4b5563; /* Dark slate button background */
+  --fc-button-border-color: #4b5563; /* Button border matches background */
+  --fc-button-hover-bg-color: #374151; /* Darker on hover */
+  --fc-button-hover-border-color: #1f2937; /* Darker border on hover */
+  --fc-button-active-bg-color: #1f2937; /* Darker when active */
+  --fc-button-active-border-color: #1e293b; /* Even darker when active */
+  --fc-event-bg-color: #64748b; /* Slate blue for events */
+  --fc-event-border-color: #475569; /* Darker slate for event borders */
+  --fc-event-text-color: #ffffff; /* Keep event text color white */
+  --fc-event-selected-overlay-color: rgba(0, 0, 0, 0.25);
+  --fc-more-link-bg-color: #e5e7eb; /* Light slate for more links */
+  --fc-more-link-text-color: inherit; /* Keep text color */
+  --fc-event-resizer-thickness: 8px;
+  --fc-event-resizer-dot-total-width: 8px;
+  --fc-event-resizer-dot-border-width: 1px;
+  --fc-non-business-color: rgba(113, 128, 150, 0.3); /* Adjusted non-business color */
+  --fc-bg-event-color: #94a3b8; /* Background event color */
+  --fc-bg-event-opacity: 0.4; /* Increased opacity */
+  --fc-highlight-color: rgba(100, 116, 139, 0.3); /* Slate highlight color */
+  --fc-today-bg-color: rgba(191, 219, 254, 0.2); /* Light slate background for today */
+  --fc-now-indicator-color: #ef4444; /* Red for now indicator */
+}
+
+

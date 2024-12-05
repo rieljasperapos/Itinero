@@ -113,7 +113,7 @@ export const createItinerary = async (req: CustomRequest, res: Response) => {
   try {
     const { title, description, startDate, endDate } = req.body;
     const user = req.user;
-    console.log(user);
+    console.log("USER IN CREATEITINERARY CONTROLLER", user);
     
     if (!title || !description || !startDate || !endDate) {
       res.status(400).send({ error: "Missing required fields" });

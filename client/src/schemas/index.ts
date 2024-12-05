@@ -20,3 +20,10 @@ export const LoginSchema = z.object({
   username: z.string(),
   password: z.string().min(6),
 });
+
+export const createItinerarySchema = z.object({
+  title: z.string(),
+  description: z.string(),
+  startDate: z.date(),
+  endDate: z.date(),
+});
