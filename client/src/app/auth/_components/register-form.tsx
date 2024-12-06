@@ -15,8 +15,11 @@ import {
 import { Input } from "@/components/input";
 import { Button } from "@/components/button";
 import axios from "axios";
+import { useToast } from "@/hooks/use-toast";
+import { ToastAction } from "@/components/ui/toast";
 
 export const RegisterForm = () => {
+  const { toast } = useToast();
   const form = useForm<z.infer<typeof RegisterSchema>>({
     resolver: zodResolver(RegisterSchema),
     defaultValues: {
@@ -39,6 +42,20 @@ export const RegisterForm = () => {
     })
     .then((response) => {
       console.log(response);
+      if (!response.data.valid) {
+        toast({
+          variant: "destructive",
+          title: "Uh oh! Something went wrong",
+          description: response.data.message,
+          action: <ToastAction altText="Try again">Try again</ToastAction>
+        })
+      } else {
+        toast({
+          variant: "default",
+          title: "Success!",
+          description: "You've successfully created an account",
+        })
+      }
     })
     .catch((error) => {
       console.log(error);
