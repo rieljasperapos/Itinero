@@ -20,28 +20,33 @@ export const registerUser = async (req: Request, res: Response) => {
       password,
       parseInt(config.SALT_ROUNDS)
     );
-    const user = await prisma.user.findUnique({
-      where: {
+
+    const existingUser = await prisma.user.findUnique({ where: { username: username } });
+    if (existingUser) {
+      res.send({ message: "Username already exists" });
+      return;
+    }
+
+    const existingEmail = await prisma.user.findUnique({ where: { email: email } });
+    if (existingEmail) {
+      res.send({ message: "Email already exists" });
+      return;
+    }
+
+    const newUser = await prisma.user.create({
+      data: {
+        name: name,
         username: username,
+        password: hashedPassword,
+        email: email,
       },
     });
 
-    if (!user) {
-      const newUser = await prisma.user.create({
-        data: {
-          name: name,
-          username: username,
-          password: hashedPassword,
-          email: email,
-        },
-      });
-      res.send({
-        message: "Successfully created user",
-        data: newUser,
-      });
-    } else {
-      res.send({ message: "username already exist" });
-    }
+    res.send({
+      message: "Successfully created user",
+      data: newUser,
+      valid: true,
+    });
   } catch (error) {
     res.send({ message: `Server error ${error}` });
   }
