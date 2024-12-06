@@ -15,6 +15,18 @@
   white-space: nowrap; /* Prevent text wrapping */
 }
 
+.fc .fc-daygrid-body {
+  width: 100% !important;
+}
+
+.fc .fc-scrollgrid-sync-table {
+  width: 100% !important;
+}
+
+.fc .fc-col-header {
+  width: 100% !important;
+}
+
 :root {
   --fc-small-font-size: 0.85em; /* Font size */
   --fc-page-bg-color: #f8fafc; /* Light slate background */
