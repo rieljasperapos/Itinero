@@ -32,9 +32,11 @@ export const RegisterForm = () => {
   });
 
   const onSubmit = async (data: z.infer<typeof RegisterSchema>) => {
+    const apiBaseUrl = process.env.NEXT_PUBLIC_API_BASE_URL;
+    console.log("API Base URL:", apiBaseUrl);
     console.log(data);
     // POST Request to server
-    axios.post("http://localhost:3000/register", {
+    axios.post(`${apiBaseUrl}/register`, {
       name: data.name,
       email: data.email,
       username: data.username,
