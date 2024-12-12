@@ -19,6 +19,7 @@ import dayGridPlugin from "@fullcalendar/daygrid";
 import { useSession } from "next-auth/react";
 import { useEffect, useState } from "react";
 import axios from "axios";
+import Layout from "@/components/layout";
 import { MapPin, CalendarDays, Clock } from "lucide-react";
 import "./_lib/custom-calendar.css";
 
@@ -73,49 +74,31 @@ const Calendar = () => {
   }
 
   return (
-    <SidebarProvider>
-      <AppSidebar />
-      <SidebarInset>
-        <header className="flex h-16 shrink-0 items-center gap-2 transition-[width,height] ease-linear group-has-[[data-collapsible=icon]]/sidebar-wrapper:h-12">
-          <div className="flex items-center gap-2 px-4">
-            <SidebarTrigger className="-ml-1" />
-            <Separator orientation="vertical" className="mr-2 h-4" />
-            <Breadcrumb>
-              <BreadcrumbList>
-                <BreadcrumbItem>
-                  <BreadcrumbPage>Calendar</BreadcrumbPage>
-                </BreadcrumbItem>
-              </BreadcrumbList>
-            </Breadcrumb>
-          </div>
-        </header>
-        <div className="flex flex-1 flex-col gap-4 p-4 pt-0">
-          <div>
-            <div className="max-w-6xl mx-auto p-4">
-              <FullCalendar
-                timeZone="Asia/Manila"
-                plugins={[dayGridPlugin]}
-                initialView="dayGridMonth"
-                headerToolbar={{
-                  left: "prev,next today",
-                  center: "title",
-                  right: "dayGridMonth,dayGridWeek,dayGridYear",
-                }}
-                initialDate={new Date()}
-                dayMaxEventRows={3}
-                editable={true}
-                selectable={true}
-                eventTimeFormat={{
-                  hour: "numeric",
-                  meridiem: "short",
-                }}
-                events={activities} // Use the state here
-              />
-            </div>
-          </div>
+    <Layout breadcrumb="Calendar">
+      <div>
+        <div className="max-w-6xl mx-auto p-4">
+          <FullCalendar
+            timeZone="Asia/Manila"
+            plugins={[dayGridPlugin]}
+            initialView="dayGridMonth"
+            headerToolbar={{
+              left: "prev,next today",
+              center: "title",
+              right: "dayGridMonth,dayGridWeek,dayGridYear",
+            }}
+            initialDate={new Date()}
+            dayMaxEventRows={3}
+            editable={true}
+            selectable={true}
+            eventTimeFormat={{
+              hour: "numeric",
+              meridiem: "short",
+            }}
+            events={activities} // Use the state here
+          />
         </div>
-      </SidebarInset>
-    </SidebarProvider>
+      </div>
+    </Layout>
   );
 };
 
