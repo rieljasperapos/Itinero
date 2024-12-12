@@ -1,4 +1,7 @@
+// page.tsx
+
 "use client";
+import React from "react";
 import {
   Form,
   FormControl,
@@ -8,44 +11,57 @@ import {
 } from "@/components/form";
 import { Input } from "@/components/input";
 import { format } from "date-fns";
-import { Button } from "@/components/button";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
 import { createItinerarySchema } from "@/schemas";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/popover";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/popover";
 import { Calendar } from "@/components/calendar";
 import { CalendarIcon } from "lucide-react";
 import axios from "axios";
 import { useSession } from "next-auth/react";
 
-const CreateItineraryForm = () => {
-  const { data: session, status } = useSession();
-  console.log({ session });
+const CreateItineraryForm = ({ children }: { children?: React.ReactNode }) => {
+  const { data: session } = useSession();
+
   const form = useForm<z.infer<typeof createItinerarySchema>>({
     resolver: zodResolver(createItinerarySchema),
     defaultValues: {
       title: "",
       description: "",
+      startDate: undefined,
+      endDate: undefined,
     },
   });
+
   const onSubmit = async (data: z.infer<typeof createItinerarySchema>) => {
-    console.log(data);
     // Post request to server using axios
-    const response = await axios.post("http://localhost:3000/itineraries/create", 
-      {
-        title: data.title,
-        description: data.description,
-        startDate: data.startDate,
-        endDate: data.endDate,
-      },
-      {
-        headers: {
-          Authorization: `Bearer ${session?.user.accessToken}`,
+    const apiBaseUrl = process.env.NEXT_PUBLIC_API_BASE_URL;
+    try {
+      const response = await axios.post(
+        `${apiBaseUrl}/itineraries/create`,
+        {
+          title: data.title,
+          description: data.description,
+          startDate: data.startDate,
+          endDate: data.endDate,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${session?.user.accessToken}`,
+          },
         }
-      }
-    )
-    console.log(response);
+      );
+      console.log("Itinerary created:", response.data);
+      // Optionally, handle success (e.g., close dialog, show notification)
+    } catch (error) {
+      console.error("Error creating itinerary:", error);
+      // Optionally, handle error (e.g., display error message)
+    }
   };
 
   return (
@@ -53,17 +69,18 @@ const CreateItineraryForm = () => {
       <div className="border-b py-2">
         <h1 className="heading">Create Itinerary</h1>
       </div>
-
       <div>
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)}>
+            {/* Form Fields */}
             <div>
+              {/* Title Field */}
               <FormField
                 control={form.control}
                 name="title"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Title</FormLabel>
+                    <p className="tripname_small mt-3"> Title </p>
                     <FormControl>
                       <Input
                         type="text"
@@ -74,12 +91,13 @@ const CreateItineraryForm = () => {
                   </FormItem>
                 )}
               />
+              {/* Description Field */}
               <FormField
                 control={form.control}
                 name="description"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Description</FormLabel>
+                    <p className="tripname_small mt-3"> Description </p>
                     <FormControl>
                       <Input
                         type="text"
@@ -90,76 +108,84 @@ const CreateItineraryForm = () => {
                   </FormItem>
                 )}
               />
-              <FormField
-                control={form.control}
-                name="startDate"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Start Date</FormLabel>
-                    <Popover>
-                      <PopoverTrigger asChild>
-                        <FormControl>
-                          <Button variant="outline">
-                            {field.value ? (
-                              format(field.value, "PPP")
-                            ) : (
-                              <span>Pick a date</span>
-                            )}
-                            <CalendarIcon className="ml-auto size-4 opacity-50" />
-                          </Button>
-                        </FormControl>
-                      </PopoverTrigger>
-                      <PopoverContent className="w-auto p-0" align="start">
-                        <Calendar
-                          mode="single"
-                          selected={field.value}
-                          onSelect={field.onChange}
-                          disabled={(date) =>
-                            date < new Date() || date < new Date("1900-01-01")
-                          }
-                          initialFocus
-                        />
-                      </PopoverContent>
-                    </Popover>
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name="endDate"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>End Date</FormLabel>
-                    <Popover>
-                      <PopoverTrigger asChild>
-                        <FormControl>
-                          <Button variant="outline">
-                            {field.value ? (
-                              format(field.value, "PPP")
-                            ) : (
-                              <span>Pick a date</span>
-                            )}
-                            <CalendarIcon className="ml-auto size-4 opacity-50" />
-                          </Button>
-                        </FormControl>
-                      </PopoverTrigger>
-                      <PopoverContent className="w-auto p-0" align="start">
-                        <Calendar
-                          mode="single"
-                          selected={field.value}
-                          onSelect={field.onChange}
-                          disabled={(date) =>
-                            date < new Date() || date < new Date("1900-01-01")
-                          }
-                          initialFocus
-                        />
-                      </PopoverContent>
-                    </Popover>
-                  </FormItem>
-                )}
-              />
-              <Button type="submit">Submit</Button>
+
+
+                <div className="flex space-x-2">
+                  {/* Start Date Field */}
+                  <FormField
+                    control={form.control}
+                    name="startDate"
+                    render={({ field }) => (
+                      <FormItem className="flex-4 min-w-[180px]">
+                        <Popover>
+                          <PopoverTrigger asChild>
+                          <FormControl>
+                            <button type="button" className="button">
+                              <div className="flex items-center mt-4 space-x-2">
+                                <span className="tripname_small">Start Date</span>
+                                <CalendarIcon className="size-4 opacity-50 self-center" />
+                              </div>
+                              {field.value ? (
+                                <span>{format(field.value, "PPP")}</span>
+                              ) : (
+                                <span>Pick a date</span>
+                              )}
+                            </button>
+                          </FormControl>
+                          </PopoverTrigger> 
+                          <PopoverContent className="w-auto p-0" align="start">
+                            <Calendar
+                              mode="single"
+                              selected={field.value}
+                              onSelect={field.onChange}
+                              disabled={(date) => date < new Date("1900-01-01")}
+                              initialFocus
+                            />
+                          </PopoverContent>
+                        </Popover>
+                      </FormItem>
+                    )}
+                  />   
+                  {/* End Date Field */}
+                  <FormField
+                    control={form.control}
+                    name="endDate"
+                    render={({ field }) => (
+                      <FormItem className="flex-4 min-w-[180px]">
+                        <Popover>
+                          <PopoverTrigger asChild>
+                          <FormControl>
+                            <button type="button" className="button">
+                              <div className="flex items-center mt-4 space-x-2">
+                                <span className="tripname_small">End Date</span>
+                                <CalendarIcon className="size-4 opacity-50 self-center" />
+                              </div>
+                              {field.value ? (
+                                <span >{format(field.value, "PPP")}</span>
+                              ) : (
+                                <span>Pick a date</span>
+                              )}
+                            </button>
+                          </FormControl>
+                          </PopoverTrigger>
+                          <PopoverContent className="w-auto p-0" align="start">
+                            <Calendar
+                              mode="single"
+                              selected={field.value}
+                              onSelect={field.onChange}
+                              disabled={(date) => date < new Date("1900-01-01")}
+                              initialFocus
+                            />
+                          </PopoverContent>
+                        </Popover>
+                      </FormItem>
+                    )}
+                  />
+                </div>
             </div>
+
+            {/* Render Children (e.g., Submit Button) */}
+            {children}
           </form>
         </Form>
       </div>
