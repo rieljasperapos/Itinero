@@ -34,7 +34,7 @@ model Itinerary {
   updatedAt     DateTime       @updatedAt @map("updated_at")
   activities    Activity[]
   collaborators Collaborator[]
-  createdBy     User           @relation(fields: [createdById], references: [id])
+  createdBy     User?           @relation(fields: [createdById], references: [id])
   notifactions  Notifaction[]
 
   @@map("itineraries")
