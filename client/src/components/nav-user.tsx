@@ -7,6 +7,7 @@ import {
   CreditCard,
   LogOut,
   Settings,
+  User
 } from "lucide-react"
 
 import {
@@ -30,6 +31,7 @@ import {
   useSidebar,
 } from "@/components/sidebar"
 import { useSession, signOut } from "next-auth/react"
+import Link from "next/link"
 
 export function NavUser() {
   const { isMobile } = useSidebar()
@@ -77,10 +79,12 @@ export function NavUser() {
             
             <DropdownMenuSeparator />
             <DropdownMenuGroup>
+              <Link href="/profile">
               <DropdownMenuItem>
-                <Settings />
-                Settings
+                <User />
+                Account
               </DropdownMenuItem>
+              </Link>
             </DropdownMenuGroup>
             <DropdownMenuSeparator />
             <DropdownMenuItem onClick={() => signOut()}>

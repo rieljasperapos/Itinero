@@ -1,26 +1,10 @@
 "use client";
-import { AppSidebar } from "../../components/AppSidebar";
-import {
-  Breadcrumb,
-  BreadcrumbItem,
-  BreadcrumbLink,
-  BreadcrumbList,
-  BreadcrumbPage,
-  BreadcrumbSeparator,
-} from "@/components/breadcrumb";
-import { Separator } from "@/components/separator";
-import {
-  SidebarInset,
-  SidebarProvider,
-  SidebarTrigger,
-} from "@/components/sidebar";
 import FullCalendar from "@fullcalendar/react";
 import dayGridPlugin from "@fullcalendar/daygrid";
 import { useSession } from "next-auth/react";
 import { useEffect, useState } from "react";
 import axios from "axios";
 import Layout from "@/components/layout";
-import { MapPin, CalendarDays, Clock } from "lucide-react";
 import "./_lib/custom-calendar.css";
 
 const Calendar = () => {

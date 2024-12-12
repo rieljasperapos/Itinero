@@ -48,7 +48,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
     }),
   ],
   callbacks: {
-    async jwt({ token, user }) {
+    async jwt({ token, user, trigger, session }) {
       if (user) {
         // Check if user and accessToken are correctly passed
         console.log("User in JWT callback:", user);
@@ -59,6 +59,11 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         token.email = user.email as string;
         token.accessToken = user.accessToken; // Ensure accessToken is correctly assigned to the token
       }
+
+      // Trigger condition for updates from the frontend
+    if (trigger === "update") {
+      return { ...token, ...session.user}
+    }
   
       console.log("Token in JWT callback:", token); // Log to check the token
       return token;
@@ -79,5 +84,4 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
       return session;
     }
   }
-  
 });

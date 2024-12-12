@@ -4,6 +4,9 @@ import { config } from "../utils/config.utils";
 import bcrypt from "bcrypt";
 import { generateToken } from "../services/token.service";
 import { User } from "../types/user.types";
+import { CustomRequest } from "../types/auth.type";
+import { StatusCodes } from "http-status-codes";
+import { isValidEmail } from "../helpers/user.helper";
 
 export const getUsers = async (req: Request, res: Response) => {
   // console.log(req.cookies);
@@ -91,6 +94,68 @@ export const loginUser = async (req: Request, res: Response) => {
   };
   res.status(200).json({ userResponse });
   return;
+};
+
+export const updateUser = async (req: CustomRequest, res: Response) => {
+  const { name, email } = req.body;
+  const userId = req.user?.id;
+
+  if (!userId) {
+    res.status(StatusCodes.UNAUTHORIZED).json({
+      success: false,
+      message: "Unauthorized"
+    });
+    return;
+  }
+
+  // Input validation for email if provided
+  if (email && !isValidEmail(email)) {
+    res.status(StatusCodes.BAD_REQUEST).json({
+      success: false,
+      message: "Invalid email format"
+    });
+    return;
+  }
+
+  const updateData: any = {};  // Object to hold the fields to be updated
+
+  // Add the fields to update if they exist in the request body
+  if (name) {
+    updateData.name = name;
+  }
+  if (email) {
+    updateData.email = email;
+  }
+
+  // If no fields are provided in the request body, return an error
+  if (Object.keys(updateData).length === 0) {
+    res.status(StatusCodes.BAD_REQUEST).json({
+      success: false,
+      message: "No valid fields provided to update"
+    });
+    return;
+  }
+
+  try {
+    const updatedUser = await prisma.user.update({
+      where: { id: userId },
+      data: updateData,
+    });
+
+    res.status(StatusCodes.OK).json({
+      success: true,
+      message: "User updated successfully",
+      data: updatedUser
+    });
+    return;
+  } catch (error) {
+    res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
+      success: false,
+      message: "Internal server error",
+      error: error
+    });
+    return;
+  }
 };
 
 export const logoutUser = (req: Request, res: Response) => {

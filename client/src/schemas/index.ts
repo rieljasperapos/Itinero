@@ -27,3 +27,14 @@ export const createItinerarySchema = z.object({
   startDate: z.date(),
   endDate: z.date(),
 });
+
+export const EditInfoSchema = z.object({
+  name: z.string(),
+  email: z.string().email(),
+});
+
+export const EditPasswordSchema = z.object({
+  currentPassword: z.string().min(6),
+  newPassword: z.string().min(6),
+  reTypePassword: z.string().min(6),
+});
