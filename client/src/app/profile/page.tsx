@@ -166,7 +166,7 @@ const ProfilePage = () => {
             <h1 className="text-lg font-semibold">Personal Information</h1>
             {isEditingInfo ? (
               <>
-                <Button className="flex items-center gap-2 bg-green-500 hover:bg-green-700" onClick={handleSubmitEditInfo}>
+                <Button className="flex items-center gap-2" onClick={handleSubmitEditInfo}>
                   <Check />
                   <p>Save Changes</p>
                 </Button>
@@ -263,7 +263,7 @@ const ProfilePage = () => {
                   />
                   <span className="text-red-500">{errors.reTypePassword}</span>
                 </div>
-                <Button className="max-w-xs bg-[#3A86FF] hover:bg-[#77A4EC]" onClick={handleSubmitChangePassword}>Save Changes</Button>
+                <Button className="max-w-xs" onClick={handleSubmitChangePassword}>Save Changes</Button>
               </>
             ) : (
               <>
