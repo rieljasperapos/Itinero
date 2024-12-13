@@ -12,9 +12,11 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
       },
       authorize: async (credentials) => {
         try {
+          const apiBaseUrl = process.env.NEXT_PUBLIC_API_BASE_URL;
+          console.log("API Base URL:", apiBaseUrl);
           // Step 1: Send a POST request to your Express.js API
           const response = await axios.post(
-            "http://localhost:3000/login",
+            `${apiBaseUrl}/login`,
             {
               username: credentials?.username,
               password: credentials?.password,

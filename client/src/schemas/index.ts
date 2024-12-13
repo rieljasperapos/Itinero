@@ -27,3 +27,13 @@ export const createItinerarySchema = z.object({
   startDate: z.date(),
   endDate: z.date(),
 });
+
+export const createActivitySchema = z.object({
+  itineraryId: z.number(),
+  activityName: z.string(),
+  address: z.string(),
+  locationName: z.string(),
+  date: z.date(),
+  startTime: z.string().regex(/^\d{2}:\d{2}$/, "Start time must be in HH:MM format"),
+  endTime: z.string().regex(/^\d{2}:\d{2}$/, "End time must be in HH:MM format"),
+});

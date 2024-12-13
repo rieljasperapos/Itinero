@@ -7,5 +7,7 @@ router.get("/itineraries", authenticate, itinerariesController.getItineraryByUse
 router.get("/itineraries/:itineraryId/activities", itinerariesController.getActivitiesByItineraryId);
 router.get("/itineraries/:id", itinerariesController.getItineraryById);
 router.post("/itineraries/create", authenticate, itinerariesController.createItinerary);
+router.put("/itineraries/:id", authenticate, itinerariesController.updateItinerary);
+router.delete("/itineraries/:id", authenticate, itinerariesController.deleteItinerary);
 
 export default router;

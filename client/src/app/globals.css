@@ -77,6 +77,13 @@ body {
   }
 }
 
+.itinerary-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px; /* Optional: Adds space between the cards */
+  margin-left: 50px
+}
+
 @layer base {
   :root {
     --background: 0 0% 100%;
