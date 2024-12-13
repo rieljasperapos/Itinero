@@ -17,7 +17,7 @@ export const inviteUser = async (req: CustomRequest, res: Response) => {
     const result = await inviteCollaborator(itineraryId, inviterId, email, role);
     res.send(result);
   } catch (error) {
-    res.status(500).send({ error: error, message: `User with email ${email} is not found` });
+    res.status(500).send({ error: error, message: `User with email ${email} is not found`, found: false });
   }
   return;
 }

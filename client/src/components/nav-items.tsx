@@ -35,7 +35,7 @@ export function NavItems({
   }[]
 }) {
   const { isMobile } = useSidebar()
-
+  
   return (
     <SidebarGroup className="group-data-[collapsible=icon]:hidden">
       <SidebarGroupLabel>Menu</SidebarGroupLabel>

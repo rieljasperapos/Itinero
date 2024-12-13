@@ -20,7 +20,7 @@ import {
     DialogTrigger,
   } from '@/components/dialog';
   import { Activity } from '@/types/activity-type';
-
+import Link from 'next/link';
 
   interface ItineraryDetailsProps {
     itineraryId: number;
@@ -30,6 +30,7 @@ import {
     dateEnd: string;
     collaborators: number;
     onItineraryChange?: () => void; // New prop for dynamic refresh
+    isEditor: boolean;
 }
 
 const avatarUrls = [ // Readjust this once your backend is working
@@ -46,6 +47,7 @@ const ItineraryDetails: React.FC<ItineraryDetailsProps> = ({
     collaborators,
     description,
     onItineraryChange, // Receive the new prop
+    isEditor,
 }) => {
     console.log("CreateActivityForm - itineraryId prop:", itineraryId);
     const formattedDateStart = format(new Date(dateStart), 'MMMM d, yyyy');
@@ -127,10 +129,12 @@ const ItineraryDetails: React.FC<ItineraryDetailsProps> = ({
             </div>
 
             <div className="flex flex-row items-center space-x-2 mt-2">
+              <Link href={`/collaborators/invite?itineraryId=${itineraryId}`}>
                 <Button variant="link" size='tight' className="regulartext" style={{ fontWeight: '600' }}>
                     <Link2 className="mr-2 size-4" strokeWidth={1.5} />
                     Invite Collaborators
                 </Button>
+              </Link>
             </div>
 
             <div className="flex flex-row items-center space-x-2 mt-2">
@@ -168,13 +172,16 @@ const ItineraryDetails: React.FC<ItineraryDetailsProps> = ({
                     />
                 </DialogContent>
             </Dialog>
-
-            <div className="flex flex-row items-center space-x-2 mt-3">
-                <AvatarCircles numPeople={collaborators} avatarUrls={avatarUrls} />
-            </div>
+            
+            <Link href="/collaborators">
+              <div className="flex flex-row items-center space-x-2 mt-3 cursor-pointer group">
+                  <AvatarCircles numPeople={collaborators} avatarUrls={avatarUrls} />
+                  <p className='group-hover:underline'>Collaborators</p>
+              </div>
+            </Link>
 
             <div className="flex flex-row items-center justify-between w-full mt-3 mb-2">
-                <p className="regulartext" style={{ fontWeight: '700' }}>Activities</p>
+                <p className="font-bold text-xl">Activities</p>
                 <div className="flex flex-row items-center space-x-2">
                     <Dialog open={openCreateDialog} onOpenChange={setOpenCreateDialog}>
                         <DialogTrigger asChild>
@@ -196,7 +203,7 @@ const ItineraryDetails: React.FC<ItineraryDetailsProps> = ({
                 </div>
             </div>
 
-            <div className="flex-1 overflow-y-auto px-2">
+            <div className="flex-1 overflow-y-auto">
                 {Object.keys(activitiesByDate).map((date) => (
                     <ItineraryDetailsPlanCard
                         key={date}
@@ -204,6 +211,8 @@ const ItineraryDetails: React.FC<ItineraryDetailsProps> = ({
                         activities={activitiesByDate[date]}
                         itineraryId={itineraryId}
                         refreshActivities={fetchActivities}
+                        collaborators={collaborators}
+                        isEditor={isEditor}
                     />
                 ))}
             </div>

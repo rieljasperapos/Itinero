@@ -8,6 +8,7 @@ import userRouter from "./routes/user.routes";
 import itineraryRouter from "./routes/itineraries.routes";
 import activityRouter from "./routes/activities.routes";
 import collabRouter from "./routes/collab.routes";
+import notificationRouter from "./routes/notification.routes";
 
 const app = express();
 app.use(cors({
@@ -24,6 +25,7 @@ app.use(userRouter);
 app.use(itineraryRouter);
 app.use(activityRouter);
 app.use(collabRouter);
+app.use(notificationRouter);
 
 app.listen(config.PORT, () => {
   console.log(`Server is running in port ${config.PORT}`);

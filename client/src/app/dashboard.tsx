@@ -35,6 +35,7 @@ const Dashboard: React.FC = () => {
     "ongoing"
   ); // New state for filter
   const { data: session, status } = useSession();
+  const [isEditor, setIsEditor] = useState(false);
 
   interface Itinerary {
     id: number;
@@ -111,17 +112,23 @@ const Dashboard: React.FC = () => {
     }
   };
 
+  useEffect(() => {
+    if (session?.user?.email && itineraries.length > 0) {
+      const editorCheck = itineraries.some((itinerary) =>
+        itinerary.collaborators.some(
+          (collaborator) => collaborator.user.email === session.user.email
+        )
+      );
+      setIsEditor(editorCheck);
+    }
+  }, [session, itineraries]);
+
   const filteredItineraries = itineraries.filter(filterItineraries);
   console.log("filtered itineraries: ", filteredItineraries);
 
   return (
     <Layout breadcrumb="Dashboard">
-      <div className="flex flex-col gap-4 p-4">
-        {/* <h1 className="heading" style={{ margin: "20px" }}>
-          My Plans
-        </h1> */}
-        {/* <hr style={{ marginBottom: "30px" }} /> */}
-
+      <div className="flex flex-col gap-8 p-4">
         <div className="mediumtext flex gap-2">
           <Button
             variant="outline"
@@ -150,7 +157,7 @@ const Dashboard: React.FC = () => {
         <div>
           <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
             <DialogTrigger asChild>
-              <Button variant="link" size="tight" className="mediumtext m-4">
+              <Button variant="link" size="tight" className="mediumtext">
                 <CirclePlus className="mr-1 size-6" strokeWidth={1} />
                 Add Itinerary
               </Button>
@@ -208,6 +215,7 @@ const Dashboard: React.FC = () => {
                       dateEnd={itinerary.endDate}
                       collaborators={itinerary.collaborators.length}
                       onItineraryChange={fetchItineraries}
+                      isEditor={isEditor}
                     />
                   </SheetContent>
                 </Sheet>

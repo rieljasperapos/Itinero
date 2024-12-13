@@ -72,6 +72,7 @@ model Notifaction {
   id          Int       @id @default(autoincrement())
   userId      Int       @map("user_id")
   itineraryId Int       @map("itinerary_id")
+  title       String
   message     String
   isRead      Boolean   @default(false) @map("is_read")
   createdAt   DateTime  @default(now()) @map("created_at")
