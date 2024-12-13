@@ -10,9 +10,8 @@ import activityRouter from "./routes/activities.routes";
 import collabRouter from "./routes/collab.routes";
 
 const app = express();
-const apiBaseUrl = process.env.NEXT_PUBLIC_API_BASE_URL;
 app.use(cors({
-  origin: "http://localhost:3000",
+  origin: config.ORIGIN_URL,
   methods: ["GET", "POST", "PUT", "DELETE"],
   credentials: true,
 }))
