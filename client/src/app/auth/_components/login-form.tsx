@@ -18,7 +18,7 @@ import { redirect } from "next/navigation";
 
 export const LoginForm = () => {
   const { data: session, status } = useSession();
-  console.log(session?.user?.name)
+  // console.log(session?.user?.name)
   if (session?.user) {
     redirect("/")
   }
@@ -37,7 +37,12 @@ export const LoginForm = () => {
       redirect: false,
     });
 
-    console.log(res);
+    if (res?.error) {
+      console.error("Sign-in error:", res.error);
+      form.setError("root", { message: "Invalid username or password" });
+    } else {
+      console.log("Sign-in successful:", res);
+    }
   };
 
   return (
@@ -83,6 +88,9 @@ export const LoginForm = () => {
                   </FormItem>
                 )}
               />
+              {form.formState.errors.root && (
+                <p className="text-red-500 text-sm">{form.formState.errors.root.message}</p>
+              )}
               <Button
                 type="submit"
                 className="bg-[#3A86FF] hover:bg-[#77A4EC]"

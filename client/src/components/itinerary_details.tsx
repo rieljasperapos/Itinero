@@ -19,6 +19,7 @@ import {
     DialogTitle,
     DialogTrigger,
   } from '@/components/dialog';
+  import { Activity } from '@/types/activity-type';
 
 
   interface ItineraryDetailsProps {
@@ -29,17 +30,6 @@ import {
     dateEnd: string;
     collaborators: number;
     onItineraryChange?: () => void; // New prop for dynamic refresh
-}
-
-interface Activity {
-    id: number;
-    activityName: string;
-    startTime: string;
-    endTime: string;
-    locationName: string;
-    address: string;
-    itineraryId: number;
-    createdById: number;
 }
 
 const avatarUrls = [ // Readjust this once your backend is working
@@ -120,30 +110,30 @@ const ItineraryDetails: React.FC<ItineraryDetailsProps> = ({
     };
 
     return (
-        <div className="flex flex-col h-full">
-            <div className="flex flex-row items-center space-x-4 mt-6 mb-2">
+        <div className="flex flex-col h-full gap-2">
+            <div className="flex flex-row items-center space-x-4">
                 <h2 className="tripname_big">{title}</h2>
             </div>
 
-            <div className="flex flex-row items-center space-x-2 mt-3">
+            <div className="flex flex-row items-center space-x-2">
                 <p className="regulartext" style={{ fontWeight: 600 }}>{description}</p>
             </div>
 
-            <div className="flex flex-row items-center space-x-2 mt-3">
+            <div className="flex flex-row items-center space-x-2 mt-2">
                 <CalendarDays className="size-4" strokeWidth={1.5} />
                 <p className="smalltext" style={{ fontWeight: 600 }}>{formattedDateStart}</p>
                 <p className="smalltext" style={{ fontWeight: 600 }}>—</p>
                 <p className="smalltext" style={{ fontWeight: 600 }}>{formattedDateEnd}</p>
             </div>
 
-            <div className="flex flex-row items-center space-x-2 mt-3">
+            <div className="flex flex-row items-center space-x-2 mt-2">
                 <Button variant="link" size='tight' className="regulartext" style={{ fontWeight: '600' }}>
                     <Link2 className="mr-2 size-4" strokeWidth={1.5} />
                     Invite Collaborators
                 </Button>
             </div>
 
-            <div className="flex flex-row items-center space-x-2 mt-3">
+            <div className="flex flex-row items-center space-x-2 mt-2">
                 <Button
                     variant="link"
                     size="tight"

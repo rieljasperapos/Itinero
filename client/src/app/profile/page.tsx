@@ -34,7 +34,7 @@ const ProfilePage = () => {
     // POST request to the server to update the user's information
     try {
       const response = await axios.post(
-        "http://localhost:3000/user-update",
+        `${process.env.NEXT_PUBLIC_API_BASE_URL}/user-update`,
         {
           name: newName,
           email: newEmail,
@@ -110,7 +110,7 @@ const ProfilePage = () => {
     try {
       // EditPasswordSchema.parse(passwordData);
       const response = await axios.post(
-        "http://localhost:3000/change-password",
+        `${process.env.NEXT_PUBLIC_API_BASE_URL}/change-password`,
         {
           currentPassword: currentPassword,
           newPassword: newPassword,
@@ -235,7 +235,7 @@ const ProfilePage = () => {
                   <span>Current Password</span>
                   <Input
                     type="password"
-                    placeholder="********"
+                    placeholder="Enter your current password"
                     onChange={(e) => setCurrentPassword(e.target.value)}
                     className="max-w-xs"
                   />
@@ -246,7 +246,7 @@ const ProfilePage = () => {
                   <span>New Password</span>
                   <Input 
                     type="password"
-                    placeholder="********"
+                    placeholder="Enter your new password"
                     onChange={(e) => setNewPassword(e.target.value)}
                     className="max-w-xs"
                   />
@@ -257,7 +257,7 @@ const ProfilePage = () => {
                   <span>Re-type Password</span>
                   <Input
                     type="password" 
-                    placeholder="********"
+                    placeholder="Re-type your new password"
                     onChange={(e) => setReTypePassword(e.target.value)}
                     className="max-w-xs"
                   />

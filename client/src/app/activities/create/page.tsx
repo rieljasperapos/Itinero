@@ -14,27 +14,20 @@ import { Popover, PopoverContent, PopoverTrigger } from "@/components/popover";
 import { Calendar } from "@/components/calendar";
 import { CalendarIcon } from "lucide-react";
 import { createActivitySchema } from "@/schemas";
+import { Activity } from "@/types/activity-type";
 
 // Define the schema (ensure this matches your validation requirements)
-
-interface Activity {
-  id: number;
-  activityName: string;
-  startTime: string;
-  endTime: string;
-  locationName: string;
-  address: string;
-  itineraryId: number;
-  createdById: number;
-}
-
 interface CreateActivityFormProps {
   itineraryId: number;
   activity?: Activity; // Optional activity prop for editing
   onSuccess?: () => void; // Callback after successful submission
 }
 
-const CreateActivityForm: React.FC<CreateActivityFormProps> = ({ itineraryId, activity, onSuccess }) => {
+const CreateActivityForm: React.FC<CreateActivityFormProps> = ({
+  itineraryId,
+  activity,
+  onSuccess,
+}) => {
   const { data: session } = useSession();
 
   // Determine if we are in edit mode or create mode
@@ -44,26 +37,28 @@ const CreateActivityForm: React.FC<CreateActivityFormProps> = ({ itineraryId, ac
   const form = useForm<z.infer<typeof createActivitySchema>>({
     resolver: zodResolver(createActivitySchema),
     defaultValues: isEditMode
-    ? {
-        activityName: activity?.activityName || "",
-        locationName: activity?.locationName || "",
-        address: activity?.address || "",
-        // Initialize date in local timezone
-        date: activity ? new Date(activity.startTime) : undefined,
-        startTime: activity ? format(new Date(activity.startTime), "HH:mm") : "",
-        endTime: activity ? format(new Date(activity.endTime), "HH:mm") : "",
-        itineraryId: activity?.itineraryId || itineraryId,
-      }
-    : {
-        activityName: "",
-        locationName: "",
-        address: "",
-        date: undefined,
-        startTime: "",
-        endTime: "",
-        itineraryId: itineraryId,
-      },
-});
+      ? {
+          activityName: activity?.activityName || "",
+          locationName: activity?.locationName || "",
+          address: activity?.address || "",
+          // Initialize date in local timezone
+          date: activity ? new Date(activity.startTime) : undefined,
+          startTime: activity
+            ? format(new Date(activity.startTime), "HH:mm")
+            : "",
+          endTime: activity ? format(new Date(activity.endTime), "HH:mm") : "",
+          itineraryId: activity?.itineraryId || itineraryId,
+        }
+      : {
+          activityName: "",
+          locationName: "",
+          address: "",
+          date: undefined,
+          startTime: "",
+          endTime: "",
+          itineraryId: itineraryId,
+        },
+  });
 
   const onSubmit = async (data: z.infer<typeof createActivitySchema>) => {
     const apiBaseUrl = process.env.NEXT_PUBLIC_API_BASE_URL;
@@ -82,7 +77,7 @@ const CreateActivityForm: React.FC<CreateActivityFormProps> = ({ itineraryId, ac
             activityName: data.activityName,
             locationName: data.locationName,
             address: data.address,
-            date: data.date ? format(data.date, 'yyyy-MM-dd') : null,
+            date: data.date ? format(data.date, "yyyy-MM-dd") : null,
             startTime: data.startTime,
             endTime: data.endTime,
             itineraryId: data.itineraryId,
@@ -90,7 +85,7 @@ const CreateActivityForm: React.FC<CreateActivityFormProps> = ({ itineraryId, ac
           {
             headers: {
               Authorization: `Bearer ${session.user.accessToken}`,
-              'Content-Type': 'application/json',
+              "Content-Type": "application/json",
             },
           }
         );
@@ -103,7 +98,7 @@ const CreateActivityForm: React.FC<CreateActivityFormProps> = ({ itineraryId, ac
             activityName: data.activityName,
             locationName: data.locationName,
             address: data.address,
-            date: data.date ? format(data.date, 'yyyy-MM-dd') : null,
+            date: data.date ? format(data.date, "yyyy-MM-dd") : null,
             startTime: data.startTime,
             endTime: data.endTime,
             itineraryId: data.itineraryId,
@@ -111,7 +106,7 @@ const CreateActivityForm: React.FC<CreateActivityFormProps> = ({ itineraryId, ac
           {
             headers: {
               Authorization: `Bearer ${session.user.accessToken}`,
-              'Content-Type': 'application/json',
+              "Content-Type": "application/json",
             },
           }
         );
@@ -156,13 +151,13 @@ const CreateActivityForm: React.FC<CreateActivityFormProps> = ({ itineraryId, ac
   };
 
   return (
-    <div className="p-8">
-      <div className="border-b py-2">
+    <div className="p-4 flex flex-col gap-4">
+      {/* <div className="border-b py-2">
         <h1 className="heading">{isEditMode ? "Edit Activity" : "Create Activity"}</h1>
-      </div>
+      </div> */}
       <div>
         <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
             {/* Activity Name Field */}
             <FormField
               control={form.control}
@@ -177,7 +172,9 @@ const CreateActivityForm: React.FC<CreateActivityFormProps> = ({ itineraryId, ac
                       {...field}
                     />
                   </FormControl>
-                  {fieldState.error && <p className="error">{fieldState.error.message}</p>}
+                  {fieldState.error && (
+                    <p className="error">{fieldState.error.message}</p>
+                  )}
                 </FormItem>
               )}
             />
@@ -196,7 +193,9 @@ const CreateActivityForm: React.FC<CreateActivityFormProps> = ({ itineraryId, ac
                       {...field}
                     />
                   </FormControl>
-                  {fieldState.error && <p className="error">{fieldState.error.message}</p>}
+                  {fieldState.error && (
+                    <p className="error">{fieldState.error.message}</p>
+                  )}
                 </FormItem>
               )}
             />
@@ -209,13 +208,11 @@ const CreateActivityForm: React.FC<CreateActivityFormProps> = ({ itineraryId, ac
                 <FormItem>
                   <p className="tripname_small mt-3">Address</p>
                   <FormControl>
-                    <Input
-                      type="text"
-                      placeholder="Enter address"
-                      {...field}
-                    />
+                    <Input type="text" placeholder="Enter address" {...field} />
                   </FormControl>
-                  {fieldState.error && <p className="error">{fieldState.error.message}</p>}
+                  {fieldState.error && (
+                    <p className="error">{fieldState.error.message}</p>
+                  )}
                 </FormItem>
               )}
             />
@@ -234,7 +231,9 @@ const CreateActivityForm: React.FC<CreateActivityFormProps> = ({ itineraryId, ac
                           <div className="flex items-center space-x-2">
                             <CalendarIcon className="size-4 opacity-50" />
                             {field.value ? (
-                              <span>{format(new Date(field.value), "PPP")}</span>
+                              <span>
+                                {format(new Date(field.value), "PPP")}
+                              </span>
                             ) : (
                               <span>Pick a date</span>
                             )}
@@ -252,12 +251,14 @@ const CreateActivityForm: React.FC<CreateActivityFormProps> = ({ itineraryId, ac
                       </PopoverContent>
                     </Popover>
                   </FormControl>
-                  {fieldState.error && <p className="error">{fieldState.error.message}</p>}
+                  {fieldState.error && (
+                    <p className="error">{fieldState.error.message}</p>
+                  )}
                 </FormItem>
               )}
             />
 
-            <div className="flex space-x-2">
+            <div className="flex gap-4">
               {/* Start Time Field */}
               <FormField
                 control={form.control}
@@ -266,13 +267,11 @@ const CreateActivityForm: React.FC<CreateActivityFormProps> = ({ itineraryId, ac
                   <FormItem className="flex-1">
                     <p className="tripname_small mt-3">Start Time</p>
                     <FormControl>
-                      <Input
-                        type="time"
-                        placeholder="Start Time"
-                        {...field}
-                      />
+                      <Input type="time" placeholder="Start Time" {...field} />
                     </FormControl>
-                    {fieldState.error && <p className="error">{fieldState.error.message}</p>}
+                    {fieldState.error && (
+                      <p className="error">{fieldState.error.message}</p>
+                    )}
                   </FormItem>
                 )}
               />
@@ -285,13 +284,11 @@ const CreateActivityForm: React.FC<CreateActivityFormProps> = ({ itineraryId, ac
                   <FormItem className="flex-1">
                     <p className="tripname_small mt-3">End Time</p>
                     <FormControl>
-                      <Input
-                        type="time"
-                        placeholder="End Time"
-                        {...field}
-                      />
+                      <Input type="time" placeholder="End Time" {...field} />
                     </FormControl>
-                    {fieldState.error && <p className="error">{fieldState.error.message}</p>}
+                    {fieldState.error && (
+                      <p className="error">{fieldState.error.message}</p>
+                    )}
                   </FormItem>
                 )}
               />
@@ -310,12 +307,16 @@ const CreateActivityForm: React.FC<CreateActivityFormProps> = ({ itineraryId, ac
               )}
             />
 
-            <div className="flex space-x-4 mt-4">
+            <div className="flex gap-2">
               <Button type="submit">
                 {isEditMode ? "Update Activity" : "Create Activity"}
               </Button>
               {isEditMode && (
-                <Button type="button" variant="destructive" onClick={handleDelete}>
+                <Button
+                  type="button"
+                  variant="destructive"
+                  onClick={handleDelete}
+                >
                   Delete Activity
                 </Button>
               )}

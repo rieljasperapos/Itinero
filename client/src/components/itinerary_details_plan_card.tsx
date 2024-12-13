@@ -1,15 +1,6 @@
 import React from 'react';
 import ItineraryDetailsActivity from './itinerary_details_activity';
-
-interface Activity {
-  id: number;
-  activityName: string;
-  startTime: string;
-  endTime: string;
-  locationName: string;
-  address: string;
-}
-
+import { Activity } from '@/types/activity-type';
 interface ItineraryDetailsPlanCardProps {
     date: string;
     activities: Activity[];
