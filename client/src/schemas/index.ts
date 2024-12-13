@@ -28,6 +28,25 @@ export const createItinerarySchema = z.object({
   endDate: z.date(),
 });
 
+export const EditInfoSchema = z.object({
+  name: z.string().optional(),
+  email: z.string().email().optional(),
+});
+
+export const EditPasswordSchema = z.object({
+  currentPassword: z.string(),
+  newPassword: z
+    .string()
+    .min(8, "Password must be at least 8 characters long.")
+    .regex(/[a-z]/, "Password must contain at least one lowercase letter.")
+    .regex(/[A-Z]/, "Password must contain at least one uppercase letter.")
+    .regex(/[\W_]/, "Password must contain at least one special character."),
+  reTypePassword: z.string().min(8, "Password must be at least 8 characters long."),
+}).refine(data => data.newPassword === data.reTypePassword, {
+  message: "Passwords don't match",
+  path: ["reTypePassword"],
+});
+
 export const createActivitySchema = z.object({
   itineraryId: z.number(),
   activityName: z.string(),
