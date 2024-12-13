@@ -1,52 +1,59 @@
 "use client";
+
 import React from "react";
+import { useForm } from "react-hook-form";
+import * as z from "zod";
+import { zodResolver } from "@hookform/resolvers/zod";
 import {
   Form,
   FormControl,
   FormField,
   FormItem,
-  FormLabel,
 } from "@/components/form";
 import { Input } from "@/components/input";
-import { format } from "date-fns";
-import { useForm } from "react-hook-form";
-import * as z from "zod";
-import { createItinerarySchema } from "@/schemas";
-import { zodResolver } from "@hookform/resolvers/zod";
+import { Calendar } from "@/components/calendar";
 import {
   Popover,
-  PopoverContent,
   PopoverTrigger,
+  PopoverContent,
 } from "@/components/popover";
-import { Calendar } from "@/components/calendar";
-import { CalendarIcon } from "lucide-react";
+import { Button } from "@/components/button";
+import { CalendarIcon, Trash2 } from "lucide-react";
 import axios from "axios";
 import { useSession } from "next-auth/react";
+import { createItinerarySchema } from "@/schemas";
+import { format } from "date-fns";
 
-interface CreateItineraryFormProps {
-  children?: React.ReactNode;
+interface EditItineraryFormProps {
+  itineraryId: number;
+  initialData: {
+    title: string;
+    description: string;
+    startDate: Date;
+    endDate: Date;
+  };
   onSuccess?: () => void;
+  onDeleteSuccess?: () => void; // New prop for delete success callback
 }
 
-const CreateItineraryForm: React.FC<CreateItineraryFormProps> = ({ children, onSuccess }) => {
+const EditItineraryForm: React.FC<EditItineraryFormProps> = ({
+  itineraryId,
+  initialData,
+  onSuccess,
+  onDeleteSuccess, // Receive the new prop
+}) => {
   const { data: session } = useSession();
 
   const form = useForm<z.infer<typeof createItinerarySchema>>({
     resolver: zodResolver(createItinerarySchema),
-    defaultValues: {
-      title: "",
-      description: "",
-      startDate: undefined,
-      endDate: undefined,
-    },
+    defaultValues: initialData,
   });
 
   const onSubmit = async (data: z.infer<typeof createItinerarySchema>) => {
-    // Post request to server using axios
     const apiBaseUrl = process.env.NEXT_PUBLIC_API_BASE_URL;
     try {
-      const response = await axios.post(
-        `${apiBaseUrl}/itineraries/create`,
+      const response = await axios.put(
+        `${apiBaseUrl}/itineraries/${itineraryId}`,
         {
           title: data.title,
           description: data.description,
@@ -59,21 +66,42 @@ const CreateItineraryForm: React.FC<CreateItineraryFormProps> = ({ children, onS
           },
         }
       );
-      console.log("Itinerary created:", response.data);
-      // Invoke the onSuccess callback
+      console.log("Itinerary updated:", response.data);
       if (onSuccess) {
         onSuccess();
       }
     } catch (error) {
-      console.error("Error creating itinerary:", error);
-      // Optionally, handle error (e.g., display error message)
+      console.error("Error updating itinerary:", error);
+    }
+  };
+
+  // Handler for deleting the itinerary
+  const handleDelete = async () => {
+    const confirmDelete = window.confirm(
+      "Are you sure you want to delete this itinerary?"
+    );
+    if (confirmDelete) {
+      const apiBaseUrl = process.env.NEXT_PUBLIC_API_BASE_URL;
+      try {
+        await axios.delete(`${apiBaseUrl}/itineraries/${itineraryId}`, {
+          headers: {
+            Authorization: `Bearer ${session?.user.accessToken}`,
+          },
+        });
+        console.log("Itinerary deleted");
+        if (onDeleteSuccess) {
+          onDeleteSuccess(); // Callback after successful deletion
+        }
+      } catch (error) {
+        console.error("Error deleting itinerary:", error);
+      }
     }
   };
 
   return (
     <div className="p-8">
       <div className="border-b py-2">
-        <h1 className="heading">Create Itinerary</h1>
+        <h1 className="heading">Make Changes</h1>
       </div>
       <div>
         <Form {...form}>
@@ -121,7 +149,7 @@ const CreateItineraryForm: React.FC<CreateItineraryFormProps> = ({ children, onS
                   control={form.control}
                   name="startDate"
                   render={({ field }) => (
-                    <FormItem className="flex-4 min-w-[180px]">
+                    <FormItem className="flex-1 min-w-[180px]">
                       <Popover>
                         <PopoverTrigger asChild>
                           <FormControl>
@@ -156,7 +184,7 @@ const CreateItineraryForm: React.FC<CreateItineraryFormProps> = ({ children, onS
                   control={form.control}
                   name="endDate"
                   render={({ field }) => (
-                    <FormItem className="flex-4 min-w-[180px]">
+                    <FormItem className="flex-1 min-w-[180px]">
                       <Popover>
                         <PopoverTrigger asChild>
                           <FormControl>
@@ -188,9 +216,16 @@ const CreateItineraryForm: React.FC<CreateItineraryFormProps> = ({ children, onS
                 />
               </div>
             </div>
-
-            {/* Render Children (e.g., Submit Button) */}
-            {children}
+            {/* Action Buttons */}
+            <div className="mt-6 flex justify-end space-x-4">
+              <Button variant="destructive" onClick={handleDelete}>
+                <Trash2 className="mr-2 h-4 w-4" strokeWidth={1.5} />
+                Delete Itinerary
+              </Button>
+              <Button type="submit">
+                Save Changes
+              </Button>
+            </div>
           </form>
         </Form>
       </div>
@@ -198,4 +233,4 @@ const CreateItineraryForm: React.FC<CreateItineraryFormProps> = ({ children, onS
   );
 };
 
-export default CreateItineraryForm;
+export default EditItineraryForm;

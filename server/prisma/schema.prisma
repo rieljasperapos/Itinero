@@ -7,10 +7,6 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-enum Role {
-  VIEWER
-  EDITOR
-}
 model User {
   id            Int            @id @default(autoincrement())
   name          String
@@ -19,9 +15,9 @@ model User {
   email         String         @unique
   createdAt     DateTime       @default(now()) @map("created_at")
   updatedAt     DateTime       @updatedAt @map("updated_at")
+  activities    Activity[]
   collaborators Collaborator[]
   itinerary     Itinerary[]
-  activities    Activity[]
   notifications Notifaction[]
 
   @@map("users")
@@ -38,7 +34,7 @@ model Itinerary {
   updatedAt     DateTime       @updatedAt @map("updated_at")
   activities    Activity[]
   collaborators Collaborator[]
-  createdBy     User?          @relation(fields: [createdById], references: [id])
+  createdBy     User?           @relation(fields: [createdById], references: [id])
   notifactions  Notifaction[]
 
   @@map("itineraries")
@@ -60,14 +56,14 @@ model Activity {
   activityName String    @map("activity_name")
   startTime    DateTime  @map("start_time")
   endTime      DateTime  @map("end_time")
-  locationName String    @map("location_name")
-  address      String    @map("address")
   createdAt    DateTime  @default(now()) @map("created_at")
   updatedAt    DateTime  @updatedAt @map("updated_at")
   itineraryId  Int       @map("itinerary_id")
+  address      String    @map("address")
+  locationName String    @map("location_name")
   createdById  Int       @map("created_by_id")
+  createdBy    User      @relation(fields: [createdById], references: [id])
   itinerary    Itinerary @relation(fields: [itineraryId], references: [id])
-  createdBy    User     @relation(fields: [createdById], references: [id])
 
   @@map("activities")
 }
@@ -83,4 +79,9 @@ model Notifaction {
   user        User      @relation(fields: [userId], references: [id])
 
   @@map("notifaction")
+}
+
+enum Role {
+  VIEWER
+  EDITOR
 }

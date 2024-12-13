@@ -1,19 +1,38 @@
 import React from 'react';
-import '../app/globals.css';
-import { CalendarDays, Link2, Pencil, CirclePlus, MapPin } from 'lucide-react';
 import ItineraryDetailsActivity from './itinerary_details_activity';
 
-interface ItineraryDetailsPlanCardProps {
-    dateStart: string;
+interface Activity {
+  id: number;
+  activityName: string;
+  startTime: string;
+  endTime: string;
+  locationName: string;
+  address: string;
 }
 
-const ItineraryDetailsPlanCard: React.FC<ItineraryDetailsPlanCardProps> = ({ dateStart }) => {
-    return (
-        <div className="flex flex-col items-start justify-start whitespace-nowrap text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-input bg-background my-1 px-4 pt-4 w-full">
-            <h2 className="regulartext">{dateStart}</h2>
-            <ItineraryDetailsActivity />
-        </div>
-    );
-};
+interface ItineraryDetailsPlanCardProps {
+    date: string;
+    activities: Activity[];
+    itineraryId: number;
+    refreshActivities: () => void;
+  }
 
-export default ItineraryDetailsPlanCard;
+  const ItineraryDetailsPlanCard: React.FC<ItineraryDetailsPlanCardProps> = ({ date, activities, itineraryId, refreshActivities }) => {
+    const parsedDate = new Date(date);
+    const formattedDate = new Date(parsedDate).toLocaleDateString('en-US', { 
+        month: 'long', 
+        day: 'numeric' 
+      });  
+    return (
+      <div className="flex flex-col items-start justify-start whitespace-nowrap text-sm font-medium border border-input bg-background my-1 px-4 pt-4 w-full">
+        <h2 className="tripname_small">{formattedDate}</h2>
+        <ItineraryDetailsActivity
+            activities={activities}
+            itineraryId={itineraryId}
+            refreshActivities={refreshActivities}
+        />
+      </div>
+    );
+  };
+  
+  export default ItineraryDetailsPlanCard;

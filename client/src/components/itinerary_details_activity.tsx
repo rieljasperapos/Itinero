@@ -1,76 +1,122 @@
-import React from 'react';
-import '../app/globals.css';
+import React, { useState } from 'react';
 import { Timeline, TimelineContent, TimelineDot, TimelineHeading, TimelineItem, TimelineLine } from './timeline';
 import { Button } from '@/components/button';
 import { Pencil } from 'lucide-react';
+import CreateActivityForm from '@/app/activities/create/page';
+import { Dialog, DialogContent, DialogTrigger } from '@/components/dialog';
 
-interface ItineraryDetailsActivityProps {
-    activitityName: string;
-    activityLocation: string;
-    timeStart: string;
-    timeEnd: string;
-    Note: string;
-    activityStatus: boolean;
+interface Activity {
+    id: number;
+    activityName: string;
+    startTime: string;
+    endTime: string;
+    locationName: string;
+    address: string;
+    itineraryId: number;
 }
 
-const activities = [
-    {
-        activitityName: "Sample Activity 1",
-        activityLocation: "Sample Location 1",
-        timeStart: "10:00 AM",
-        timeEnd: "11:00 AM",
-        Note: "Sample Note 1",
-        activityStatus: true,
-    },
-    {
-        activitityName: "Sample Activity 2",
-        activityLocation: "Sample Location 2",
-        timeStart: "12:00 PM",
-        timeEnd: "1:00 PM",
-        Note: "Sample Note 2",
-        activityStatus: true,
-    },
-    {
-        activitityName: "Sample Activity 3",
-        activityLocation: "Sample Location 3",
-        timeStart: "2:00 PM",
-        timeEnd: "3:00 PM",
-        Note: "2323232231231 31323231232133",
-        activityStatus: false,
-    },
-];
+interface ItineraryDetailsActivityProps {
+    activities: Activity[];
+    itineraryId: number;
+    refreshActivities: () => void;
+}
 
-const ItineraryDetailsActivity: React.FC = () => {
+const ItineraryDetailsActivity: React.FC<ItineraryDetailsActivityProps> = ({ activities, itineraryId, refreshActivities }) => {
+    const [openActivityId, setOpenActivityId] = useState<number | null>(null);
+
+
+    const getActivityStatus = (startTime: string, endTime: string): 'current' | 'done' | 'default' => {
+        const now = new Date();
+        const start = new Date(startTime);
+        const end = new Date(endTime);
+    
+        if (now >= start && now <= end) {
+            return 'current';
+        } else if (now > end) {
+            return 'done';
+        } else {
+            return 'default';
+        }
+    };
+    
     return (
-        <div className="inline-flex flex-col items-start justify-start whitespace-nowrap text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-5 bg-background px-4 pt-4 w-full">
+        <div className="inline-flex flex-col items-start justify-start whitespace-nowrap text-sm font-medium bg-background px-4 pt-4 w-full">
             <Timeline>
-                {activities.map((activity, index) => (
-                    <div key={index} className="flex items-center regulartext">
-                        <TimelineItem status={activity.activityStatus ? "done" : "default"}>
-                            <TimelineHeading>{activity.activitityName}</TimelineHeading>
-                            <TimelineDot status={activity.activityStatus ? "done" : "default"} />
-                            {index < activities.length - 1 ? (
-                                <TimelineLine done={activity.activityStatus} className={activity.activityStatus ? "bg-primary" : "bg-muted"} />
+                {activities.map((activity, index) => {
+                    const status = getActivityStatus(activity.startTime, activity.endTime);
+                    const isLastActivity = index === activities.length - 1;
+
+                    return (
+                        <TimelineItem key={activity.id}>
+                            <TimelineHeading className='regulartext'>{activity.locationName}</TimelineHeading>
+                            
+                            <TimelineDot status={status === 'current' ? 'current' : status === 'done' ? 'done' : 'default'} />
+                            
+                            {isLastActivity ? (
+                                <TimelineLine className="bg-transparent" />
                             ) : (
-                                <TimelineLine done={activity.activityStatus} className="bg-transparent" />
-                            )}
+                                <TimelineLine className={status === 'done' ? 'bg-primary done' : 'bg-muted'} />
+                            )}                         
+                            
+                               
                             <TimelineContent>
-                                <div className="flex flex-row space-x-8 items-center justify-center regulartext">
-                                    <p className="span-1">{activity.activityLocation}</p>
-                                    <div className="flex flex-col">
-                                        <p>{activity.timeStart} -</p>
-                                        <p>{activity.timeEnd}</p>
+                                <div className="flex flex-row space-x-4 items-center justify-between w-full">
+                                    
+                                    {/* Activity Address */}
+                                    <div className="flex-1 min-w-[150px] max-w-[250px] px-2 smalltext">
+                                        <p className="text-left">{activity.address}</p>
                                     </div>
-                                    <p>{activity.Note}</p>
-                                    <Button variant="ghost" style={{ fontWeight: '700' }}>
-                                        <Pencil className="mr-1 size-4" strokeWidth={2} />
-                                        Edit Activity
-                                    </Button>
+                                    
+                                    {/* Activity Start and End Time */}
+                                    <div className="flex-1 min-w-[100px] max-w-[150px] px-2 smalltext">
+                                        <p className="text-center">
+                                            {new Date(activity.startTime).toLocaleTimeString([], { 
+                                                hour: '2-digit', 
+                                                minute: '2-digit' 
+                                            })} 
+                                            <span> - </span>
+                                            {new Date(activity.endTime).toLocaleTimeString([], { 
+                                                hour: '2-digit', 
+                                                minute: '2-digit' 
+                                            })}
+                                        </p>
+                                    </div>
+                                    
+                                    {/* Activity Name */}
+                                    <div className="flex-1 min-w-[150px] max-w-[250px] px-2 smalltext">
+                                        <p className="text-left">{activity.activityName}</p>
+                                    </div>
+                                    
+                                    {/* Edit Activity Button */}
+                                    <div className="flex-1 min-w-[100px] max-w-[150px] px-2 text-center smalltext">
+                                        <Dialog
+                                            open={openActivityId === activity.id}
+                                            onOpenChange={(open) => setOpenActivityId(open ? activity.id : null)}
+                                        >
+                                            <DialogTrigger asChild>
+                                                <Button variant="ghost" className="font-bold">
+                                                    <Pencil className="mr-1 size-4" strokeWidth={2} />
+                                                    Edit Activity
+                                                </Button>
+                                            </DialogTrigger>
+                                            <DialogContent className="sm:max-w-[825px]">
+                                                <CreateActivityForm
+                                                    itineraryId={itineraryId}
+                                                    activity={activity}
+                                                    onSuccess={() => {
+                                                        refreshActivities(); // Refresh activities list
+                                                        setOpenActivityId(null); // Close the dialog
+                                                    }}
+                                                />
+                                            </DialogContent>
+                                        </Dialog>
+                                    </div>
+                                    
                                 </div>
                             </TimelineContent>
                         </TimelineItem>
-                    </div>
-                ))}
+                    );
+                })}
             </Timeline>
         </div>
     );

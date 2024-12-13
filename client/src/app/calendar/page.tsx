@@ -15,8 +15,9 @@ const Calendar = () => {
     const fetchActivities = async () => {
       if (session?.user.accessToken) {
         try {
+          const apiBaseUrl = process.env.NEXT_PUBLIC_API_BASE_URL;
           const response = await axios.get(
-            "http://localhost:3000/itineraries",
+            `${apiBaseUrl}/itineraries`,
             {
               headers: {
                 Authorization: `Bearer ${session?.user.accessToken}`,

@@ -58,7 +58,7 @@ export const registerUser = async (req: Request, res: Response) => {
 
 export const loginUser = async (req: Request, res: Response) => {
   const { username, password } = req.body;
-  console.log(`USERNAME: ${username}`);
+  console.log(`USERNAMEsdsds: ${username}`);
 
   // Find user in the database
   const user = await prisma.user.findFirst({ where: { username: username } });

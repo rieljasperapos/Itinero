@@ -136,3 +136,102 @@ export const createItinerary = async (req: CustomRequest, res: Response) => {
     return;
   }
 };
+
+export const updateItinerary = async (req: CustomRequest, res: Response): Promise<void> => {
+  const { id } = req.params;
+  const { title, description, startDate, endDate } = req.body;
+  const userId = req.user?.id;
+
+  try {
+    // Check if the itinerary exists
+    const itinerary = await prisma.itinerary.findUnique({
+      where: { id: Number(id) },
+    });
+
+    if (!itinerary) {
+      res.status(StatusCodes.NOT_FOUND).json({
+        success: false,
+        message: "Itinerary not found",
+      });
+      return;
+    }
+
+    // Check if the user has permission to edit
+    if (itinerary.createdById !== userId) {
+      res.status(StatusCodes.FORBIDDEN).json({
+        success: false,
+        message: "You do not have permission to edit this itinerary",
+      });
+      return;
+    }
+
+    // Update the itinerary
+    await prisma.itinerary.update({
+      where: { id: Number(id) },
+      data: {
+        title,
+        description,
+        startDate,
+        endDate,
+      },
+    });
+
+    res.status(StatusCodes.OK).json({
+      success: true,
+      message: "Itinerary updated successfully",
+    });
+  } catch (error) {
+    console.error("Error updating itinerary:", error);
+    res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
+      success: false,
+      message: "An error occurred while updating the itinerary.",
+      error: error instanceof Error ? error.message : "Unknown error",
+    });
+  }
+};
+
+export const deleteItinerary = async (req: CustomRequest, res: Response): Promise<void> => {
+  const { id } = req.params;
+  const userId = req.user?.id;
+
+  try {
+    // Check if the itinerary exists
+    const itinerary = await prisma.itinerary.findUnique({
+      where: { id: Number(id) },
+    });
+
+    if (!itinerary) {
+      res.status(StatusCodes.NOT_FOUND).json({
+        success: false,
+        message: "Itinerary not found",
+      });
+      return;
+    }
+
+    // Check if the user has permission to delete
+    if (itinerary.createdById !== userId) {
+      res.status(StatusCodes.FORBIDDEN).json({
+        success: false,
+        message: "You do not have permission to delete this itinerary",
+      });
+      return;
+    }
+
+    // Delete the itinerary
+    await prisma.itinerary.delete({
+      where: { id: Number(id) },
+    });
+
+    res.status(StatusCodes.OK).json({
+      success: true,
+      message: "Itinerary deleted successfully",
+    });
+  } catch (error) {
+    console.error("Error deleting itinerary:", error);
+    res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
+      success: false,
+      message: "An error occurred while deleting the itinerary.",
+      error: error instanceof Error ? error.message : "Unknown error",
+    });
+  }
+};
