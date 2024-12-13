@@ -9,5 +9,6 @@ router.post('/login', limiter, userController.loginUser);
 router.post('/register', userController.registerUser);
 router.post('/logout', userController.logoutUser);
 router.post('/user-update', authenticate, userController.updateUser);
+router.post('/change-password', authenticate, userController.changePassword);
 
 export default router;

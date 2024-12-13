@@ -158,6 +158,82 @@ export const updateUser = async (req: CustomRequest, res: Response) => {
   }
 };
 
+export const changePassword = async (req: CustomRequest, res: Response) => {
+  const { currentPassword, newPassword, reTypePassword } = req.body;
+  const userId = req.user?.id;
+
+  if (!userId) {
+    res.status(StatusCodes.UNAUTHORIZED).json({
+      success: false,
+      message: "Unauthorized"
+    });
+    return;
+  }
+
+  // Input validation for passwords
+  if (!currentPassword || !newPassword || !reTypePassword) {
+    res.status(StatusCodes.BAD_REQUEST).json({
+      success: false,
+      message: "Missing required fields"
+    });
+    return;
+  }
+
+  // Check if the new passwords match with the re-type password
+  if (newPassword !== reTypePassword) {
+    res.status(StatusCodes.BAD_REQUEST).json({
+      success: false,
+      message: "Passwords do not match"
+    });
+    return;
+  }
+
+  // Check if the user exists
+  const foundUser = await prisma.user.findUnique({
+    where: { id: userId },
+  });
+  if (!foundUser) {
+    res.status(StatusCodes.NOT_FOUND).json({
+      success: false,
+      message: "User not found"
+    });
+    return;
+  }
+
+  // Check if the current password matches
+  const passwordMatched = await bcrypt.compare(currentPassword, foundUser.password);
+  if (!passwordMatched) {
+    res.status(StatusCodes.UNAUTHORIZED).json({
+      success: false,
+      message: "Invalid current password"
+    });
+    return;
+  }
+
+  try {
+    const updatedUser = await prisma.user.update({
+      where: { id: userId },
+      data: {
+        password: await bcrypt.hash(newPassword, parseInt(config.SALT_ROUNDS))
+      },
+    });
+
+    res.status(StatusCodes.OK).json({
+      success: true,
+      message: "Password updated successfully",
+      data: updatedUser
+    });
+    return;
+  } catch (error) {
+    res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
+      success: false,
+      message: "Internal server error",
+      error: error
+    });
+    return;
+  }
+};
+
 export const logoutUser = (req: Request, res: Response) => {
   res.clearCookie("token", {
     httpOnly: true,

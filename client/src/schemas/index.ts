@@ -29,12 +29,20 @@ export const createItinerarySchema = z.object({
 });
 
 export const EditInfoSchema = z.object({
-  name: z.string(),
-  email: z.string().email(),
+  name: z.string().optional(),
+  email: z.string().email().optional(),
 });
 
 export const EditPasswordSchema = z.object({
-  currentPassword: z.string().min(6),
-  newPassword: z.string().min(6),
-  reTypePassword: z.string().min(6),
+  currentPassword: z.string(),
+  newPassword: z
+    .string()
+    .min(8, "Password must be at least 8 characters long.")
+    .regex(/[a-z]/, "Password must contain at least one lowercase letter.")
+    .regex(/[A-Z]/, "Password must contain at least one uppercase letter.")
+    .regex(/[\W_]/, "Password must contain at least one special character."),
+  reTypePassword: z.string().min(8, "Password must be at least 8 characters long."),
+}).refine(data => data.newPassword === data.reTypePassword, {
+  message: "Passwords don't match",
+  path: ["reTypePassword"],
 });

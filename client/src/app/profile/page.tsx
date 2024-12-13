@@ -8,6 +8,10 @@ import { Edit2, Check } from "lucide-react";
 import { useState } from "react";
 import { Input } from "@/components/input";
 import axios from "axios";
+import { EditPasswordSchema } from "@/schemas";
+import * as z from "zod";
+import { useToast } from "@/hooks/use-toast";
+import { ToastAction } from "@/components/ui/toast";
 
 const ProfilePage = () => {
   const [isEditingInfo, setIsEditingInfo] = useState(false);
@@ -18,6 +22,12 @@ const ProfilePage = () => {
   const [newPassword, setNewPassword] = useState("");
   const [reTypePassword, setReTypePassword] = useState("");
   const { data: session, status, update } = useSession();
+  const [errors, setErrors] = useState({
+    currentPassword: "",
+    newPassword: "",
+    reTypePassword: "",
+  });
+  const { toast } = useToast();
   console.log({ session });
 
   const handleSubmitEditInfo = async () => {
@@ -36,6 +46,7 @@ const ProfilePage = () => {
         }
       );
       console.log("Handle Edit Info Response:", response.data);
+
 
       await update({
         ...session,
@@ -57,10 +68,74 @@ const ProfilePage = () => {
     setNewEmail("");
   }
 
+  const validatePasswordFields = () => {
+    try {
+      const passwordData = { currentPassword, newPassword, reTypePassword };
+      // Validate password fields using the password schema
+      EditPasswordSchema.parse(passwordData);
+      setErrors({
+        currentPassword: "",
+        newPassword: "",
+        reTypePassword: "",
+      }); // Clear errors on success
+      return true;
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        const newErrors: { [key in keyof typeof errors]: string } = {
+          currentPassword: "",
+          newPassword: "",
+          reTypePassword: "",
+        };
+
+        error.errors.forEach((err) => {
+          // Ensure the path[0] is one of the keys in errors (currentPassword, newPassword, reTypePassword)
+          if (newErrors.hasOwnProperty(err.path[0])) {
+            // Cast err.path[0] as keyof typeof errors to prevent TypeScript error
+            newErrors[err.path[0] as keyof typeof newErrors] = err.message;
+          }
+        });
+
+        setErrors(newErrors); // Set errors
+      }
+      return false;
+    }
+  };
+
   const handleSubmitChangePassword = async () => {
     // POST request to the server to update the user's password
-  }
+    if (!validatePasswordFields()) {
+      return; // Don't submit if validation fails
+    }
 
+    try {
+      // EditPasswordSchema.parse(passwordData);
+      const response = await axios.post(
+        "http://localhost:3000/change-password",
+        {
+          currentPassword: currentPassword,
+          newPassword: newPassword,
+          reTypePassword: reTypePassword,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${session?.user.accessToken}`,
+          }
+        }
+      );
+      console.log(response.data.data.message);
+      setIsEditingPassword(!isEditingPassword);
+    } catch (error: any) {
+      if (error.response.data.message === "Invalid current password") {
+        toast({
+          variant: "destructive",
+          title: "Invalid current password",
+          description: "Please enter the correct current password",
+          action: <ToastAction altText="Try again">Try again</ToastAction>
+        })
+      }
+      console.error(error);
+    }
+  }
   
   return (
     <Layout breadcrumb="Profile">
@@ -158,31 +233,37 @@ const ProfilePage = () => {
                 {/* Current Password Field */}
                 <div className="flex flex-col gap-2 text-slate-400">
                   <span>Current Password</span>
-                  <Input 
+                  <Input
+                    type="password"
                     placeholder="********"
                     onChange={(e) => setCurrentPassword(e.target.value)}
                     className="max-w-xs"
                   />
+                  <span className="text-red-500">{errors.currentPassword}</span>
                 </div>
                 {/* New Password Field */}
                 <div className="flex flex-col gap-2 text-slate-400">
                   <span>New Password</span>
                   <Input 
+                    type="password"
                     placeholder="********"
                     onChange={(e) => setNewPassword(e.target.value)}
                     className="max-w-xs"
                   />
+                  <span className="text-red-500">{errors.newPassword}</span>
                 </div>
                 {/* Re-type Password Field */}
                 <div className="flex flex-col gap-2 text-slate-400">
                   <span>Re-type Password</span>
-                  <Input 
+                  <Input
+                    type="password" 
                     placeholder="********"
                     onChange={(e) => setReTypePassword(e.target.value)}
                     className="max-w-xs"
                   />
+                  <span className="text-red-500">{errors.reTypePassword}</span>
                 </div>
-                <Button className="max-w-xs bg-[#3A86FF] hover:bg-[#77A4EC]" onClick={() => setIsEditingPassword(!isEditingPassword)}>Save Changes</Button>
+                <Button className="max-w-xs bg-[#3A86FF] hover:bg-[#77A4EC]" onClick={handleSubmitChangePassword}>Save Changes</Button>
               </>
             ) : (
               <>
