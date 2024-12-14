@@ -26,7 +26,7 @@ const ItineraryCard: React.FC<ItineraryCardProps> = ({ title, dateStart, dateEnd
                 </div>
             </div>
 
-            <div className="flex flex-row items-center space-x-2 mt-2" style={{ color: '#C0C0C0' }}>
+            <div className="flex flex-row items-center space-x-2 mt-2">
                 <Clock className="size-4" strokeWidth={1.5} color="#C0C0C0" />
                 <p className="smalltext">{formattedDateStart}</p>
                 <p className="smalltext">—</p>
