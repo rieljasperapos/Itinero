@@ -121,8 +121,8 @@ const ItineraryDetailsActivity: React.FC<ItineraryDetailsActivityProps> = ({ act
                   </div>
 
                   {/* Activity Name */}
-                  <div className="flex-1 min-w-[150px] max-w-[250px] px-2 smalltext">
-                    <p className="text-left">{activity.activityName}</p>
+                  <div className="flex-1 min-w-[150px] max-w-[250px] px-2">
+                    <p className="text-left font-bold">{activity.activityName}</p>
                   </div>
 
                   {/* Edit Activity Button */}
