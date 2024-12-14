@@ -87,7 +87,7 @@ const ResetPasswordPage = () => {
           placeholder="Enter your email"
           onChange={(e) => setEmail(e.target.value)}
         />
-        <Button onClick={handleFindEmail}>Enter email</Button>
+        <Button onClick={handleFindEmail} className="bg-[#3A86FF] hover:bg-[#77A4EC]">Enter email</Button>
       </div>
       {/* ENTER NEW PASSWORD */}
       <div className="flex flex-col gap-4 mt-8">
@@ -137,7 +137,7 @@ const ResetPasswordPage = () => {
                       </FormItem>
                     )}
                   />
-                  <Button type="submit">Submit</Button>
+                  <Button type="submit" className="bg-[#3A86FF] hover:bg-[#77A4EC]">Submit</Button>
                 </div>
               </form>
             </Form>
