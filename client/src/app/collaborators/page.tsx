@@ -63,19 +63,27 @@ const CollaboratorsPage = () => {
     ) : (
       <Layout breadcrumb="Collaborators">
         <div className="p-4 flex flex-col gap-4">
-          {collaborators.map((collaborator, idx) => (
-            <div key={idx} className="flex gap-4">
-              <Avatar className="h-20 w-20 rounded-full">
-                <AvatarImage src="/avatars/shadcn.jpg" alt={collaborator.name} />
-                <AvatarFallback className="rounded-lg">CN</AvatarFallback>
-              </Avatar>
-              <div className="flex gap-2 w-full flex-wrap max-w-lg justify-between items-center">
-                <p>{collaborator.name}</p>
-                <p>{collaborator.email}</p>
-                <p className="text-semibold">{collaborator.role}</p>
-              </div>
-            </div>
-          ))}
+          {collaborators.length === 0 ? (
+            <>
+              <p>No collaborators found.</p>
+            </>
+          ) : (
+            <>
+              {collaborators.map((collaborator, idx) => (
+                <div key={idx} className="flex gap-4">
+                  <Avatar className="h-20 w-20 rounded-full">
+                    <AvatarImage src="/avatars/shadcn.jpg" alt={collaborator.name} />
+                    <AvatarFallback className="rounded-lg">CN</AvatarFallback>
+                  </Avatar>
+                  <div className="flex gap-2 w-full flex-wrap max-w-lg justify-between items-center">
+                    <p>{collaborator.name}</p>
+                    <p>{collaborator.email}</p>
+                    <p className="text-semibold">{collaborator.role}</p>
+                  </div>
+                </div>
+              ))}
+            </>
+          )}
         </div>
       </Layout>
     )
