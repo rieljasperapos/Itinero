@@ -14,9 +14,11 @@ interface ItineraryDetailsActivityProps {
   refreshActivities: () => void;
   collaborators: number;
   isEditor: boolean;
+  dateStart: string;
+  dateEnd: string;
 }
 
-const ItineraryDetailsActivity: React.FC<ItineraryDetailsActivityProps> = ({ activities, itineraryId, refreshActivities, collaborators, isEditor }) => {
+const ItineraryDetailsActivity: React.FC<ItineraryDetailsActivityProps> = ({ activities, itineraryId, refreshActivities, collaborators, isEditor, dateStart, dateEnd }) => {
   const [openActivityId, setOpenActivityId] = useState<number | null>(null);
 
   const getActivityStatus = (startTime: string, endTime: string): 'current' | 'done' | 'default' => {
@@ -100,6 +102,8 @@ const ItineraryDetailsActivity: React.FC<ItineraryDetailsActivityProps> = ({ act
                       <DialogContent className="sm:max-w-[825px]">
                         <CreateActivityForm
                           itineraryId={itineraryId}
+                          itineraryDateStart={dateStart}
+                          itineraryDateEnd={dateEnd}
                           activity={activity}
                           onSuccess={() => {
                             refreshActivities(); // Refresh activities list

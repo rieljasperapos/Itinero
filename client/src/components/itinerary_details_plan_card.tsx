@@ -9,9 +9,11 @@ interface ItineraryDetailsPlanCardProps {
     refreshActivities: () => void;
     collaborators: number;
     isEditor: boolean;
+    dateStart: string;
+    dateEnd: string;
   }
 
-  const ItineraryDetailsPlanCard: React.FC<ItineraryDetailsPlanCardProps> = ({ date, activities, itineraryId, refreshActivities, collaborators, isEditor }) => {
+  const ItineraryDetailsPlanCard: React.FC<ItineraryDetailsPlanCardProps> = ({ date, activities, itineraryId, refreshActivities, collaborators, isEditor, dateStart, dateEnd }) => {
     const parsedDate = new Date(date);
     const formattedDate = new Date(parsedDate).toLocaleDateString('en-US', { 
         month: 'long', 
@@ -26,6 +28,8 @@ interface ItineraryDetailsPlanCardProps {
             refreshActivities={refreshActivities}
             collaborators={collaborators}
             isEditor={isEditor}
+            dateStart={dateStart}
+            dateEnd={dateEnd}
         />
       </div>
     );

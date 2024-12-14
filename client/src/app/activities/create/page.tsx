@@ -19,12 +19,16 @@ import { Activity } from "@/types/activity-type";
 // Define the schema (ensure this matches your validation requirements)
 interface CreateActivityFormProps {
   itineraryId: number;
+  itineraryDateStart: string;
+  itineraryDateEnd: string;
   activity?: Activity; // Optional activity prop for editing
   onSuccess?: () => void; // Callback after successful submission
 }
 
 const CreateActivityForm: React.FC<CreateActivityFormProps> = ({
   itineraryId,
+  itineraryDateStart,
+  itineraryDateEnd,
   activity,
   onSuccess,
 }) => {
@@ -238,15 +242,16 @@ const CreateActivityForm: React.FC<CreateActivityFormProps> = ({
                           disabled={(date) => {
                             // Normalize the time of both dates to midnight
                             const normalizeToMidnight = (d: Date) => {
-                              const normalized = new Date(d);
+                              // console.log(activity?.startTime);
+                              const normalized = new Date(itineraryDateStart);
                               normalized.setHours(0, 0, 0, 0); // Set time to 00:00:00
                               return normalized;
                             };
 
                             const today = normalizeToMidnight(new Date()); // Today's date at midnight
-                            const minDate = new Date("1900-01-01");
+                            const minDate = new Date(itineraryDateEnd);
 
-                            return date < today || date < minDate;
+                            return date < today || date > minDate;
                           }}
                           initialFocus
                         />

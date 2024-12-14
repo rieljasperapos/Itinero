@@ -188,6 +188,8 @@ const ItineraryDetails: React.FC<ItineraryDetailsProps> = ({
             <DialogContent className="sm:max-w-[825px]">
               <CreateActivityForm
                 itineraryId={itineraryId}
+                itineraryDateStart={formattedDateStart}
+                itineraryDateEnd={formattedDateEnd}
                 onSuccess={() => {
                   fetchActivities(); // Refresh activities list
                   setOpenCreateDialog(false); // Close the dialog
@@ -208,6 +210,8 @@ const ItineraryDetails: React.FC<ItineraryDetailsProps> = ({
             refreshActivities={fetchActivities}
             collaborators={collaborators}
             isEditor={isEditor}
+            dateStart={dateStart}
+            dateEnd={dateEnd}
           />
         ))}
       </div>
