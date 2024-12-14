@@ -11,7 +11,7 @@ Follow these steps to get a local copy of **Itinero** up and running:
 Ensure that you have the following installed:
 
 - **Node.js** (version 14 or higher)
-- **PostgreSQL** (or any PostgreSQL-compatible database)
+- **PostgreSQL**
 - **npm** or **yarn** (package manager)
 
 ### Backend Setup
