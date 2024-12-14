@@ -18,7 +18,7 @@ export const getNotifications = async (req: CustomRequest, res: Response) => {
     res.status(StatusCodes.OK).send({ data: notifications });
   } catch (error) {
     console.error("Error fetching notifications:", error);
-    res.status(500).send({ error: "An error occurred while fetching notifications." });
+    res.status(StatusCodes.INTERNAL_SERVER_ERROR).send({ error: "An error occurred while fetching notifications." });
   }
 };
 
@@ -27,7 +27,7 @@ export const markNotificationAsRead = async (req: CustomRequest, res: Response) 
 
   // Validate that the ID is provided and is a number
   if (!id || isNaN(Number(id))) {
-    res.status(400).send({ error: "Invalid notification ID." });
+    res.status(StatusCodes.BAD_REQUEST).send({ error: "Invalid notification ID." });
     return
   }
 
@@ -40,11 +40,11 @@ export const markNotificationAsRead = async (req: CustomRequest, res: Response) 
         isRead: true,
       },
     });
-    res.send({ data: updatedNotification });
+    res.status(StatusCodes.OK).send({ data: updatedNotification });
     return;
   } catch (error) {
     console.error("Error marking notification as read:", error);
-    res.status(500).send({ error: "An error occurred while marking the notification as read." });
+    res.status(StatusCodes.INTERNAL_SERVER_ERROR).send({ error: "An error occurred while marking the notification as read." });
     return;
   }
 };
@@ -63,9 +63,9 @@ export const getNotificationsUnreadCount = async (req: CustomRequest, res: Respo
       },
     });
 
-    res.send({ data: notifications.length });
+    res.status(StatusCodes.OK).send({ data: notifications.length });
   } catch (error) {
     console.error("Error fetching notifications:", error);
-    res.status(500).send({ error: "An error occurred while fetching notifications." });
+    res.status(StatusCodes.INTERNAL_SERVER_ERROR).send({ error: "An error occurred while fetching notifications." });
   }
 };

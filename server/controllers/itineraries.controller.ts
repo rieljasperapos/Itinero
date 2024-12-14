@@ -79,9 +79,9 @@ export const getItineraryById = async (req: Request, res: Response) => {
     },
   });
   if (!data) {
-    res.send({ message: "Itinerary not found" });
+    res.status(StatusCodes.NOT_FOUND).send({ message: "Itinerary not found" });
   } else {
-    res.send({ data: data });
+    res.status(StatusCodes.OK).send({ data: data });
   }
   return;
 };
@@ -97,13 +97,13 @@ export const getActivitiesByItineraryId = async (req: Request, res: Response) =>
     });
 
     if (!activities || activities.length === 0) {
-      res.status(404).send({ message: "No activities found for this itinerary" });
+      res.status(StatusCodes.NOT_FOUND).send({ message: "No activities found for this itinerary" });
     }
 
-    res.send({ data: activities });
+    res.status(StatusCodes.OK).send({ data: activities });
   } catch (error) {
     console.error(error);
-    res.status(500).send({ error: "An error occurred while fetching activities" });
+    res.status(StatusCodes.INTERNAL_SERVER_ERROR).send({ error: "An error occurred while fetching activities" });
   }
   return;
 };
@@ -114,7 +114,7 @@ export const createItinerary = async (req: CustomRequest, res: Response) => {
     const user = req.user;
     
     if (!title || !description || !startDate || !endDate) {
-      res.status(400).send({ error: "Missing required fields" });
+      res.status(StatusCodes.BAD_REQUEST).send({ error: "Missing required fields" });
       return;
     }
 
@@ -127,10 +127,10 @@ export const createItinerary = async (req: CustomRequest, res: Response) => {
         createdById: user?.id,
       },
     });
-    res.send({ data: data });
+    res.status(StatusCodes.OK).send({ data: data });
   } catch (error) {
     console.error(error);
-    res.status(500).send({ error: error, message: "An error occurred while creating the itinerary" });
+    res.status(StatusCodes.INTERNAL_SERVER_ERROR).send({ error: error, message: "An error occurred while creating the itinerary" });
     return;
   }
 };
