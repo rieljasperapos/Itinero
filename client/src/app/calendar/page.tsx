@@ -3,55 +3,30 @@ import FullCalendar from "@fullcalendar/react";
 import dayGridPlugin from "@fullcalendar/daygrid";
 import { useSession } from "next-auth/react";
 import { useEffect, useState } from "react";
-import axios from "axios";
 import Layout from "@/components/layout";
 import "./_lib/custom-calendar.css";
+import { redirect } from "next/navigation";
+import { fetchActivities } from "./_lib/api";
+import { Activity } from "./_lib/types";
 
 const Calendar = () => {
-  const [activities, setActivities] = useState([]);
+  const [activities, setActivities] = useState<Activity[]>([]);
   const { data: session, status } = useSession();
 
   useEffect(() => {
-    const fetchActivities = async () => {
-      if (session?.user.accessToken) {
-        try {
-          const apiBaseUrl = process.env.NEXT_PUBLIC_API_BASE_URL;
-          const response = await axios.get(
-            `${apiBaseUrl}/itineraries`,
-            {
-              headers: {
-                Authorization: `Bearer ${session?.user.accessToken}`,
-              },
-            }
-          );
-          console.log("Fetched activities:", response.data);
+    if (status === "unauthenticated") {
+      redirect("/auth/signin");
+    } else if (status === "authenticated") {
+      fetchAndSetActivities();
+    }
+  }, [status]);
 
-          // Map the response data to FullCalendar event format
-          const fetchedActivities = response.data.data.flatMap(
-            (itinerary: any) =>
-              itinerary.activities.map((activity: any) => ({
-                title: activity.activityName,
-                start: activity.startTime,
-                end: activity.endTime,
-                location: activity.locationName, // Optional: extra data if needed
-                itinerary: itinerary.title,
-              }))
-          );
+  const fetchAndSetActivities = async () => {
+    if (!session?.user.accessToken) return;
 
-          setActivities(fetchedActivities);
-        } catch (error) {
-          console.error("Error fetching activities:", error);
-        }
-      }
-    };
-
-    fetchActivities();
-  }, [session?.user.accessToken]);
-
-  const formatTime = (dateString: any) => {
-    const options: any = { hour: "2-digit", minute: "2-digit", hour12: true };
-    return new Date(dateString).toLocaleTimeString([], options);
-  };
+    const activities = await fetchActivities(session.user.accessToken);
+    setActivities(activities);
+  }
 
   if (status === "loading") {
     return <div>Loading...</div>;

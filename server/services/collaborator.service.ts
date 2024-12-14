@@ -5,8 +5,8 @@ export const inviteCollaborator = async (itineraryId: number, inviterId: number,
   // Validate ownership of the itinerary
   const itinerary = await prisma.itinerary.findFirst({
     where: {
-      id: itineraryId,
-      createdById: inviterId
+      id: Number(itineraryId),
+      createdById: Number(inviterId)
     }
   });
 
@@ -33,8 +33,8 @@ export const inviteCollaborator = async (itineraryId: number, inviterId: number,
   // Check if the user is already a collaborator
   const existingCollaborator = await prisma.collaborator.findFirst({
     where: {
-      userId: invitee.id,
-      itineraryId
+      userId: Number(invitee.id),
+      itineraryId: Number(itineraryId)
     }
   });
 
@@ -42,14 +42,14 @@ export const inviteCollaborator = async (itineraryId: number, inviterId: number,
     // Update role 
     await prisma.collaborator.update({
       where: { id: existingCollaborator.id },
-      data: { role}
+      data: { role }
     });
   } else {
     // Add new collaborator
     await prisma.collaborator.create({
       data: {
         userId: invitee.id,
-        itineraryId,
+        itineraryId: Number(itineraryId),
         role,
       }
     })
@@ -59,7 +59,8 @@ export const inviteCollaborator = async (itineraryId: number, inviterId: number,
   await prisma.notifaction.create({
     data: {
       userId: invitee.id,
-      itineraryId,
+      itineraryId: Number(itineraryId),
+      title: "Collab Invitation",
       message: `You have been invited to collaborate on ${itinerary.title} as ${role}`,
       isRead: false,
     }
@@ -67,6 +68,7 @@ export const inviteCollaborator = async (itineraryId: number, inviterId: number,
 
   return {
     message: `Successfully invited ${invitee.name} to collaborate on ${itinerary.title} as ${role}`,
+    found: true,
   };
 };
 

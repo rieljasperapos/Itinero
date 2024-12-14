@@ -32,18 +32,14 @@ export const RegisterForm = () => {
   });
 
   const onSubmit = async (data: z.infer<typeof RegisterSchema>) => {
-    const apiBaseUrl = process.env.NEXT_PUBLIC_API_BASE_URL;
-    console.log("API Base URL:", apiBaseUrl);
-    console.log(data);
     // POST Request to server
-    axios.post(`${apiBaseUrl}/register`, {
+    axios.post(`${process.env.NEXT_PUBLIC_API_BASE_URL}/register`, {
       name: data.name,
       email: data.email,
       username: data.username,
       password: data.password,
     })
     .then((response) => {
-      console.log(response);
       if (!response.data.valid) {
         toast({
           variant: "destructive",
@@ -60,7 +56,7 @@ export const RegisterForm = () => {
       }
     })
     .catch((error) => {
-      console.log(error);
+      console.error("Error creating account:", error);
     })
   };
 

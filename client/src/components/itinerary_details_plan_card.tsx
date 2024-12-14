@@ -1,14 +1,19 @@
 import React from 'react';
 import ItineraryDetailsActivity from './itinerary_details_activity';
 import { Activity } from '@/types/activity-type';
+import { Collaborator } from '@/types/collaborator-type';
+
 interface ItineraryDetailsPlanCardProps {
     date: string;
     activities: Activity[];
     itineraryId: number;
     refreshActivities: () => void;
+    collaborators: Collaborator[];
+    dateStart: string;
+    dateEnd: string;
   }
 
-  const ItineraryDetailsPlanCard: React.FC<ItineraryDetailsPlanCardProps> = ({ date, activities, itineraryId, refreshActivities }) => {
+  const ItineraryDetailsPlanCard: React.FC<ItineraryDetailsPlanCardProps> = ({ date, activities, itineraryId, refreshActivities, collaborators, dateStart, dateEnd }) => {
     const parsedDate = new Date(date);
     const formattedDate = new Date(parsedDate).toLocaleDateString('en-US', { 
         month: 'long', 
@@ -21,6 +26,9 @@ interface ItineraryDetailsPlanCardProps {
             activities={activities}
             itineraryId={itineraryId}
             refreshActivities={refreshActivities}
+            collaborators={collaborators}
+            dateStart={dateStart}
+            dateEnd={dateEnd}
         />
       </div>
     );

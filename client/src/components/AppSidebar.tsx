@@ -1,58 +1,77 @@
-"use client"
+"use client";
 
-import * as React from "react"
+import * as React from "react";
 import {
-  AudioWaveform,
-  BookOpen,
-  Bot,
-  Command,
-  Frame,
   GalleryVerticalEnd,
-  Map,
-  PieChart,
-  Settings2,
-  SquareTerminal,
-  Bell,
   Home,
-  Calendar
-} from "lucide-react"
+  Calendar,
+  Bell,
+} from "lucide-react";
 
-import { NavItems } from "@/components/nav-items"
-import { NavUser } from "@/components/nav-user"
-import { AppBranding } from "@/components/app-branding"
+import { NavItems } from "@/components/nav-items";
+import { NavUser } from "@/components/nav-user";
+import { AppBranding } from "@/components/app-branding";
 import {
   Sidebar,
   SidebarContent,
   SidebarFooter,
   SidebarHeader,
   SidebarRail,
-} from "@/components/sidebar"
-
-const data = {
-  brand: {
-      name: "Itinero",
-      logo: GalleryVerticalEnd,
-  },
-  items: [
-    {
-      name: "Dashboard",
-      url: "/",
-      icon: Home,
-    },
-    {
-      name: "Calendar",
-      url: "/calendar",
-      icon: Calendar,
-    },
-    {
-      name: "Notifications",
-      url: "#",
-      icon: Bell,
-    },
-  ],
-}
+} from "@/components/sidebar";
+import { useEffect, useState } from "react";
+import axios from "axios";
+import { useSession } from "next-auth/react";
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
+  const { data: session } = useSession();
+  const [unreadCount, setUnreadCount] = useState<number>(0);
+
+  useEffect(() => {
+    const fetchNotificationsCount = async () => {
+      try {
+        const response = await axios.get(
+          `${process.env.NEXT_PUBLIC_API_BASE_URL}/notifications/unread-count`,
+          {
+            headers: {
+              Authorization: `Bearer ${session?.user.accessToken}`,
+            },
+          }
+        );
+        setUnreadCount(response.data.data || 0); // Default to 0 if no data
+      } catch (error) {
+        console.error("Error fetching notifications count:", error);
+      }
+    };
+
+    if (session?.user.accessToken) {
+      fetchNotificationsCount();
+    }
+  }, [session?.user.accessToken]);
+
+  const data = {
+    brand: {
+      name: "Itinero",
+      logo: GalleryVerticalEnd,
+    },
+    items: [
+      {
+        name: "Dashboard",
+        url: "/",
+        icon: Home,
+      },
+      {
+        name: "Calendar",
+        url: "/calendar",
+        icon: Calendar,
+      },
+      {
+        name: `Notifications (${unreadCount})`, // Append count here
+        url: "/notification",
+        icon: Bell,
+      },
+    ],
+  };
+
   return (
     <Sidebar collapsible="icon" {...props}>
       <SidebarHeader>
@@ -66,5 +85,5 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       </SidebarFooter>
       <SidebarRail />
     </Sidebar>
-  )
+  );
 }

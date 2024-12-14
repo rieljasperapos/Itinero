@@ -43,10 +43,9 @@ const CreateItineraryForm: React.FC<CreateItineraryFormProps> = ({ children, onS
 
   const onSubmit = async (data: z.infer<typeof createItinerarySchema>) => {
     // Post request to server using axios
-    const apiBaseUrl = process.env.NEXT_PUBLIC_API_BASE_URL;
     try {
       const response = await axios.post(
-        `${apiBaseUrl}/itineraries/create`,
+        `${process.env.NEXT_PUBLIC_API_BASE_URL}/itineraries/create`,
         {
           title: data.title,
           description: data.description,
@@ -59,7 +58,6 @@ const CreateItineraryForm: React.FC<CreateItineraryFormProps> = ({ children, onS
           },
         }
       );
-      console.log("Itinerary created:", response.data);
       // Invoke the onSuccess callback
       if (onSuccess) {
         onSuccess();
@@ -143,7 +141,19 @@ const CreateItineraryForm: React.FC<CreateItineraryFormProps> = ({ children, onS
                             mode="single"
                             selected={field.value}
                             onSelect={field.onChange}
-                            disabled={(date) => date < new Date("1900-01-01")}
+                            disabled={(date) => {
+                              // Normalize the time of both dates to midnight
+                              const normalizeToMidnight = (d: Date) => {
+                                const normalized = new Date(d);
+                                normalized.setHours(0, 0, 0, 0); // Set time to 00:00:00
+                                return normalized;
+                              };
+
+                              const today = normalizeToMidnight(new Date()); // Today's date at midnight
+                              const minDate = new Date("1900-01-01");
+
+                              return date < today || date < minDate;
+                            }}
                             initialFocus
                           />
                         </PopoverContent>
@@ -178,7 +188,19 @@ const CreateItineraryForm: React.FC<CreateItineraryFormProps> = ({ children, onS
                             mode="single"
                             selected={field.value}
                             onSelect={field.onChange}
-                            disabled={(date) => date < new Date("1900-01-01")}
+                            disabled={(date) => {
+                              // Normalize the time of both dates to midnight
+                              const normalizeToMidnight = (d: Date) => {
+                                const normalized = new Date(d);
+                                normalized.setHours(0, 0, 0, 0); // Set time to 00:00:00
+                                return normalized;
+                              };
+
+                              const today = normalizeToMidnight(new Date()); // Today's date at midnight
+                              const minDate = new Date("1900-01-01");
+
+                              return date < today || date < minDate;
+                            }}
                             initialFocus
                           />
                         </PopoverContent>

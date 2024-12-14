@@ -70,25 +70,41 @@ export const getItineraryByUserId = async (req: CustomRequest, res: Response) =>
   return;
 };
 
-
 export const getItineraryById = async (req: Request, res: Response) => {
   const { id } = req.params;
-  const data = await prisma.itinerary.findUnique({
-    where: {
-      id: Number(id),
-    },
-  });
-  if (!data) {
-    res.send({ message: "Itinerary not found" });
-  } else {
-    res.send({ data: data });
+
+  try {
+    const data = await prisma.itinerary.findUnique({
+      where: {
+        id: Number(id),
+      },
+      include: {
+        collaborators: {
+          include: {
+            user: { select: { id: true, name: true, email: true } },
+          }
+        },
+        createdBy: {
+          select: { id: true, name: true, email: true },
+        }
+      },
+    });
+
+    if (!data) {
+      res.status(StatusCodes.NOT_FOUND).send({ message: "Itinerary not found" });
+      return;
+    }
+
+    res.status(StatusCodes.OK).send({ data });
+  } catch (error) {
+    console.error("Error fetching itinerary:", error);
+    res.status(StatusCodes.INTERNAL_SERVER_ERROR).send({ message: "An error occurred while fetching the itinerary" });
   }
-  return;
 };
+
 
 export const getActivitiesByItineraryId = async (req: Request, res: Response) => {
   const { itineraryId } = req.params;
-  console.log(itineraryId);
 
   try {
     const activities = await prisma.activity.findMany({
@@ -98,13 +114,13 @@ export const getActivitiesByItineraryId = async (req: Request, res: Response) =>
     });
 
     if (!activities || activities.length === 0) {
-      res.status(404).send({ message: "No activities found for this itinerary" });
+      res.status(StatusCodes.NOT_FOUND).send({ message: "No activities found for this itinerary" });
     }
 
-    res.send({ data: activities });
+    res.status(StatusCodes.OK).send({ data: activities });
   } catch (error) {
     console.error(error);
-    res.status(500).send({ error: "An error occurred while fetching activities" });
+    res.status(StatusCodes.INTERNAL_SERVER_ERROR).send({ error: "An error occurred while fetching activities" });
   }
   return;
 };
@@ -113,10 +129,9 @@ export const createItinerary = async (req: CustomRequest, res: Response) => {
   try {
     const { title, description, startDate, endDate } = req.body;
     const user = req.user;
-    console.log("USER IN CREATEITINERARY CONTROLLER", user);
     
     if (!title || !description || !startDate || !endDate) {
-      res.status(400).send({ error: "Missing required fields" });
+      res.status(StatusCodes.BAD_REQUEST).send({ error: "Missing required fields" });
       return;
     }
 
@@ -129,10 +144,10 @@ export const createItinerary = async (req: CustomRequest, res: Response) => {
         createdById: user?.id,
       },
     });
-    res.send({ data: data });
+    res.status(StatusCodes.OK).send({ data: data });
   } catch (error) {
     console.error(error);
-    res.status(500).send({ error: error, message: "An error occurred while creating the itinerary" });
+    res.status(StatusCodes.INTERNAL_SERVER_ERROR).send({ error: error, message: "An error occurred while creating the itinerary" });
     return;
   }
 };

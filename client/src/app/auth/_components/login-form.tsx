@@ -18,10 +18,10 @@ import { redirect } from "next/navigation";
 
 export const LoginForm = () => {
   const { data: session, status } = useSession();
-  // console.log(session?.user?.name)
   if (session?.user) {
     redirect("/")
   }
+
   const form = useForm<z.infer<typeof LoginSchema>>({
     resolver: zodResolver(LoginSchema),
     defaultValues: {
@@ -29,8 +29,8 @@ export const LoginForm = () => {
       password: "",
     },
   });
+  
   const onSubmit = async (data: z.infer<typeof LoginSchema>) => {
-    console.log(data);
     const res = await signIn("credentials", {
       username: data.username,
       password: data.password,
@@ -40,8 +40,6 @@ export const LoginForm = () => {
     if (res?.error) {
       console.error("Sign-in error:", res.error);
       form.setError("root", { message: "Invalid username or password" });
-    } else {
-      console.log("Sign-in successful:", res);
     }
   };
 
