@@ -91,7 +91,14 @@ const EditItineraryForm: React.FC<EditItineraryFormProps> = ({
         if (onDeleteSuccess) {
           onDeleteSuccess(); // Callback after successful deletion
         }
-      } catch (error) {
+      } catch (error: any) {
+        if (!error.response.data.success) {
+          toast({
+            variant: "destructive",
+            title: "Uh oh!",
+            description: error.response.data.message,
+          })
+        }
         console.error("Error deleting itinerary:", error);
       }
     }
