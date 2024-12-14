@@ -29,7 +29,6 @@ const Dashboard: React.FC = () => {
     "ongoing"
   );
   const { data: session, status } = useSession();
-  const [isEditor, setIsEditor] = useState(false);
   const [itineraries, setItineraries] = useState<Itinerary[]>([]);
   const [isDialogOpen, setIsDialogOpen] = useState<boolean>(false); // State to control dialog
 
@@ -91,17 +90,6 @@ const Dashboard: React.FC = () => {
         return true;
     }
   };
-
-  useEffect(() => {
-    if (session?.user?.email && itineraries.length > 0) {
-      const editorCheck = itineraries.some((itinerary) =>
-        itinerary.collaborators.some(
-          (collaborator) => collaborator.user.email === session.user.email
-        )
-      );
-      setIsEditor(editorCheck);
-    }
-  }, [session, itineraries]);
 
   const filteredItineraries = itineraries.filter(filterItineraries);
 
@@ -193,9 +181,8 @@ const Dashboard: React.FC = () => {
                       description={itinerary.description}
                       dateStart={itinerary.startDate}
                       dateEnd={itinerary.endDate}
-                      collaborators={itinerary.collaborators.length}
+                      collaborators={itinerary.collaborators}
                       onItineraryChange={fetchItineraries}
-                      isEditor={isEditor}
                     />
                   </SheetContent>
                 </Sheet>

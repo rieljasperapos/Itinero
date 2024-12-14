@@ -70,21 +70,38 @@ export const getItineraryByUserId = async (req: CustomRequest, res: Response) =>
   return;
 };
 
-
 export const getItineraryById = async (req: Request, res: Response) => {
   const { id } = req.params;
-  const data = await prisma.itinerary.findUnique({
-    where: {
-      id: Number(id),
-    },
-  });
-  if (!data) {
-    res.status(StatusCodes.NOT_FOUND).send({ message: "Itinerary not found" });
-  } else {
-    res.status(StatusCodes.OK).send({ data: data });
+
+  try {
+    const data = await prisma.itinerary.findUnique({
+      where: {
+        id: Number(id),
+      },
+      include: {
+        collaborators: {
+          include: {
+            user: { select: { id: true, name: true, email: true } },
+          }
+        },
+        createdBy: {
+          select: { id: true, name: true, email: true },
+        }
+      },
+    });
+
+    if (!data) {
+      res.status(StatusCodes.NOT_FOUND).send({ message: "Itinerary not found" });
+      return;
+    }
+
+    res.status(StatusCodes.OK).send({ data });
+  } catch (error) {
+    console.error("Error fetching itinerary:", error);
+    res.status(StatusCodes.INTERNAL_SERVER_ERROR).send({ message: "An error occurred while fetching the itinerary" });
   }
-  return;
 };
+
 
 export const getActivitiesByItineraryId = async (req: Request, res: Response) => {
   const { itineraryId } = req.params;

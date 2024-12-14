@@ -5,6 +5,7 @@ import { useSession } from "next-auth/react";
 import axios from "axios";
 import { useEffect, useState } from "react";
 import { redirect } from "next/navigation";
+import { useSearchParams } from "next/navigation";
 
 // Transfer this to types
 interface Collaborator {
@@ -14,6 +15,8 @@ interface Collaborator {
 }
 
 const CollaboratorsPage = () => {
+  const searchParams = useSearchParams();
+  const itineraryId = searchParams.get("itineraryId");
   const { data: session, status } = useSession();
   const [collaborators, setCollaborators] = useState<Collaborator[]>([]);
 
@@ -26,7 +29,7 @@ const CollaboratorsPage = () => {
       if (status === "authenticated") {
         try {
           const response = await axios.get(
-            `${process.env.NEXT_PUBLIC_API_BASE_URL}/itineraries`,
+            `${process.env.NEXT_PUBLIC_API_BASE_URL}/itineraries/${itineraryId}`,
             {
               headers: {
                 Authorization: `Bearer ${session?.user.accessToken}`,
@@ -35,7 +38,7 @@ const CollaboratorsPage = () => {
           );
 
           // Map the response data to the format you need
-          const fetchedCollaborators = response.data.data[0].collaborators.map(
+          const fetchedCollaborators = response.data.data.collaborators.map(
             (collaborator: any) => ({
               name: collaborator.user.name,
               email: collaborator.user.email,

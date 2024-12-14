@@ -21,6 +21,7 @@ import {
 } from '@/components/dialog';
 import { Activity } from '@/types/activity-type';
 import Link from 'next/link';
+import { Collaborator } from '@/types/collaborator-type';
 
 interface ItineraryDetailsProps {
   itineraryId: number;
@@ -28,9 +29,8 @@ interface ItineraryDetailsProps {
   description: string;
   dateStart: string;
   dateEnd: string;
-  collaborators: number;
+  collaborators: Collaborator[];
   onItineraryChange?: () => void; // New prop for dynamic refresh
-  isEditor: boolean;
 }
 
 const avatarUrls = [ // Readjust this once your backend is working
@@ -47,7 +47,6 @@ const ItineraryDetails: React.FC<ItineraryDetailsProps> = ({
   collaborators,
   description,
   onItineraryChange, // Receive the new prop
-  isEditor,
 }) => {
   const formattedDateStart = format(new Date(dateStart), 'MMMM d, yyyy');
   const formattedDateEnd = format(new Date(dateEnd), 'MMMM d, yyyy');
@@ -168,9 +167,9 @@ const ItineraryDetails: React.FC<ItineraryDetailsProps> = ({
       </Dialog>
 
       {/* MODIFY THIS */}
-      <Link href="/collaborators">
+      <Link href={`/collaborators?itineraryId=${itineraryId}`}>
         <div className="flex flex-row items-center space-x-2 mt-3 cursor-pointer group">
-          <AvatarCircles numPeople={collaborators} avatarUrls={avatarUrls} />
+          <AvatarCircles numPeople={collaborators.length} avatarUrls={avatarUrls} />
           <p className='group-hover:underline'>Collaborators</p>
         </div>
       </Link>
@@ -209,7 +208,6 @@ const ItineraryDetails: React.FC<ItineraryDetailsProps> = ({
             itineraryId={itineraryId}
             refreshActivities={fetchActivities}
             collaborators={collaborators}
-            isEditor={isEditor}
             dateStart={dateStart}
             dateEnd={dateEnd}
           />

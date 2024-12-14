@@ -8,6 +8,7 @@ import { useState } from "react";
 import { Input } from "@/components/input";
 import { useToast } from "@/hooks/use-toast";
 import { handleSubmitEditInfo, handleSubmitEditPassword, validatePasswordFields } from "./_lib/profile-handler";
+import { redirect } from "next/navigation";
 
 const ProfilePage = () => {
   const [isEditingInfo, setIsEditingInfo] = useState(false);
@@ -19,6 +20,11 @@ const ProfilePage = () => {
   const [reTypePassword, setReTypePassword] = useState("");
   const { data: session, status, update } = useSession();
   const { toast } = useToast();
+
+  // Redirect to login page if user is not authenticated
+  if (status === "unauthenticated") {
+    redirect("/auth/signin");
+  }
 
   // Handler for updating user information
   const handleInfoSubmit = async () => {
@@ -35,6 +41,7 @@ const ProfilePage = () => {
     setIsEditingInfo(!isEditingInfo);
   };
 
+  // Handle password submission
   const handlePasswordSubmit = async () => {
     const validation = validatePasswordFields(currentPassword, newPassword, reTypePassword);
     if (!validation.valid) {
@@ -54,14 +61,12 @@ const ProfilePage = () => {
   }
 
   return (
-    <Layout breadcrumb="Profile">
-      {status === "loading" ? (
-        <>
-          <div className="p-4 flex flex-col gap-10">
-            <h1 className="font-bold text-2xl">Loading...</h1>
-          </div>
-        </>
-      ) : (
+    status === "loading" ? (
+      <div className="p-4 flex flex-col gap-10">
+        <h1 className="font-bold text-2xl">Loading...</h1>
+      </div>
+    ) : (
+      <Layout breadcrumb="Profile">
         <div className="p-4 flex flex-col gap-10">
           <h1 className="font-bold text-2xl">My Profile</h1>
           <div className="border p-4 flex items-center gap-3">
@@ -208,8 +213,8 @@ const ProfilePage = () => {
             </div>
           </div>
         </div>
-      )}
-    </Layout>
+      </Layout>
+    )
   );
 };
 
