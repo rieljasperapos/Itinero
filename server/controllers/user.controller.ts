@@ -3,7 +3,6 @@ import { Request, Response } from "express";
 import { config } from "../utils/config.utils";
 import bcrypt from "bcrypt";
 import { generateToken } from "../services/token.service";
-import { User } from "../types/user.types";
 import { CustomRequest } from "../types/auth.type";
 import { StatusCodes } from "http-status-codes";
 import { isValidEmail } from "../helpers/user.helper";
@@ -25,13 +24,13 @@ export const registerUser = async (req: Request, res: Response) => {
 
     const existingUser = await prisma.user.findUnique({ where: { username: username } });
     if (existingUser) {
-      res.send({ message: "Username already exists" });
+      res.status(StatusCodes.BAD_REQUEST).send({ message: "Username already exists" });
       return;
     }
 
     const existingEmail = await prisma.user.findUnique({ where: { email: email } });
     if (existingEmail) {
-      res.send({ message: "Email already exists" });
+      res.status(StatusCodes.BAD_REQUEST).send({ message: "Email already exists" });
       return;
     }
 
@@ -44,13 +43,13 @@ export const registerUser = async (req: Request, res: Response) => {
       },
     });
 
-    res.send({
+    res.status(StatusCodes.OK).send({
       message: "Successfully created user",
       data: newUser,
       valid: true,
     });
   } catch (error) {
-    res.send({ message: `Server error ${error}` });
+    res.status(StatusCodes.INTERNAL_SERVER_ERROR).send({ message: `Server error ${error}` });
   }
   return;
 };
@@ -237,6 +236,6 @@ export const logoutUser = (req: Request, res: Response) => {
     secure: process.env.NODE_ENV === "production",
     sameSite: "strict",
   });
-  res.send({ message: "Logged out successfully" });
+  res.status(StatusCodes.OK).send({ message: "Logged out successfully" });
   return;
 };
