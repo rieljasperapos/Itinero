@@ -1,14 +1,13 @@
 "use client"
-
-import { useCounterStore } from "@/stores/counter-store";
 import Dashboard from "./dashboard";
+import ItineraryDetails from "@/components/itinerary_details";
 
 export default function Home() {
-  const counter = useCounterStore((state) => state);
 
   return (
-    <div className="flex gap-4">
+    <div className="flex">
       <Dashboard />
+
     </div>
   );
 }

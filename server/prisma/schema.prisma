@@ -1,9 +1,3 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
-
 generator client {
   provider = "prisma-client-js"
 }
@@ -14,7 +8,81 @@ datasource db {
 }
 
 model User {
-  id Int @id @default(autoincrement())
-  name String
-  username String @unique
+  id            Int            @id @default(autoincrement())
+  name          String
+  username      String         @unique
+  password      String
+  email         String         @unique
+  createdAt     DateTime       @default(now()) @map("created_at")
+  updatedAt     DateTime       @updatedAt @map("updated_at")
+  activities    Activity[]
+  collaborators Collaborator[]
+  itinerary     Itinerary[]
+  notifications Notifaction[]
+
+  @@map("users")
+}
+
+model Itinerary {
+  id            Int            @id @default(autoincrement())
+  title         String
+  description   String
+  startDate     DateTime
+  endDate       DateTime
+  createdById   Int            @map("created_by_id")
+  createdAt     DateTime       @default(now()) @map("created_at")
+  updatedAt     DateTime       @updatedAt @map("updated_at")
+  activities    Activity[]
+  collaborators Collaborator[]
+  createdBy     User?           @relation(fields: [createdById], references: [id])
+  notifactions  Notifaction[]
+
+  @@map("itineraries")
+}
+
+model Collaborator {
+  id          Int       @id @default(autoincrement())
+  userId      Int       @map("user_id")
+  itineraryId Int       @map("itinerary_id")
+  role        Role      @default(VIEWER)
+  itinerary   Itinerary @relation(fields: [itineraryId], references: [id])
+  user        User      @relation(fields: [userId], references: [id])
+
+  @@map("collaborators")
+}
+
+model Activity {
+  id           Int       @id @default(autoincrement())
+  activityName String    @map("activity_name")
+  startTime    DateTime  @map("start_time")
+  endTime      DateTime  @map("end_time")
+  createdAt    DateTime  @default(now()) @map("created_at")
+  updatedAt    DateTime  @updatedAt @map("updated_at")
+  itineraryId  Int       @map("itinerary_id")
+  address      String    @map("address")
+  locationName String    @map("location_name")
+  createdById  Int       @map("created_by_id")
+  createdBy    User      @relation(fields: [createdById], references: [id])
+  itinerary    Itinerary @relation(fields: [itineraryId], references: [id])
+
+  @@map("activities")
+}
+
+model Notifaction {
+  id          Int       @id @default(autoincrement())
+  userId      Int       @map("user_id")
+  itineraryId Int       @map("itinerary_id")
+  title       String
+  message     String
+  isRead      Boolean   @default(false) @map("is_read")
+  createdAt   DateTime  @default(now()) @map("created_at")
+  itinerary   Itinerary @relation(fields: [itineraryId], references: [id])
+  user        User      @relation(fields: [userId], references: [id])
+
+  @@map("notifaction")
+}
+
+enum Role {
+  VIEWER
+  EDITOR
 }
