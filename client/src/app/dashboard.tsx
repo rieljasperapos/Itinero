@@ -100,21 +100,21 @@ const Dashboard: React.FC = () => {
           <Button
             variant="outline"
             onClick={() => setFilter("ongoing")}
-            className={filter === "ongoing" ? "bg-primary text-white" : "ml-2"}
+            className={`${filter === "ongoing" ? "bg-primary text-white" : ""} w-full max-w-[100px]`}
           >
             Ongoing
           </Button>
           <Button
             variant="outline"
             onClick={() => setFilter("upcoming")}
-            className={filter === "upcoming" ? "bg-primary text-white" : ""}
+            className={`${filter === "upcoming" ? "bg-primary text-white" : ""} w-full max-w-[100px]`}
           >
             Upcoming
           </Button>
           <Button
             variant="outline"
             onClick={() => setFilter("past")}
-            className={filter === "past" ? "bg-primary text-white" : ""}
+            className={`${filter === "past" ? "bg-primary text-white" : ""} w-full max-w-[100px]`}
           >
             Past
           </Button>
