@@ -1,17 +1,13 @@
 "use client";
 import Layout from "@/components/layout";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/avatar";
-import Image from "next/image";
 import { useSession } from "next-auth/react";
 import { Button } from "@/components/ui/button";
 import { Edit2, Check } from "lucide-react";
 import { useState } from "react";
 import { Input } from "@/components/input";
-import axios from "axios";
-import { EditPasswordSchema } from "@/schemas";
-import * as z from "zod";
 import { useToast } from "@/hooks/use-toast";
-import { ToastAction } from "@/components/ui/toast";
+import { handleSubmitEditInfo, handleSubmitEditPassword, validatePasswordFields } from "./_lib/profile-handler";
 
 const ProfilePage = () => {
   const [isEditingInfo, setIsEditingInfo] = useState(false);
@@ -22,126 +18,40 @@ const ProfilePage = () => {
   const [newPassword, setNewPassword] = useState("");
   const [reTypePassword, setReTypePassword] = useState("");
   const { data: session, status, update } = useSession();
-  const [errors, setErrors] = useState({
-    currentPassword: "",
-    newPassword: "",
-    reTypePassword: "",
-  });
   const { toast } = useToast();
 
-  const handleSubmitEditInfo = async () => {
-    // POST request to the server to update the user's information
-    try {
-      const response = await axios.post(
-        `${process.env.NEXT_PUBLIC_API_BASE_URL}/user-update`,
-        {
-          name: newName,
-          email: newEmail,
-        },
-        {
-          headers: {
-            Authorization: `Bearer ${session?.user.accessToken}`,
-          },
-        }
-      );
+  // Handler for updating user information
+  const handleInfoSubmit = async () => {
+    const response = await handleSubmitEditInfo(newName, newEmail, session, toast);
+    if (response && response.success) {
       await update({
         ...session,
         user: {
-          ...session?.user,
-          name: response.data.data.name,
-          email: response.data.data.email,
-        },
-      });
-      if (response.data.success) {
-        toast({
-          variant: "default",
-          title: "Success!",
-          description: "Your information has been updated",
-        });
-      }
-    } catch (error) {
-      console.error("Error in handleSubmitEditInfo:", error);
-    }
-    setIsEditingInfo(!isEditingInfo); // Change the isEditing to false once Save Changes is clicked
-    // Reset the input fields
-    setNewName("");
-    setNewEmail("");
-  };
-
-  const validatePasswordFields = () => {
-    try {
-      const passwordData = { currentPassword, newPassword, reTypePassword };
-      // Validate password fields using the password schema
-      EditPasswordSchema.parse(passwordData);
-      setErrors({
-        currentPassword: "",
-        newPassword: "",
-        reTypePassword: "",
-      }); // Clear errors on success
-      return true;
-    } catch (error) {
-      if (error instanceof z.ZodError) {
-        const newErrors: { [key in keyof typeof errors]: string } = {
-          currentPassword: "",
-          newPassword: "",
-          reTypePassword: "",
-        };
-
-        error.errors.forEach((err) => {
-          // Ensure the path[0] is one of the keys in errors (currentPassword, newPassword, reTypePassword)
-          if (newErrors.hasOwnProperty(err.path[0])) {
-            // Cast err.path[0] as keyof typeof errors to prevent TypeScript error
-            newErrors[err.path[0] as keyof typeof newErrors] = err.message;
-          }
-        });
-
-        setErrors(newErrors); // Set errors
-      }
-      return false;
-    }
-  };
-
-  const handleSubmitChangePassword = async () => {
-    // POST request to the server to update the user's password
-    if (!validatePasswordFields()) {
-      return; // Don't submit if validation fails
-    }
-
-    try {
-      // EditPasswordSchema.parse(passwordData);
-      const response = await axios.post(
-        `${process.env.NEXT_PUBLIC_API_BASE_URL}/change-password`,
-        {
-          currentPassword: currentPassword,
-          newPassword: newPassword,
-          reTypePassword: reTypePassword,
-        },
-        {
-          headers: {
-            Authorization: `Bearer ${session?.user.accessToken}`,
-          },
+          name: response.data.name,
+          email: response.data.email
         }
-      );
-      if (response.data.success) {
-        toast({
-          variant: "default",
-          title: "Success!",
-          description: "Your password has been updated",
-        });
-      }
-      setIsEditingPassword(!isEditingPassword);
-    } catch (error: any) {
-      if (error.response.data.message === "Invalid current password") {
+      });
+    }
+    setIsEditingInfo(!isEditingInfo);
+  };
+
+  const handlePasswordSubmit = async () => {
+    const validation = validatePasswordFields(currentPassword, newPassword, reTypePassword);
+    if (!validation.valid) {
+      Object.entries(validation.errors).forEach(([key, message]) => {
         toast({
           variant: "destructive",
-          title: "Invalid current password",
-          description: "Please enter the correct current password",
-          action: <ToastAction altText="Try again">Try again</ToastAction>,
+          title: "Validation Error",
+          description: message,
         });
-      }
-      console.error(error);
+      });
+      return;
     }
-  };
+    const response = await handleSubmitEditPassword(currentPassword, newPassword, reTypePassword, session, toast);
+    if (response && response.success) {
+      setIsEditingPassword(!isEditingPassword);
+    }
+  }
 
   return (
     <Layout breadcrumb="Profile">
@@ -173,7 +83,7 @@ const ProfilePage = () => {
                 <>
                   <Button
                     className="flex items-center gap-2"
-                    onClick={handleSubmitEditInfo}
+                    onClick={handleInfoSubmit}
                   >
                     <Check />
                     <p>Save Changes</p>
@@ -250,9 +160,6 @@ const ProfilePage = () => {
                       onChange={(e) => setCurrentPassword(e.target.value)}
                       className="max-w-xs"
                     />
-                    <span className="text-red-500">
-                      {errors.currentPassword}
-                    </span>
                   </div>
                   {/* New Password Field */}
                   <div className="flex flex-col gap-2 text-slate-400">
@@ -263,7 +170,6 @@ const ProfilePage = () => {
                       onChange={(e) => setNewPassword(e.target.value)}
                       className="max-w-xs"
                     />
-                    <span className="text-red-500">{errors.newPassword}</span>
                   </div>
                   {/* Re-type Password Field */}
                   <div className="flex flex-col gap-2 text-slate-400">
@@ -274,13 +180,10 @@ const ProfilePage = () => {
                       onChange={(e) => setReTypePassword(e.target.value)}
                       className="max-w-xs"
                     />
-                    <span className="text-red-500">
-                      {errors.reTypePassword}
-                    </span>
                   </div>
                   <Button
                     className="max-w-xs"
-                    onClick={handleSubmitChangePassword}
+                    onClick={handlePasswordSubmit}
                   >
                     Save Changes
                   </Button>
