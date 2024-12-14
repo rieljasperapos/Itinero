@@ -13,6 +13,7 @@ import {
   SidebarTrigger,
 } from "@/components/sidebar";
 import { LayoutProps } from "@/types/layout-type";
+import DotPattern from "./dot-pattern";
 
 const Layout = ({ children, breadcrumb }: LayoutProps) => {
   return (
@@ -35,6 +36,14 @@ const Layout = ({ children, breadcrumb }: LayoutProps) => {
         <div className="flex flex-1 flex-col gap-4 p-4 pt-0">
           {children}
         </div>
+        <DotPattern
+            width={20}
+            height={20}
+            cx={1}
+            cy={1}
+            cr={1}
+            opacity={0.3}
+        />
       </SidebarInset>
     </SidebarProvider>
   );

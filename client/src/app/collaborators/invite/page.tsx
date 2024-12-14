@@ -89,7 +89,7 @@ const InviteCollaboratorPage = () => {
       </div>
     ) : (
       <Layout breadcrumb="Invite">
-        <div className="flex flex-col gap-8 p-4 w-full max-w-lg">
+        <div className="flex flex-col gap-8 p-10 justify-center w-full max-w-3xl border mx-auto my-auto">
           <div className="flex flex-col gap-2">
             <h1 className="font-bold text-2xl">Invite Collaborator</h1>
             <span className="text-sm text-muted-foreground">You want to travel or plan a trip with someone? Invite them to collaborate on your itinerary.</span>
