@@ -9,7 +9,6 @@ import { StatusCodes } from "http-status-codes";
 import { isValidEmail } from "../helpers/user.helper";
 
 export const getUsers = async (req: Request, res: Response) => {
-  // console.log(req.cookies);
   const data = await prisma.user.findMany();
   res.send({ data: data });
   return;
@@ -58,7 +57,6 @@ export const registerUser = async (req: Request, res: Response) => {
 
 export const loginUser = async (req: Request, res: Response) => {
   const { username, password } = req.body;
-  console.log(`USERNAMEsdsds: ${username}`);
 
   // Find user in the database
   const user = await prisma.user.findFirst({ where: { username: username } });
@@ -82,7 +80,6 @@ export const loginUser = async (req: Request, res: Response) => {
     email: user.email,
   };
   const accessToken = generateToken(foundUser);
-  console.log(`sign token: ${accessToken}`);
   res.cookie("accessToken", accessToken, {
     httpOnly: true,
     secure: process.env.NODE_ENV === "production",

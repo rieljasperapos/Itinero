@@ -6,7 +6,7 @@ import { User } from "../types/user.types";
 
 export const authenticate = (req: CustomRequest, res: Response, next: NextFunction) => {
   const authHeader = req.headers["authorization"];
-  
+
   if (!authHeader) {
     res.status(401).json({ message: "Unauthorized: No Authorization header" });
     return
@@ -20,12 +20,9 @@ export const authenticate = (req: CustomRequest, res: Response, next: NextFuncti
     return;
   }
 
-  console.log(`Token in middleware: ${token}`); // Log the token for debugging
-
   try {
     // Verify the JWT using the secret (it contains user data)
     const decoded = jwt.verify(token, config.AUTH_SECRET) as User;
-    console.log("Decoded JWT payload:", decoded);
 
     // If valid, attach the user data to the request object
     req.user = decoded;

@@ -88,7 +88,6 @@ export const getItineraryById = async (req: Request, res: Response) => {
 
 export const getActivitiesByItineraryId = async (req: Request, res: Response) => {
   const { itineraryId } = req.params;
-  console.log(itineraryId);
 
   try {
     const activities = await prisma.activity.findMany({
@@ -113,7 +112,6 @@ export const createItinerary = async (req: CustomRequest, res: Response) => {
   try {
     const { title, description, startDate, endDate } = req.body;
     const user = req.user;
-    console.log("USER IN CREATEITINERARY CONTROLLER", user);
     
     if (!title || !description || !startDate || !endDate) {
       res.status(400).send({ error: "Missing required fields" });

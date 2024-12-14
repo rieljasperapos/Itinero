@@ -1,5 +1,5 @@
 "use client";
-import { useSearchParams } from "next/navigation";
+import { redirect, useSearchParams } from "next/navigation";
 import Layout from "@/components/layout";
 import * as z from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -31,7 +31,10 @@ const InviteCollaboratorPage = () => {
   const { toast } = useToast();
   const searchParams = useSearchParams();
   const itineraryId = searchParams.get("itineraryId"); // Access the `itineraryId` from the query parameters
-  console.log(itineraryId);
+
+  if (status === "unauthenticated") {
+    redirect("/auth/signin");
+  }
 
   const form = useForm<z.infer<typeof inviteCollaboratorSchema>>({
     resolver: zodResolver(inviteCollaboratorSchema),
@@ -42,7 +45,6 @@ const InviteCollaboratorPage = () => {
   });
 
   const onSubmit = async (data: z.infer<typeof inviteCollaboratorSchema>) => {
-    console.log(data);
     // POST request to the server to invite a collaborator
     try {
       const response = await axios.post(
@@ -66,9 +68,7 @@ const InviteCollaboratorPage = () => {
           description: response.data.message,
         });
       }
-      console.log(response.data);
     } catch (error: any) {
-      // console.log()
       if (!error.response.data.found) {
         toast({
           variant: "destructive",
@@ -82,55 +82,66 @@ const InviteCollaboratorPage = () => {
   };
 
   return (
-    <Layout breadcrumb="Invite Collaborator">
-      <div className="flex flex-col gap-8 p-4 w-full max-w-lg">
-        <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)}>
-            <div className="flex flex-col gap-4">
-              {/* Email Field */}
-              <FormField
-                control={form.control}
-                name="email"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Email</FormLabel>
-                    <FormControl>
-                      <Input
-                        type="email"
-                        placeholder="Enter your email"
-                        {...field}
-                      />
-                    </FormControl>
-                  </FormItem>
-                )}
-              />
-              {/* Role Field */}
-              <FormField
-                control={form.control}
-                name="role"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Role</FormLabel>
-                    <FormControl>
-                      <Select onValueChange={field.onChange} value={field.value}>
-                        <SelectTrigger>
-                          <SelectValue placeholder="Select a role" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="VIEWER">Viewer</SelectItem>
-                          <SelectItem value="EDITOR">Editor</SelectItem>
-                        </SelectContent>
-                      </Select>
-                    </FormControl>
-                  </FormItem>
-                )}
-              />
-              <Button type="submit">Invite</Button>
-            </div>
-          </form>
-        </Form>
+    status === "loading" ? (
+      <div className="flex justify-center items-center h-screen">
+        <div className="animate-spin rounded-full h-12 w-12 border-t-4 border-blue-500 border-solid border-gray-300" />
+        <span className="sr-only">Loading...</span>
       </div>
-    </Layout>
+    ) : (
+      <Layout breadcrumb="Invite">
+        <div className="flex flex-col gap-8 p-4 w-full max-w-lg">
+          <div className="flex flex-col gap-2">
+            <h1 className="font-bold text-2xl">Invite Collaborator</h1>
+            <span className="text-sm text-muted-foreground">You want to travel or plan a trip with someone? Invite them to collaborate on your itinerary.</span>
+          </div>
+          <Form {...form}>
+            <form onSubmit={form.handleSubmit(onSubmit)}>
+              <div className="flex flex-col gap-4">
+                {/* Email Field */}
+                <FormField
+                  control={form.control}
+                  name="email"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Email</FormLabel>
+                      <FormControl>
+                        <Input
+                          type="email"
+                          placeholder="Enter your email"
+                          {...field}
+                        />
+                      </FormControl>
+                    </FormItem>
+                  )}
+                />
+                {/* Role Field */}
+                <FormField
+                  control={form.control}
+                  name="role"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Role</FormLabel>
+                      <FormControl>
+                        <Select onValueChange={field.onChange} value={field.value}>
+                          <SelectTrigger>
+                            <SelectValue placeholder="Select a role" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="VIEWER">Viewer</SelectItem>
+                            <SelectItem value="EDITOR">Editor</SelectItem>
+                          </SelectContent>
+                        </Select>
+                      </FormControl>
+                    </FormItem>
+                  )}
+                />
+                <Button type="submit">Invite</Button>
+              </div>
+            </form>
+          </Form>
+        </div>
+      </Layout>
+    )
   );
 };
 

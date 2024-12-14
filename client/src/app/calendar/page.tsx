@@ -6,25 +6,28 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import Layout from "@/components/layout";
 import "./_lib/custom-calendar.css";
+import { redirect } from "next/navigation";
 
 const Calendar = () => {
   const [activities, setActivities] = useState([]);
   const { data: session, status } = useSession();
 
+  if (status === "unauthenticated") {
+    redirect("/auth/signin");
+  }
+
   useEffect(() => {
     const fetchActivities = async () => {
       if (session?.user.accessToken) {
         try {
-          const apiBaseUrl = process.env.NEXT_PUBLIC_API_BASE_URL;
           const response = await axios.get(
-            `${apiBaseUrl}/itineraries`,
+            `${process.env.NEXT_PUBLIC_API_BASE_URL}/itineraries`,
             {
               headers: {
                 Authorization: `Bearer ${session?.user.accessToken}`,
               },
             }
           );
-          console.log("Fetched activities:", response.data);
 
           // Map the response data to FullCalendar event format
           const fetchedActivities = response.data.data.flatMap(

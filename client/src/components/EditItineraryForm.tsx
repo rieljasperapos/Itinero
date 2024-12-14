@@ -4,19 +4,10 @@ import React from "react";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-} from "@/components/form";
+import { Form, FormControl, FormField, FormItem } from "@/components/form";
 import { Input } from "@/components/input";
 import { Calendar } from "@/components/calendar";
-import {
-  Popover,
-  PopoverTrigger,
-  PopoverContent,
-} from "@/components/popover";
+import { Popover, PopoverTrigger, PopoverContent } from "@/components/popover";
 import { Button } from "@/components/button";
 import { CalendarIcon, Trash2 } from "lucide-react";
 import axios from "axios";
@@ -50,10 +41,9 @@ const EditItineraryForm: React.FC<EditItineraryFormProps> = ({
   });
 
   const onSubmit = async (data: z.infer<typeof createItinerarySchema>) => {
-    const apiBaseUrl = process.env.NEXT_PUBLIC_API_BASE_URL;
     try {
       const response = await axios.put(
-        `${apiBaseUrl}/itineraries/${itineraryId}`,
+        `${process.env.NEXT_PUBLIC_API_BASE_URL}/itineraries/${itineraryId}`,
         {
           title: data.title,
           description: data.description,
@@ -66,7 +56,6 @@ const EditItineraryForm: React.FC<EditItineraryFormProps> = ({
           },
         }
       );
-      console.log("Itinerary updated:", response.data);
       if (onSuccess) {
         onSuccess();
       }
@@ -81,14 +70,15 @@ const EditItineraryForm: React.FC<EditItineraryFormProps> = ({
       "Are you sure you want to delete this itinerary?"
     );
     if (confirmDelete) {
-      const apiBaseUrl = process.env.NEXT_PUBLIC_API_BASE_URL;
       try {
-        await axios.delete(`${apiBaseUrl}/itineraries/${itineraryId}`, {
-          headers: {
-            Authorization: `Bearer ${session?.user.accessToken}`,
-          },
-        });
-        console.log("Itinerary deleted");
+        await axios.delete(
+          `${process.env.NEXT_PUBLIC_API_BASE_URL}/itineraries/${itineraryId}`,
+          {
+            headers: {
+              Authorization: `Bearer ${session?.user.accessToken}`,
+            },
+          }
+        );
         if (onDeleteSuccess) {
           onDeleteSuccess(); // Callback after successful deletion
         }
@@ -155,7 +145,9 @@ const EditItineraryForm: React.FC<EditItineraryFormProps> = ({
                           <FormControl>
                             <button type="button" className="button">
                               <div className="flex items-center mt-4 space-x-2">
-                                <span className="tripname_small">Start Date</span>
+                                <span className="tripname_small">
+                                  Start Date
+                                </span>
                                 <CalendarIcon className="size-4 opacity-50 self-center" />
                               </div>
                               {field.value ? (
@@ -171,7 +163,19 @@ const EditItineraryForm: React.FC<EditItineraryFormProps> = ({
                             mode="single"
                             selected={field.value}
                             onSelect={field.onChange}
-                            disabled={(date) => date < new Date("1900-01-01")}
+                            disabled={(date) => {
+                              // Normalize the time of both dates to midnight
+                              const normalizeToMidnight = (d: Date) => {
+                                const normalized = new Date(d);
+                                normalized.setHours(0, 0, 0, 0); // Set time to 00:00:00
+                                return normalized;
+                              };
+
+                              const today = normalizeToMidnight(new Date()); // Today's date at midnight
+                              const minDate = new Date("1900-01-01");
+
+                              return date < today || date < minDate;
+                            }}
                             initialFocus
                           />
                         </PopoverContent>
@@ -206,7 +210,19 @@ const EditItineraryForm: React.FC<EditItineraryFormProps> = ({
                             mode="single"
                             selected={field.value}
                             onSelect={field.onChange}
-                            disabled={(date) => date < new Date("1900-01-01")}
+                            disabled={(date) => {
+                              // Normalize the time of both dates to midnight
+                              const normalizeToMidnight = (d: Date) => {
+                                const normalized = new Date(d);
+                                normalized.setHours(0, 0, 0, 0); // Set time to 00:00:00
+                                return normalized;
+                              };
+
+                              const today = normalizeToMidnight(new Date()); // Today's date at midnight
+                              const minDate = new Date("1900-01-01");
+
+                              return date < today || date < minDate;
+                            }}
                             initialFocus
                           />
                         </PopoverContent>
@@ -222,9 +238,7 @@ const EditItineraryForm: React.FC<EditItineraryFormProps> = ({
                 <Trash2 className="mr-2 h-4 w-4" strokeWidth={1.5} />
                 Delete Itinerary
               </Button>
-              <Button type="submit">
-                Save Changes
-              </Button>
+              <Button type="submit">Save Changes</Button>
             </div>
           </form>
         </Form>

@@ -2,7 +2,6 @@ import React, { useEffect, useState } from "react";
 import { Button } from "@/components/button";
 import { CirclePlus } from "lucide-react";
 import ItineraryCard from "@/components/itinerary_card";
-import { signOut } from "next-auth/react";
 import { useSession } from "next-auth/react";
 import { redirect } from "next/navigation";
 import * as VisuallyHidden from "@radix-ui/react-visually-hidden";
@@ -12,7 +11,6 @@ import {
   DialogContent,
   DialogDescription,
   DialogFooter,
-  DialogHeader,
   DialogTitle,
   DialogTrigger,
 } from "@/components/dialog";
@@ -20,37 +18,20 @@ import CreateItineraryForm from "./itinerary/create/page";
 import Layout from "@/components/layout";
 import {
   Sheet,
-  SheetClose,
   SheetContent,
-  SheetDescription,
-  SheetFooter,
-  SheetHeader,
-  SheetTitle,
   SheetTrigger,
 } from "@/components/sheet";
 import ItineraryDetails from "@/components/itinerary_details";
+import { Itinerary } from "@/types/itinerary-type";
 
 const Dashboard: React.FC = () => {
   const [filter, setFilter] = useState<"upcoming" | "ongoing" | "past">(
     "ongoing"
-  ); // New state for filter
+  );
   const { data: session, status } = useSession();
   const [isEditor, setIsEditor] = useState(false);
-
-  interface Itinerary {
-    id: number;
-    title: string;
-    description: string;
-    startDate: string;
-    endDate: string;
-    collaborators: any[];
-  }
-
   const [itineraries, setItineraries] = useState<Itinerary[]>([]);
   const [isDialogOpen, setIsDialogOpen] = useState<boolean>(false); // State to control dialog
-
-  // console.log({ session });
-  // console.log("session access token ", session?.user.accessToken);
 
   if (!session?.user) {
     redirect("/auth/signin");
@@ -58,13 +39,14 @@ const Dashboard: React.FC = () => {
 
   const fetchUser = async () => {
     try {
-      const apiBaseUrl = process.env.NEXT_PUBLIC_API_BASE_URL;
-      const response = await axios.get(`${apiBaseUrl}/users`, {
-        headers: {
-          Authorization: `Bearer ${session?.user.accessToken}`,
-        },
-      });
-      console.log(response.data);
+      const response = await axios.get(
+        `${process.env.NEXT_PUBLIC_API_BASE_URL}/users`,
+        {
+          headers: {
+            Authorization: `Bearer ${session?.user.accessToken}`,
+          },
+        }
+      );
     } catch (error) {
       console.error("Error fetching users:", error);
     }
@@ -72,15 +54,14 @@ const Dashboard: React.FC = () => {
 
   const fetchItineraries = async () => {
     try {
-      const apiBaseUrl = process.env.NEXT_PUBLIC_API_BASE_URL;
-      // console.log("session access token ::: ", session?.user.accessToken);
-      const response = await axios.get(`${apiBaseUrl}/itineraries`, {
-        headers: {
-          Authorization: `Bearer ${session.user.accessToken}`,
-        },
-      });
-      // console.log("CHECK RESPONSE: ", response.data.data);
-      // Set the fetched itineraries to the state
+      const response = await axios.get(
+        `${process.env.NEXT_PUBLIC_API_BASE_URL}/itineraries`,
+        {
+          headers: {
+            Authorization: `Bearer ${session.user.accessToken}`,
+          },
+        }
+      );
       setItineraries(response.data.data);
     } catch (error) {
       console.error("Error fetching itineraries:", error);
@@ -91,7 +72,6 @@ const Dashboard: React.FC = () => {
     if (session && session.user && session.user.accessToken) {
       fetchUser();
       fetchItineraries();
-      console.log("where ", { itineraries });
     }
   }, [session]);
 
@@ -124,7 +104,6 @@ const Dashboard: React.FC = () => {
   }, [session, itineraries]);
 
   const filteredItineraries = itineraries.filter(filterItineraries);
-  console.log("filtered itineraries: ", filteredItineraries);
 
   return (
     <Layout breadcrumb="Dashboard">
@@ -189,10 +168,11 @@ const Dashboard: React.FC = () => {
         <div>
           {filteredItineraries.length === 0 ? (
             <>
-              <p className="text-center text-gray-400">No {filter} Itineraries</p>
+              <p className="text-center text-gray-400">
+                No {filter} Itineraries
+              </p>
             </>
-          
-          ): (
+          ) : (
             <>
               {filteredItineraries.map((itinerary) => (
                 <Sheet key={itinerary.id}>
@@ -219,7 +199,7 @@ const Dashboard: React.FC = () => {
                     />
                   </SheetContent>
                 </Sheet>
-          ))}
+              ))}
             </>
           )}
         </div>

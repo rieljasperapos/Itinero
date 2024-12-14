@@ -45,8 +45,6 @@ export const createActivity = async (req: CustomRequest, res: Response) => {
   try {
     const { activityName, startTime, endTime, locationName, address, itineraryId, date } = req.body;
     const user = req.user;
-    console.log("date date date:", date); // Add this line
-    console.log("User:", user); // Existing line
 
     if (!activityName || !startTime || !endTime || !locationName || !address || !itineraryId || !date) {
       res.status(400).send({ error: "Missing required fieldssdasda" });

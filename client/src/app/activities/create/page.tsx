@@ -61,8 +61,6 @@ const CreateActivityForm: React.FC<CreateActivityFormProps> = ({
   });
 
   const onSubmit = async (data: z.infer<typeof createActivitySchema>) => {
-    const apiBaseUrl = process.env.NEXT_PUBLIC_API_BASE_URL;
-
     if (!session?.user.accessToken) {
       console.error("User is not authenticated.");
       return;
@@ -72,7 +70,7 @@ const CreateActivityForm: React.FC<CreateActivityFormProps> = ({
       if (isEditMode && activity) {
         // Update existing activity
         await axios.put(
-          `${apiBaseUrl}/activities/${activity.id}`,
+          `${process.env.NEXT_PUBLIC_API_BASE_URL}/activities/${activity.id}`,
           {
             activityName: data.activityName,
             locationName: data.locationName,
@@ -89,11 +87,10 @@ const CreateActivityForm: React.FC<CreateActivityFormProps> = ({
             },
           }
         );
-        console.log("Activity updated successfully.");
       } else {
         // Create new activity
         await axios.post(
-          `${apiBaseUrl}/activities/create`,
+          `${process.env.NEXT_PUBLIC_API_BASE_URL}/activities/create`,
           {
             activityName: data.activityName,
             locationName: data.locationName,
@@ -110,7 +107,6 @@ const CreateActivityForm: React.FC<CreateActivityFormProps> = ({
             },
           }
         );
-        console.log("Activity created successfully.");
       }
 
       // Invoke the onSuccess callback
@@ -128,19 +124,13 @@ const CreateActivityForm: React.FC<CreateActivityFormProps> = ({
   // Handle delete action in edit mode
   const handleDelete = async () => {
     if (!activity || !isEditMode) return;
-
     if (!confirm("Are you sure you want to delete this activity?")) return;
-
-    const apiBaseUrl = process.env.NEXT_PUBLIC_API_BASE_URL;
-
     try {
-      await axios.delete(`${apiBaseUrl}/activities/${activity.id}`, {
+      await axios.delete(`${process.env.NEXT_PUBLIC_API_BASE_URL}/activities/${activity.id}`, {
         headers: {
           Authorization: `Bearer ${session?.user.accessToken}`,
         },
       });
-      console.log("Activity deleted successfully.");
-
       // Invoke the onSuccess callback
       if (onSuccess) {
         onSuccess();
@@ -245,7 +235,19 @@ const CreateActivityForm: React.FC<CreateActivityFormProps> = ({
                           mode="single"
                           selected={field.value}
                           onSelect={field.onChange}
-                          disabled={(date) => date < new Date("1900-01-01")}
+                          disabled={(date) => {
+                            // Normalize the time of both dates to midnight
+                            const normalizeToMidnight = (d: Date) => {
+                              const normalized = new Date(d);
+                              normalized.setHours(0, 0, 0, 0); // Set time to 00:00:00
+                              return normalized;
+                            };
+
+                            const today = normalizeToMidnight(new Date()); // Today's date at midnight
+                            const minDate = new Date("1900-01-01");
+
+                            return date < today || date < minDate;
+                          }}
                           initialFocus
                         />
                       </PopoverContent>
