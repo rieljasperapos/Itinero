@@ -15,6 +15,7 @@ import { Input } from "@/components/input";
 import { Button } from "@/components/button";
 import { signIn, useSession } from "next-auth/react";
 import { redirect } from "next/navigation";
+import Link from "next/link";
 
 export const LoginForm = () => {
   const { data: session, status } = useSession();
@@ -86,9 +87,18 @@ export const LoginForm = () => {
                   </FormItem>
                 )}
               />
-              {form.formState.errors.root && (
-                <p className="text-red-500 text-sm">{form.formState.errors.root.message}</p>
-              )}
+              <div className="flex justify-between items-center">
+  <div className="flex-1 min-w-[200px]"> {/* Set a minimum width */}
+    {form.formState.errors.root && (
+      <p className="text-red-500 text-sm">{form.formState.errors.root.message}</p>
+    )}
+  </div>
+  <Link href="/reset-password">
+    <span className="text-sm text-blue-400 hover:text-blue-500 cursor-pointer">
+      Reset password?
+    </span>
+  </Link>
+</div>
               <Button
                 type="submit"
                 className="bg-[#3A86FF] hover:bg-[#77A4EC]"
