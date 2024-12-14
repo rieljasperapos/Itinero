@@ -1,6 +1,6 @@
 # Itinero
 
-![](./images/itinero.png)
+![](./images/itinero-banner.png)
 
 ## Installation
 
