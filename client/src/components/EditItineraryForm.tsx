@@ -14,6 +14,7 @@ import axios from "axios";
 import { useSession } from "next-auth/react";
 import { createItinerarySchema } from "@/schemas";
 import { format } from "date-fns";
+import { useToast } from "@/hooks/use-toast";
 
 interface EditItineraryFormProps {
   itineraryId: number;
@@ -34,6 +35,7 @@ const EditItineraryForm: React.FC<EditItineraryFormProps> = ({
   onDeleteSuccess, // Receive the new prop
 }) => {
   const { data: session } = useSession();
+  const { toast } = useToast();
 
   const form = useForm<z.infer<typeof createItinerarySchema>>({
     resolver: zodResolver(createItinerarySchema),
@@ -59,7 +61,14 @@ const EditItineraryForm: React.FC<EditItineraryFormProps> = ({
       if (onSuccess) {
         onSuccess();
       }
-    } catch (error) {
+    } catch (error: any) {
+      if (!error.response.data.success) {
+        toast({
+          variant: "destructive",
+          title: "You are not the owner!",
+          description: error.response.data.message,
+        });
+      }
       console.error("Error updating itinerary:", error);
     }
   };

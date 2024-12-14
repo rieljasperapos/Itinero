@@ -20,7 +20,7 @@ interface ItineraryDetailsPlanCardProps {
         day: 'numeric' 
       });  
     return (
-      <div className="flex flex-col items-start justify-start whitespace-nowrap text-sm font-medium border border-input bg-background my-1 px-4 pt-4 w-full">
+      <div className="flex flex-col gap-4 items-start justify-start whitespace-nowrap text-sm font-medium border border-input bg-background my-1 px-4 pt-4 w-full">
         <h2 className="tripname_small">{formattedDate}</h2>
         <ItineraryDetailsActivity
             activities={activities}

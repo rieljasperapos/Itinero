@@ -67,21 +67,21 @@ const ProfilePage = () => {
       </div>
     ) : (
       <Layout breadcrumb="Profile">
-        <div className="p-4 flex flex-col gap-10">
-          <h1 className="font-bold text-2xl">My Profile</h1>
-          <div className="border p-4 flex items-center gap-3">
-            <Avatar className="h-24 w-24 rounded-full">
+        <div className="p-4 flex flex-col gap-10 w-full max-w-6xl mx-auto">
+          {/* <h1 className="font-bold text-2xl">My Profile</h1> */}
+          <div className="justify-center p-4 flex flex-col items-center gap-3">
+            <Avatar className="h-36 w-36 rounded-full">
               <AvatarImage src="/avatars/shadcn.jpg" alt={session?.user.name} />
               <AvatarFallback className="rounded-lg">CN</AvatarFallback>
             </Avatar>
-            <div>
-              <p className="text-xl font-semibold">{session?.user.name}</p>
-              <p className="text-sm">{session?.user.username}</p>
+            <div className="flex flex-col items-center">
+              <p className="text-2xl font-semibold">{session?.user.name}</p>
+              <p className="text-lg">{session?.user.username}</p>
             </div>
           </div>
 
           {/* Personal Information */}
-          <div className="border p-4 flex flex-col gap-8">
+          <div className="border p-8 flex flex-col gap-6">
             <div className="flex justify-between items-center">
               <h1 className="text-lg font-semibold">Personal Information</h1>
               {isEditingInfo ? (
@@ -148,7 +148,7 @@ const ProfilePage = () => {
           </div>
 
           {/* Password */}
-          <div className="border p-4 flex flex-col gap-8">
+          <div className="border p-8 flex flex-col gap-8">
             <div className="flex justify-between items-center">
               <h1 className="text-lg font-semibold">Security & Privacy</h1>
             </div>

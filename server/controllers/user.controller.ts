@@ -230,6 +230,92 @@ export const changePassword = async (req: CustomRequest, res: Response) => {
   }
 };
 
+export const findUserByEmail = async (req: Request, res: Response) => {
+  const { email } = req.body;
+
+  try {
+    const user = await prisma.user.findUnique({ where: { email: email } });
+    if (!user) {
+      res.status(StatusCodes.NOT_FOUND).json({
+        success: false,
+        message: "User not found"
+      });
+      return;
+    }
+
+    res.status(StatusCodes.OK).json({
+      success: true,
+      message: "User found successfully",
+      data: user
+    });
+    return;
+  } catch (error) {
+    res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
+      success: false,
+      message: "Internal server error",
+      error: error
+    });
+    return;
+  }
+};
+
+export const resetPassword = async (req: Request, res: Response) => {
+  const { newPassword, reTypePassword, email } = req.body;
+
+  // Input validation for passwords
+  if (!newPassword || !reTypePassword) {
+    res.status(StatusCodes.BAD_REQUEST).json({
+      success: false,
+      message: "Missing required fields"
+    });
+    return;
+  }
+
+  // Check if the new passwords match with the re-type password
+  if (newPassword !== reTypePassword) {
+    res.status(StatusCodes.BAD_REQUEST).json({
+      success: false,
+      message: "Passwords do not match"
+    });
+    return;
+  }
+
+  try {
+    const user = await prisma.user.findUnique({
+      where: { email: email },
+    });
+
+    if (!user) {
+      res.status(StatusCodes.NOT_FOUND).json({
+        success: false,
+        message: "User not found"
+      });
+      return;
+    }
+
+    const updatedUser = await prisma.user.update({
+      where: { id: user.id },
+      data: {
+        password: await bcrypt.hash(newPassword, parseInt(config.SALT_ROUNDS))
+      },
+    });
+
+    res.status(StatusCodes.OK).json({
+      success: true,
+      message: "Password updated successfully",
+      data: updatedUser
+    });
+    return;
+  } catch (error) {
+    res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
+      success: false,
+      message: "Internal server error",
+      error: error
+    });
+    return;
+  }
+}
+
 export const logoutUser = (req: Request, res: Response) => {
   res.clearCookie("token", {
     httpOnly: true,

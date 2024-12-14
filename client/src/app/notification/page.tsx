@@ -84,39 +84,47 @@ const NotificationPage = () => {
       </div>
     ) : (
       <Layout breadcrumb="Notification">
-        <div className="flex flex-col gap-4 p-4">
-          {notifications.map((notification) => (
-            <div
-              key={notification.id}
-              onClick={() => handleNotificationClick(notification.id)}
-              className={`border-b rounded-xl p-4 flex flex-col gap-2 cursor-pointer transition duration-200 bg-white`}
-            >
-              {/* Notification Title */}
-              <div className="flex items-center">
-                {notification.isRead ? null : (
-                  <span className="w-2.5 h-2.5 bg-red-500 rounded-full mr-2"></span> // Red indicator for unread notifications
-                )}
-                <h1
-                  className={`text-lg ${notification.isRead ? "" : "font-bold"}`}
-                >
-                  {notification.title}
-                </h1>
-                <span
-                  className={`${notification.isRead ? "text-gray-400" : ""
-                    } ml-auto`}
-                >
-                  {calculateTimeAgo(notification.createdAt)}
-                </span>
+        {notifications.length === 0 ? (
+          <div className="flex flex-col gap-4 p-4">
+            <p className="text-center text-gray-400">
+              No notifications found.
+            </p>
+          </div>
+        ) : (
+          <div className="flex flex-col gap-4 p-4">
+            {notifications.map((notification) => (
+              <div
+                key={notification.id}
+                onClick={() => handleNotificationClick(notification.id)}
+                className={`border-b rounded-xl p-4 flex flex-col gap-2 cursor-pointer transition duration-200`}
+              >
+                {/* Notification Title */}
+                <div className="flex items-center">
+                  {notification.isRead ? null : (
+                    <span className="w-2.5 h-2.5 bg-red-500 rounded-full mr-2"></span> // Red indicator for unread notifications
+                  )}
+                  <h1
+                    className={`text-lg ${notification.isRead ? "" : "font-bold"}`}
+                  >
+                    {notification.title}
+                  </h1>
+                  <span
+                    className={`${notification.isRead ? "text-gray-400" : ""
+                      } ml-auto`}
+                  >
+                    {calculateTimeAgo(notification.createdAt)}
+                  </span>
+                </div>
+                {/* Notification Content */}
+                <div>
+                  <p className={`${notification.isRead ? "text-gray-400" : ""}`}>
+                    {notification.message}
+                  </p>
+                </div>
               </div>
-              {/* Notification Content */}
-              <div>
-                <p className={`${notification.isRead ? "text-gray-400" : ""}`}>
-                  {notification.message}
-                </p>
-              </div>
-            </div>
-          ))}
-        </div>
+            ))}
+          </div>
+        )}
       </Layout>
     )
   );
