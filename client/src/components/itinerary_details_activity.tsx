@@ -134,7 +134,7 @@ const ItineraryDetailsActivity: React.FC<ItineraryDetailsActivityProps> = ({ act
                       <DialogTrigger asChild>
                         <Button
                           variant="ghost"
-                          className={`font-bold ${!isEditor ? "opacity-50 cursor-not-allowed" : ""}`}
+                          className={`font-bold ${!isEditor ? "opacity-20 cursor-not-allowed invisible" : ""}`}
                           disabled={!isEditor}
                         >
                           <Pencil className="mr-1 size-4" strokeWidth={2} />
