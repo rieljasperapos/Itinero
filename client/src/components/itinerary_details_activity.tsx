@@ -2,7 +2,7 @@
 import React, { useEffect, useState } from 'react';
 import { Timeline, TimelineContent, TimelineDot, TimelineHeading, TimelineItem, TimelineLine } from './timeline';
 import { Button } from '@/components/button';
-import { Pencil } from 'lucide-react';
+import { Pencil, MapPin, Clock, Footprints } from 'lucide-react';
 import CreateActivityForm from '@/app/activities/create/page';
 import { Dialog, DialogContent, DialogTrigger } from '@/components/dialog';
 import { Activity } from '@/types/activity-type';
@@ -59,7 +59,7 @@ const ItineraryDetailsActivity: React.FC<ItineraryDetailsActivityProps> = ({ act
     if (session?.user?.email) {
       // Check if the user is the creator
       const userIsCreator = createdBy === session.user.email;
-  
+
       if (userIsCreator) {
         setIsEditor(true); // Automatically set as editor
       } else {
@@ -68,8 +68,6 @@ const ItineraryDetailsActivity: React.FC<ItineraryDetailsActivityProps> = ({ act
           (collaborator) =>
             collaborator.user.email === session.user.email && collaborator.role === 'EDITOR'
         );
-  
-        console.log("User is editor: ", userIsEditor);
         setIsEditor(userIsEditor); // Set the boolean state
       }
     } else {
@@ -78,7 +76,7 @@ const ItineraryDetailsActivity: React.FC<ItineraryDetailsActivityProps> = ({ act
   }, [session, collaboratorsByItinerary, createdBy]);
 
   return (
-    <div className="inline-flex flex-col items-start justify-start whitespace-nowrap text-sm font-medium bg-background px-4 pt-4 w-full">
+    <div className="w-full">
       <Timeline>
         {activities.map((activity, index) => {
           const status = getActivityStatus(activity.startTime, activity.endTime);
@@ -97,17 +95,19 @@ const ItineraryDetailsActivity: React.FC<ItineraryDetailsActivityProps> = ({ act
               )}
 
 
-              <TimelineContent>
-                <div className="flex flex-row space-x-4 items-center justify-between w-full">
+              <TimelineContent className="flex w-full">
+                <div className="flex items-center justify-between w-full gap-4">
 
                   {/* Activity Address */}
-                  <div className="flex-1 min-w-[150px] max-w-[250px] px-2 smalltext">
-                    <p className="text-left">{activity.address}</p>
+                  <div className="flex items-center gap-2 flex-1 min-w-[150px] max-w-[150px]">
+                    <MapPin className="w-4 flex-shrink-0 text-gray-500" />
+                    <p className="truncate text-sm">{activity.address}</p>
                   </div>
 
                   {/* Activity Start and End Time */}
-                  <div className="flex-1 min-w-[100px] max-w-[150px] px-2 smalltext">
-                    <p className="text-center">
+                  <div className="flex-1 min-w-[100px] max-w-[250px] text-center flex items-center gap-2">
+                    <Clock className="w-4 flex-shrink-0 text-gray-500" />
+                    <p className="text-sm">
                       {new Date(activity.startTime).toLocaleTimeString([], {
                         hour: '2-digit',
                         minute: '2-digit'
@@ -121,12 +121,13 @@ const ItineraryDetailsActivity: React.FC<ItineraryDetailsActivityProps> = ({ act
                   </div>
 
                   {/* Activity Name */}
-                  <div className="flex-1 min-w-[150px] max-w-[250px] px-2">
-                    <p className="text-left font-bold">{activity.activityName}</p>
+                  <div className="flex-1 min-w-[150px] max-w-[250px] flex items-center gap-2">
+                    <Footprints className="w-4 flex-shrink-0 text-gray-500" />
+                    <p className="font-bold truncate">{activity.activityName}</p>
                   </div>
 
                   {/* Edit Activity Button */}
-                  <div className="flex-1 min-w-[100px] max-w-[150px] px-2 text-center smalltext">
+                  <div className="flex-shrink-0">
                     <Dialog
                       open={openActivityId === activity.id}
                       onOpenChange={(open) => setOpenActivityId(open ? activity.id : null)}
@@ -134,11 +135,12 @@ const ItineraryDetailsActivity: React.FC<ItineraryDetailsActivityProps> = ({ act
                       <DialogTrigger asChild>
                         <Button
                           variant="ghost"
-                          className={`font-bold ${!isEditor ? "opacity-20 cursor-not-allowed invisible" : ""}`}
+                          className={`font-bold transition-colors ${!isEditor ? 'opacity-20 cursor-not-allowed invisible' : ''
+                            }`}
                           disabled={!isEditor}
                         >
                           <Pencil className="mr-1 size-4" strokeWidth={2} />
-                          Edit Activity
+                          Edit
                         </Button>
                       </DialogTrigger>
                       <DialogContent className="sm:max-w-[825px]">
@@ -158,6 +160,7 @@ const ItineraryDetailsActivity: React.FC<ItineraryDetailsActivityProps> = ({ act
 
                 </div>
               </TimelineContent>
+
             </TimelineItem>
           );
         })}

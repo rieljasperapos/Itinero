@@ -35,8 +35,6 @@ const ResetPasswordPage = () => {
         `${process.env.NEXT_PUBLIC_API_BASE_URL}/find-by-email`,
         { email }
       );
-
-      console.log(response.data);
       if (response.data.success) {
         setEmailFound(true);
         toast({
@@ -53,7 +51,6 @@ const ResetPasswordPage = () => {
   };
 
   const onSubmit = async (data: z.infer<typeof ResetPasswordSchema>) => {
-    console.log(data);
     // POST request to the server to reset the password
     try {
       const response = await axios.post(

@@ -98,23 +98,23 @@ const Dashboard: React.FC = () => {
       <div className="flex flex-col gap-8 p-4">
         <div className="mediumtext flex gap-2">
           <Button
-            variant="outline"
+            variant={`${filter === "ongoing" ? "default" : "outline"}`}
             onClick={() => setFilter("ongoing")}
-            className={`${filter === "ongoing" ? "bg-primary text-white" : ""} w-full max-w-[100px]`}
+            className="w-full max-w-[100px]"
           >
             Ongoing
           </Button>
           <Button
-            variant="outline"
+            variant={`${filter === "upcoming" ? "default" : "outline"}`}
             onClick={() => setFilter("upcoming")}
-            className={`${filter === "upcoming" ? "bg-primary text-white" : ""} w-full max-w-[100px]`}
+            className="w-full max-w-[100px]"
           >
             Upcoming
           </Button>
           <Button
-            variant="outline"
+            variant={`${filter === "past" ? "default" : "outline"}`}
             onClick={() => setFilter("past")}
-            className={`${filter === "past" ? "bg-primary text-white" : ""} w-full max-w-[100px]`}
+            className="w-full max-w-[100px]"
           >
             Past
           </Button>

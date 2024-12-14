@@ -7,7 +7,9 @@ import {
   CreditCard,
   LogOut,
   Settings,
-  User
+  User,
+  Moon,
+  Sun,
 } from "lucide-react"
 
 import {
@@ -32,11 +34,14 @@ import {
 } from "@/components/sidebar"
 import { useSession, signOut } from "next-auth/react"
 import Link from "next/link"
+import { Button } from "./ui/button"
+import { useTheme } from "next-themes"
 
 export function NavUser() {
   const { isMobile } = useSidebar()
   const { data: session, status } = useSession();
-  
+  const { setTheme, theme } = useTheme();
+
   return (
     <SidebarMenu>
       <SidebarMenuItem>
@@ -66,7 +71,7 @@ export function NavUser() {
             <DropdownMenuLabel className="p-0 font-normal">
               <div className="flex items-center gap-2 px-1 py-1.5 text-left text-sm">
                 <Avatar className="h-8 w-8 rounded-lg">
-                <AvatarImage src="/avatars/shadcn.jpg" alt={session?.user.name} />
+                  <AvatarImage src="/avatars/shadcn.jpg" alt={session?.user.name} />
                   <AvatarFallback className="rounded-lg">CN</AvatarFallback>
                 </Avatar>
                 <div className="grid flex-1 text-left text-sm leading-tight">
@@ -76,19 +81,35 @@ export function NavUser() {
               </div>
             </DropdownMenuLabel>
             <DropdownMenuSeparator />
-            
-            <DropdownMenuSeparator />
+
             <DropdownMenuGroup>
               <Link href="/profile">
-              <DropdownMenuItem>
-                <User />
-                Account
-              </DropdownMenuItem>
+                <DropdownMenuItem>
+                  <User className="mr-2 size-4" />
+                  Account
+                </DropdownMenuItem>
               </Link>
+
+              {/* Theme Toggle */}
+              <DropdownMenuSeparator />
+              <DropdownMenuLabel>Theme</DropdownMenuLabel>
+              <DropdownMenuItem onClick={() => setTheme("light")}>
+                <Sun className="mr-2 size-4" />
+                <span>Light</span>
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={() => setTheme("dark")}>
+                <Moon className="mr-2 size-4" />
+                <span>Dark</span>
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={() => setTheme("system")}>
+                <BadgeCheck className="mr-2 size-4" />
+                <span>System</span>
+              </DropdownMenuItem>
             </DropdownMenuGroup>
+
             <DropdownMenuSeparator />
             <DropdownMenuItem onClick={() => signOut()}>
-              <LogOut />
+              <LogOut className="mr-2 size-4" />
               Log out
             </DropdownMenuItem>
           </DropdownMenuContent>

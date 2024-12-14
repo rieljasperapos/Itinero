@@ -96,7 +96,7 @@ const NotificationPage = () => {
               <div
                 key={notification.id}
                 onClick={() => handleNotificationClick(notification.id)}
-                className={`border-b rounded-xl p-4 flex flex-col gap-2 cursor-pointer transition duration-200 bg-white`}
+                className={`border-b rounded-xl p-4 flex flex-col gap-2 cursor-pointer transition duration-200`}
               >
                 {/* Notification Title */}
                 <div className="flex items-center">

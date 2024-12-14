@@ -106,29 +106,24 @@ const ItineraryDetails: React.FC<ItineraryDetailsProps> = ({
 
   return (
     <div className="flex flex-col h-full gap-2">
-      <div className="flex flex-row items-center space-x-4">
-        <h2 className="tripname_big">{title}</h2>
+      <div className="flex flex-col gap-2 mb-2">
+        <h2 className="text-2xl font-bold">{title}</h2>
+        <p className="text-muted-foreground">{description}</p>
       </div>
 
-      <div className="flex flex-row items-center space-x-2">
-        <p className="regulartext" style={{ fontWeight: 600 }}>{description}</p>
+      <div className="flex items-center gap-2 mt-2">
+        <CalendarDays className="size-5" strokeWidth={1.5} />
+        <p>{formattedDateStart}</p>
+        <p>—</p>
+        <p>{formattedDateEnd}</p>
       </div>
 
-      <div className="flex flex-row items-center space-x-2 mt-2">
-        <CalendarDays className="size-4" strokeWidth={1.5} />
-        <p className="smalltext" style={{ fontWeight: 600 }}>{formattedDateStart}</p>
-        <p className="smalltext" style={{ fontWeight: 600 }}>—</p>
-        <p className="smalltext" style={{ fontWeight: 600 }}>{formattedDateEnd}</p>
-      </div>
-
-      <div className="flex flex-row items-center space-x-2 mt-2">
-        <Link href={`/collaborators/invite?itineraryId=${itineraryId}`}>
-          <Button variant="link" size='tight' className="regulartext" style={{ fontWeight: '600' }}>
-            <Link2 className="mr-2 size-4" strokeWidth={1.5} />
-            Invite Collaborators
-          </Button>
-        </Link>
-      </div>
+      <Link href={`/collaborators/invite?itineraryId=${itineraryId}`}>
+        <div className="flex items-center mt-2">
+          <Link2 className="mr-2 size-5" strokeWidth={1.5} />
+          <p>Invite Collaborators</p>
+        </div>
+      </Link>
 
       <div className="flex flex-row items-center space-x-2 mt-2">
         <Button
@@ -174,7 +169,7 @@ const ItineraryDetails: React.FC<ItineraryDetailsProps> = ({
         </div>
       </Link>
 
-      <div className="flex flex-row items-center justify-between w-full mt-3 mb-2">
+      <div className="flex flex-row items-center justify-between w-full mt-6 mb-2">
         <p className="font-bold text-xl">Activities</p>
         <div className="flex flex-row items-center space-x-2">
           <Dialog open={openCreateDialog} onOpenChange={setOpenCreateDialog}>
@@ -198,6 +193,14 @@ const ItineraryDetails: React.FC<ItineraryDetailsProps> = ({
           </Dialog>
         </div>
       </div>
+
+      {Object.keys(activitiesByDate).length === 0 ? (
+        <p className="text-center text-gray-400">
+          No activities found.
+        </p>
+      ) : (
+        ""
+      )}
 
       <div className="flex-1 overflow-y-auto">
         {Object.keys(activitiesByDate).map((date) => (
