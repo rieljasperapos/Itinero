@@ -35,7 +35,7 @@ const Calendar = () => {
   return (
     <Layout breadcrumb="Calendar">
       <div>
-        <div className="max-w-6xl mx-auto p-4">
+        <div className="mx-auto p-4">
           <FullCalendar
             timeZone="Asia/Manila"
             plugins={[dayGridPlugin]}
