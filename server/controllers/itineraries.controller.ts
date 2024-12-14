@@ -2,6 +2,7 @@ import { prisma } from "../lib/prisma";
 import { Request, Response } from "express";
 import { CustomRequest } from "../types/auth.type";
 import { StatusCodes } from "http-status-codes";
+import { createItineraryService, deleteItineraryService, getItineraryByIdService, getUserItineraries, updateItineraryService } from "../services/itinerary.service";
 
 export const getItineraries = async (req: Request, res: Response) => {
   const data = await prisma.itinerary.findMany();
@@ -9,7 +10,10 @@ export const getItineraries = async (req: Request, res: Response) => {
   return;
 };
 
-export const getItineraryByUserId = async (req: CustomRequest, res: Response) => {
+export const getItineraryByUserId = async (
+  req: CustomRequest,
+  res: Response
+) => {
   const userId = req.user?.id;
 
   if (!userId) {
@@ -17,47 +21,15 @@ export const getItineraryByUserId = async (req: CustomRequest, res: Response) =>
       success: false,
       message: "Unauthorized access",
     });
+    return;
   }
 
   try {
-    // Fetch itineraries created by the user
-    const createdItineraries = await prisma.itinerary.findMany({
-      where: { createdById: userId },
-      include: {
-        activities: true,
-        collaborators: {
-          include: {
-            user: { select: { id: true, name: true, email: true } },
-          },
-        },
-      },
-    });
-
-    // Fetch itineraries where the user is a collaborator
-    const collaboratedItineraries = await prisma.itinerary.findMany({
-      where: { collaborators: { some: { userId } } },
-      include: {
-        activities: true,
-        collaborators: {
-          include: {
-            user: { select: { id: true, name: true, email: true } },
-          },
-        },
-      },
-    });
-
-    // Combine results and remove duplicates
-    const combinedItineraries = [
-      ...createdItineraries,
-      ...collaboratedItineraries.filter(
-        (collaborated) =>
-          !createdItineraries.some((created) => created.id === collaborated.id)
-      ),
-    ];
+    const itineraries = await getUserItineraries(userId);
 
     res.status(StatusCodes.OK).json({
       success: true,
-      data: combinedItineraries,
+      data: itineraries,
     });
   } catch (error) {
     console.error("Error fetching itineraries:", error);
@@ -67,43 +39,34 @@ export const getItineraryByUserId = async (req: CustomRequest, res: Response) =>
       error: error instanceof Error ? error.message : "Unknown error",
     });
   }
-  return;
 };
 
 export const getItineraryById = async (req: Request, res: Response) => {
   const { id } = req.params;
 
   try {
-    const data = await prisma.itinerary.findUnique({
-      where: {
-        id: Number(id),
-      },
-      include: {
-        collaborators: {
-          include: {
-            user: { select: { id: true, name: true, email: true } },
-          }
-        },
-        createdBy: {
-          select: { id: true, name: true, email: true },
-        }
-      },
-    });
+    const data = await getItineraryByIdService(Number(id));
 
     if (!data) {
-      res.status(StatusCodes.NOT_FOUND).send({ message: "Itinerary not found" });
+      res
+        .status(StatusCodes.NOT_FOUND)
+        .send({ message: "Itinerary not found" });
       return;
     }
 
     res.status(StatusCodes.OK).send({ data });
   } catch (error) {
     console.error("Error fetching itinerary:", error);
-    res.status(StatusCodes.INTERNAL_SERVER_ERROR).send({ message: "An error occurred while fetching the itinerary" });
+    res
+      .status(StatusCodes.INTERNAL_SERVER_ERROR)
+      .send({ message: "An error occurred while fetching the itinerary" });
   }
 };
 
-
-export const getActivitiesByItineraryId = async (req: Request, res: Response) => {
+export const getActivitiesByItineraryId = async (
+  req: Request,
+  res: Response
+) => {
   const { itineraryId } = req.params;
 
   try {
@@ -114,13 +77,17 @@ export const getActivitiesByItineraryId = async (req: Request, res: Response) =>
     });
 
     if (!activities || activities.length === 0) {
-      res.status(StatusCodes.NOT_FOUND).send({ message: "No activities found for this itinerary" });
+      res
+        .status(StatusCodes.NOT_FOUND)
+        .send({ message: "No activities found for this itinerary" });
     }
 
     res.status(StatusCodes.OK).send({ data: activities });
   } catch (error) {
     console.error(error);
-    res.status(StatusCodes.INTERNAL_SERVER_ERROR).send({ error: "An error occurred while fetching activities" });
+    res
+      .status(StatusCodes.INTERNAL_SERVER_ERROR)
+      .send({ error: "An error occurred while fetching activities" });
   }
   return;
 };
@@ -129,67 +96,59 @@ export const createItinerary = async (req: CustomRequest, res: Response) => {
   try {
     const { title, description, startDate, endDate } = req.body;
     const user = req.user;
-    
+
     if (!title || !description || !startDate || !endDate) {
-      res.status(StatusCodes.BAD_REQUEST).send({ error: "Missing required fields" });
+      res
+        .status(StatusCodes.BAD_REQUEST)
+        .send({ error: "Missing required fields" });
       return;
     }
 
-    const data = await prisma.itinerary.create({
-      data: {
-        title: title,
-        description: description,
-        startDate: startDate,
-        endDate: endDate,
-        createdById: user?.id,
-      },
+    const data = await createItineraryService({
+      title,
+      description,
+      startDate,
+      endDate,
+      createdById: user?.id,
     });
-    res.status(StatusCodes.OK).send({ data: data });
+
+    res.status(StatusCodes.OK).send({ data });
   } catch (error) {
     console.error(error);
-    res.status(StatusCodes.INTERNAL_SERVER_ERROR).send({ error: error, message: "An error occurred while creating the itinerary" });
-    return;
+    res
+      .status(StatusCodes.INTERNAL_SERVER_ERROR)
+      .send({
+        error: error,
+        message: "An error occurred while creating the itinerary",
+      });
   }
 };
 
-export const updateItinerary = async (req: CustomRequest, res: Response): Promise<void> => {
+export const updateItinerary = async (
+  req: CustomRequest,
+  res: Response
+): Promise<void> => {
   const { id } = req.params;
   const { title, description, startDate, endDate } = req.body;
   const userId = req.user?.id;
 
   try {
-    // Check if the itinerary exists
-    const itinerary = await prisma.itinerary.findUnique({
-      where: { id: Number(id) },
+    const result = await updateItineraryService({
+      id: Number(id),
+      title,
+      description,
+      startDate,
+      endDate,
+      userId,
     });
 
-    if (!itinerary) {
-      res.status(StatusCodes.NOT_FOUND).json({
+    if (result.error) {
+      res.status(result.status).json({
         success: false,
-        message: "Itinerary not found",
+        message: result.message,
       });
       return;
     }
-
-    // Check if the user has permission to edit
-    if (itinerary.createdById !== userId) {
-      res.status(StatusCodes.FORBIDDEN).json({
-        success: false,
-        message: "You do not have permission to edit this itinerary",
-      });
-      return;
-    }
-
-    // Update the itinerary
-    await prisma.itinerary.update({
-      where: { id: Number(id) },
-      data: {
-        title,
-        description,
-        startDate,
-        endDate,
-      },
-    });
 
     res.status(StatusCodes.OK).json({
       success: true,
@@ -205,37 +164,23 @@ export const updateItinerary = async (req: CustomRequest, res: Response): Promis
   }
 };
 
-export const deleteItinerary = async (req: CustomRequest, res: Response): Promise<void> => {
+export const deleteItinerary = async (
+  req: CustomRequest,
+  res: Response
+): Promise<void> => {
   const { id } = req.params;
   const userId = req.user?.id;
 
   try {
-    // Check if the itinerary exists
-    const itinerary = await prisma.itinerary.findUnique({
-      where: { id: Number(id) },
-    });
+    const result = await deleteItineraryService(Number(id), userId);
 
-    if (!itinerary) {
-      res.status(StatusCodes.NOT_FOUND).json({
+    if (result.error) {
+      res.status(result.status).json({
         success: false,
-        message: "Itinerary not found",
+        message: result.message,
       });
       return;
     }
-
-    // Check if the user has permission to delete
-    if (itinerary.createdById !== userId) {
-      res.status(StatusCodes.FORBIDDEN).json({
-        success: false,
-        message: "You do not have permission to delete this itinerary",
-      });
-      return;
-    }
-
-    // Delete the itinerary
-    await prisma.itinerary.delete({
-      where: { id: Number(id) },
-    });
 
     res.status(StatusCodes.OK).json({
       success: true,
