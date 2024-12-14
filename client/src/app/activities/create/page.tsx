@@ -242,7 +242,6 @@ const CreateActivityForm: React.FC<CreateActivityFormProps> = ({
                           disabled={(date) => {
                             // Normalize the time of both dates to midnight
                             const normalizeToMidnight = (d: Date) => {
-                              // console.log(activity?.startTime);
                               const normalized = new Date(itineraryDateStart);
                               normalized.setHours(0, 0, 0, 0); // Set time to 00:00:00
                               return normalized;
