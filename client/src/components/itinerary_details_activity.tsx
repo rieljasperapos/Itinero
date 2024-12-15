@@ -9,6 +9,13 @@ import { Activity } from '@/types/activity-type';
 import { useSession } from 'next-auth/react';
 import axios from 'axios';
 import { Collaborator } from '@/types/collaborator-type';
+import { useRouter } from 'next/navigation';
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/tooltip"
 
 interface ItineraryDetailsActivityProps {
   activities: Activity[];
@@ -25,6 +32,9 @@ const ItineraryDetailsActivity: React.FC<ItineraryDetailsActivityProps> = ({ act
   const [isEditor, setIsEditor] = useState<boolean>(false);
   const [createdBy, setCreatedBy] = useState<any>("");
   const { data: session, status } = useSession();
+  const [lat, setLat] = useState<number>(0);
+  const [lng, setLng] = useState<number>(0);
+  const router = useRouter();
 
   const getActivityStatus = (startTime: string, endTime: string): 'current' | 'done' | 'default' => {
     const now = new Date();
@@ -75,6 +85,31 @@ const ItineraryDetailsActivity: React.FC<ItineraryDetailsActivityProps> = ({ act
     }
   }, [session, collaboratorsByItinerary, createdBy]);
 
+  const handleMapClick = (address: string) => async () => {
+    const prepareAddressForGeocoder = (addr: string) => {
+      return encodeURIComponent(addr.replace(/\s+/g, '+'));
+    };
+
+    const preparedAddress = prepareAddressForGeocoder(address);
+
+    try {
+      const response = await axios.get(
+        `https://api.opencagedata.com/geocode/v1/json?q=${preparedAddress}&key=a1cc09f7cf7c4ad5bdc86716c541b89c`
+      );
+
+      if (response.data.results && response.data.results.length > 0) {
+        const { lat, lng } = response.data.results[0].geometry;
+
+        // Redirect to the map page with query parameters
+        router.push(`/map?Lat=${lat}&Lng=${lng}`);
+      } else {
+        console.error('No results found for the given address.');
+      }
+    } catch (error) {
+      console.error('Error fetching geocode data:', error);
+    }
+  };
+
   return (
     <div className="w-full">
       <Timeline>
@@ -83,7 +118,7 @@ const ItineraryDetailsActivity: React.FC<ItineraryDetailsActivityProps> = ({ act
           const isLastActivity = index === activities.length - 1;
 
           return (
-            <TimelineItem key={activity.id}>
+            <TimelineItem key={activity.id} className="group">
               <TimelineHeading className='regulartext'>{activity.locationName}</TimelineHeading>
 
               <TimelineDot status={status === 'current' ? 'current' : status === 'done' ? 'done' : 'default'} />
@@ -99,10 +134,19 @@ const ItineraryDetailsActivity: React.FC<ItineraryDetailsActivityProps> = ({ act
                 <div className="flex items-center justify-between w-full gap-4">
 
                   {/* Activity Address */}
-                  <div className="flex items-center gap-2 flex-1 min-w-[150px] max-w-[150px]">
-                    <MapPin className="w-4 flex-shrink-0 text-gray-500" />
-                    <p className="truncate text-sm">{activity.address}</p>
-                  </div>
+                  <TooltipProvider>
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <div className="flex items-center gap-2 flex-1 min-w-[150px] max-w-[150px] group cursor-pointer" onClick={handleMapClick(activity.address)}>
+                          <MapPin className="w-4 flex-shrink-0 text-gray-500 group-hover:animate-bounce group-hover:text-red-500 group-hover:font-bold" />
+                          <p className="truncate text-sm group-hover:underline">{activity.address}</p>
+                        </div>
+                      </TooltipTrigger>
+                      <TooltipContent>
+                        <p>View on map</p>
+                      </TooltipContent>
+                    </Tooltip>
+                  </TooltipProvider>
 
                   {/* Activity Start and End Time */}
                   <div className="flex-1 min-w-[100px] max-w-[250px] text-center flex items-center gap-2">

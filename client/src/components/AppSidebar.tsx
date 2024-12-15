@@ -6,6 +6,7 @@ import {
   Home,
   Calendar,
   Bell,
+  Map
 } from "lucide-react";
 
 import { NavItems } from "@/components/nav-items";
@@ -68,6 +69,11 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         name: `Notifications (${unreadCount})`, // Append count here
         url: "/notification",
         icon: Bell,
+      },
+      {
+        name: `Map`,
+        url: "/map",
+        icon: Map
       },
     ],
   };
