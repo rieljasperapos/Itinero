@@ -94,7 +94,7 @@ const ItineraryDetailsActivity: React.FC<ItineraryDetailsActivityProps> = ({ act
 
     try {
       const response = await axios.get(
-        `https://api.opencagedata.com/geocode/v1/json?q=${preparedAddress}&key=a1cc09f7cf7c4ad5bdc86716c541b89c`
+        `https://api.opencagedata.com/geocode/v1/json?q=${preparedAddress}&key=${process.env.NEXT_PUBLIC_OPEN_CAGE_KEY}`
       );
 
       if (response.data.results && response.data.results.length > 0) {
