@@ -23,6 +23,10 @@
   width: 100% !important;
 }
 
+.fc .fc-popover {
+  background-color: darkgray
+}
+
 .fc .fc-col-header {
   width: 100% !important;
 }
