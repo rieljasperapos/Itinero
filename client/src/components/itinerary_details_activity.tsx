@@ -32,8 +32,6 @@ const ItineraryDetailsActivity: React.FC<ItineraryDetailsActivityProps> = ({ act
   const [isEditor, setIsEditor] = useState<boolean>(false);
   const [createdBy, setCreatedBy] = useState<any>("");
   const { data: session, status } = useSession();
-  const [lat, setLat] = useState<number>(0);
-  const [lng, setLng] = useState<number>(0);
   const router = useRouter();
 
   const getActivityStatus = (startTime: string, endTime: string): 'current' | 'done' | 'default' => {
@@ -94,7 +92,7 @@ const ItineraryDetailsActivity: React.FC<ItineraryDetailsActivityProps> = ({ act
 
     try {
       const response = await axios.get(
-        `https://api.opencagedata.com/geocode/v1/json?q=${preparedAddress}&key=${process.env.NEXT_PUBLIC_OPEN_CAGE_KEY}`
+        `https://api.opencagedata.com/geocode/v1/json?q=${preparedAddress}&key=${process.env.NEXT_PUBLIC_GEOCODER_KEY}`
       );
 
       if (response.data.results && response.data.results.length > 0) {
