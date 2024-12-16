@@ -8,7 +8,7 @@ export default function MyMap(props: any) {
 
   return (
     <div className="h-[75vh]">
-    <MapContainer center={position} zoom={zoom} scrollWheelZoom={true} style={{ height: "100%", width: "100%", borderRadius: "30px" }}>
+    <MapContainer center={position} zoom={zoom} scrollWheelZoom={true} style={{ height: "100%", width: "100%", borderRadius: "30px", zIndex: 5 }}>
       <TileLayer
         attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
         url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
