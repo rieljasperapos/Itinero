@@ -16,8 +16,12 @@ import { Button } from "@/components/button";
 import { signIn, useSession } from "next-auth/react";
 import { redirect } from "next/navigation";
 import Link from "next/link";
+import { useState } from "react";
+import { Eye, EyeOff } from "lucide-react";
 
 export const LoginForm = () => {
+  const [showPassword, setShowPassword] = useState(false);
+  const [loading, setLoading] = useState(false);
   const { data: session, status } = useSession();
   if (session?.user) {
     redirect("/")
@@ -32,6 +36,7 @@ export const LoginForm = () => {
   });
 
   const onSubmit = async (data: z.infer<typeof LoginSchema>) => {
+    setLoading(true);
     const res = await signIn("credentials", {
       username: data.username,
       password: data.password,
@@ -78,11 +83,25 @@ export const LoginForm = () => {
                     <FormItem>
                       <FormLabel>Password</FormLabel>
                       <FormControl>
-                        <Input
-                          type="password"
-                          placeholder="Enter your password"
-                          {...field}
-                        />
+                        <div style={{ position: 'relative' }}>
+                          <Input
+                            type={showPassword ? 'text' : 'password'}
+                            placeholder="Enter your password"
+                            {...field}
+                          />
+                          <span
+                            onClick={() => setShowPassword(!showPassword)}
+                            style={{
+                              position: 'absolute',
+                              right: '10px',
+                              top: '50%',
+                              transform: 'translateY(-50%)',
+                              cursor: 'pointer',
+                            }}
+                          >
+                            {showPassword ? <EyeOff /> : <Eye />} {/* Adjust icons as needed */}
+                          </span>
+                        </div>
                       </FormControl>
                     </FormItem>
                   )}
@@ -103,7 +122,7 @@ export const LoginForm = () => {
                   type="submit"
                   className="bg-[#3A86FF] hover:bg-[#77A4EC]"
                 >
-                  Submit
+                  {loading ? "Loading..." : "Submit"}
                 </Button>
               </div>
             </form>
