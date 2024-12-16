@@ -17,8 +17,15 @@ import { Button } from "@/components/button";
 import axios from "axios";
 import { useToast } from "@/hooks/use-toast";
 import { ToastAction } from "@/components/ui/toast";
+import { Eye, EyeOff } from "lucide-react";
+import { useState } from "react";
+import { useRouter } from "next/navigation";
 
 export const RegisterForm = () => {
+  const navigate = useRouter();
+  const [loading, setLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const { toast } = useToast();
   const form = useForm<z.infer<typeof RegisterSchema>>({
     resolver: zodResolver(RegisterSchema),
@@ -32,6 +39,7 @@ export const RegisterForm = () => {
   });
 
   const onSubmit = async (data: z.infer<typeof RegisterSchema>) => {
+    setLoading(true);
     // POST Request to server
     axios.post(`${process.env.NEXT_PUBLIC_API_BASE_URL}/register`, {
       name: data.name,
@@ -39,25 +47,27 @@ export const RegisterForm = () => {
       username: data.username,
       password: data.password,
     })
-    .then((response) => {
-      if (!response.data.valid) {
-        toast({
-          variant: "destructive",
-          title: "Uh oh! Something went wrong",
-          description: response.data.message,
-          action: <ToastAction altText="Try again">Try again</ToastAction>
-        })
-      } else {
-        toast({
-          variant: "default",
-          title: "Success!",
-          description: "You've successfully created an account",
-        })
-      }
-    })
-    .catch((error) => {
-      console.error("Error creating account:", error);
-    })
+      .then((response) => {
+        if (!response.data.valid) {
+          toast({
+            variant: "destructive",
+            title: "Uh oh! Something went wrong",
+            description: response.data.message,
+            action: <ToastAction altText="Try again">Try again</ToastAction>
+          })
+        } else {
+          toast({
+            variant: "default",
+            title: "Success!",
+            description: "You've successfully created an account",
+          })
+
+          navigate.push("/auth/signin")
+        }
+      })
+      .catch((error) => {
+        console.error("Error creating account:", error);
+      })
   };
 
   return (
@@ -124,11 +134,25 @@ export const RegisterForm = () => {
                 <FormItem>
                   <FormLabel>Password</FormLabel>
                   <FormControl>
-                    <Input
-                      type="password"
-                      placeholder="Enter your password"
-                      {...field}
-                    />
+                    <div style={{ position: 'relative' }}>
+                      <Input
+                        type={showPassword ? 'text' : 'password'}
+                        placeholder="Enter your password"
+                        {...field}
+                      />
+                      <span
+                        onClick={() => setShowPassword(!showPassword)}
+                        style={{
+                          position: 'absolute',
+                          right: '10px',
+                          top: '50%',
+                          transform: 'translateY(-50%)',
+                          cursor: 'pointer',
+                        }}
+                      >
+                        {showPassword ? <EyeOff /> : <Eye />} {/* Adjust icons as needed */}
+                      </span>
+                    </div>
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -141,18 +165,32 @@ export const RegisterForm = () => {
                 <FormItem>
                   <FormLabel>Confirm Password</FormLabel>
                   <FormControl>
-                    <Input
-                      type="password"
-                      placeholder="Enter your password"
-                      {...field}
-                    />
+                    <div style={{ position: 'relative' }}>
+                      <Input
+                        type={showConfirmPassword ? 'text' : 'password'}
+                        placeholder="Confirm your password"
+                        {...field}
+                      />
+                      <span
+                        onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                        style={{
+                          position: 'absolute',
+                          right: '10px',
+                          top: '50%',
+                          transform: 'translateY(-50%)',
+                          cursor: 'pointer',
+                        }}
+                      >
+                        {showConfirmPassword ? <EyeOff /> : <Eye />} {/* Adjust icons as needed */}
+                      </span>
+                    </div>
                   </FormControl>
                   <FormMessage />
                 </FormItem>
               )}
             />
             <Button type="submit" className="bg-[#3A86FF] hover:bg-[#77A4EC]">
-              Submit
+              {loading ? 'Loading...' : 'Submit'}
             </Button>
           </div>
         </form>
