@@ -2,6 +2,7 @@ import { Response } from "express";
 import { getNotifications, inviteCollaborator } from "../services/collaborator.service";
 import { CustomRequest } from "../types/auth.type";
 import { StatusCodes } from "http-status-codes";
+import HttpException from "../utils/error.utils";
 
 export const inviteUser = async (req: CustomRequest, res: Response) => {
   const { itineraryId, email, role } = req.body;
@@ -15,8 +16,15 @@ export const inviteUser = async (req: CustomRequest, res: Response) => {
   try {
     const result = await inviteCollaborator(itineraryId, inviterId, email, role);
     res.status(StatusCodes.OK).send(result);
-  } catch (error) {
-    res.status(StatusCodes.INTERNAL_SERVER_ERROR).send({ error: error, message: `User with email ${email} is not found`, found: false });
+  } catch (error: any) {
+    if (error instanceof HttpException) {
+      res.status(error.status).send({ error: error.message });
+    } else {
+      res.status(StatusCodes.INTERNAL_SERVER_ERROR).send({
+        error: "An unexpected error occurred",
+        details: error.message,
+      });
+    }
   }
   return;
 }
