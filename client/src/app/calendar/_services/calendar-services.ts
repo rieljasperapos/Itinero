@@ -1,6 +1,6 @@
 import axios from "axios";
 import { format, toZonedTime } from 'date-fns-tz';
-import { Activity } from "./types";
+import { Activity } from "../_types/types";
 
 export const fetchActivities = async (accessToken: string): Promise<Activity[]> => {
   try {
