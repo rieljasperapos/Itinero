@@ -1,5 +1,6 @@
 import { Metadata } from "next"
 import MapClientWrapper from "./_components/map-client-wrapper"
+import { Suspense } from "react";
 
 export const metadata: Metadata = {
   title: "Map | Itinero",
@@ -8,7 +9,9 @@ export const metadata: Metadata = {
 
 const MapPage = () => {
   return (
-    <MapClientWrapper />
+    <Suspense>
+      <MapClientWrapper />
+    </Suspense>
   )
 }
 

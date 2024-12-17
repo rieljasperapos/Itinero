@@ -32,6 +32,7 @@ const Dashboard: React.FC = () => {
   const { data: session, status } = useSession();
   const [itineraries, setItineraries] = useState<Itinerary[]>([]);
   const [isDialogOpen, setIsDialogOpen] = useState<boolean>(false); // State to control dialog
+  const [loading, setLoading] = useState<boolean>(true);
 
   if (!session?.user) {
     redirect("/auth/signin");
@@ -65,6 +66,8 @@ const Dashboard: React.FC = () => {
       setItineraries(response.data.data);
     } catch (error) {
       console.error("Error fetching itineraries:", error);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -155,12 +158,12 @@ const Dashboard: React.FC = () => {
         </div>
 
         <div>
-          {filteredItineraries.length === 0 ? (
-            <>
-              <p className="text-center text-gray-400">
-                No {filter} Itineraries
-              </p>
-            </>
+          {loading ? (
+            <p className="text-center text-gray-400">Loading...</p>
+          ) : filteredItineraries.length === 0 ? (
+            <p className="text-center text-gray-400">
+              No {filter} Itineraries
+            </p>
           ) : (
             <>
               {filteredItineraries.map((itinerary) => (

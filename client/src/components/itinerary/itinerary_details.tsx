@@ -116,16 +116,11 @@ const ItineraryDetails: React.FC<ItineraryDetailsProps> = ({
         </div>
       </Link>
 
-      <div className="flex flex-row items-center space-x-2">
-        <Button
-          variant="link"
-          size="tight"
-          className="text-sm"
-          onClick={() => setOpenEditDialog(true)}
-        >
-          <Pencil className="mr-2 size-4" strokeWidth={1.5} />
+      <div className="flex flex items-center space-x-2 group cursor-pointer" onClick={() => setOpenEditDialog(true)}>
+        <Pencil className="size-4" strokeWidth={1.5} />
+        <span className="text-sm group-hover:underline">
           Edit Trip Info
-        </Button>
+        </span>
       </div>
 
       {/* Edit Itinerary Dialog */}

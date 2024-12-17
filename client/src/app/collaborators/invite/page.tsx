@@ -1,5 +1,6 @@
+import { Suspense } from "react";
+import InviteCollaborator from "./_components/collab-invite";
 import { Metadata } from "next";
-import InviteCollaborator from "./_components/collab-invite"
 
 export const metadata: Metadata = {
   title: "Invite | Itinero",
@@ -8,7 +9,9 @@ export const metadata: Metadata = {
 
 const InviteCollaboratorPage = () => {
   return (
-    <InviteCollaborator />
+    <Suspense fallback={<p>Loading...</p>}>
+      <InviteCollaborator />
+    </Suspense>
   )
 }
 

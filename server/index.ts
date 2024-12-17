@@ -1,14 +1,14 @@
 import express from "express";
-import { config } from "./utils/config.utils";
+import { config } from "./src/utils/config.utils";
 import cors from "cors"
 import cookieParser from "cookie-parser";
 import helmet from "helmet";
 
-import userRouter from "./routes/user.routes";
-import itineraryRouter from "./routes/itineraries.routes";
-import activityRouter from "./routes/activities.routes";
-import collabRouter from "./routes/collab.routes";
-import notificationRouter from "./routes/notification.routes";
+import userRouter from "./src/routes/user.routes";
+import itineraryRouter from "./src/routes/itineraries.routes";
+import activityRouter from "./src/routes/activities.routes";
+import collabRouter from "./src/routes/collab.routes";
+import notificationRouter from "./src/routes/notification.routes";
 
 const app = express();
 app.use(cors({
