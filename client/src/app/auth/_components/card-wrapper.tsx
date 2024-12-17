@@ -4,7 +4,7 @@ import {
   CardFooter,
   CardHeader,
   CardTitle,
-} from "@/components/card";
+} from "@/components/ui/card";
 import { CardWrapperProps, RegisterProps, LoginProps } from "@/types/auth-type";
 import Image from "next/image";
 

@@ -2,7 +2,7 @@ import React from 'react';
 import { UsersRound } from 'lucide-react';
 import { Clock } from 'lucide-react';
 import { format } from 'date-fns';
-import '../app/globals.css';
+import '../../app/globals.css';
 
 interface ItineraryCardProps {
     title: string;

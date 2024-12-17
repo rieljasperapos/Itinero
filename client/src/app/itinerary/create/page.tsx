@@ -6,8 +6,8 @@ import {
   FormField,
   FormItem,
   FormLabel,
-} from "@/components/form";
-import { Input } from "@/components/input";
+} from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
 import { format } from "date-fns";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
@@ -17,8 +17,8 @@ import {
   Popover,
   PopoverContent,
   PopoverTrigger,
-} from "@/components/popover";
-import { Calendar } from "@/components/calendar";
+} from "@/components/ui/popover";
+import { Calendar } from "@/components/ui/calendar";
 import { CalendarIcon } from "lucide-react";
 import axios from "axios";
 import { useSession } from "next-auth/react";

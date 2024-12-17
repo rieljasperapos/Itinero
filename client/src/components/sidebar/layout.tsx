@@ -5,24 +5,24 @@ import {
   BreadcrumbItem,
   BreadcrumbList,
   BreadcrumbPage,
-} from "@/components/breadcrumb";
-import { Separator } from "@/components/separator";
+} from "@/components/ui/breadcrumb";
+import { Separator } from "@/components/ui/separator";
 import {
   SidebarInset,
   SidebarProvider,
   SidebarTrigger,
-} from "@/components/sidebar";
+} from "@/components/ui/sidebar";
 import { LayoutProps } from "@/types/layout-type";
-import DotPattern from "./dot-pattern";
-import { Moon, MoonIcon, Sun } from "lucide-react"
+import DotPattern from "../ui/dot-pattern";
+import { Moon, Sun } from "lucide-react"
 import { useTheme } from "next-themes"
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
-} from "@/components/dropdown-menu"
-import { Button } from "./ui/button";
+} from "@/components/ui/dropdown-menu"
+import { Button } from "../ui/button";
 
 const Layout = ({ children, breadcrumb }: LayoutProps) => {
   const { setTheme, theme } = useTheme();

@@ -3,7 +3,7 @@ import FullCalendar from "@fullcalendar/react";
 import dayGridPlugin from "@fullcalendar/daygrid";
 import { useSession } from "next-auth/react";
 import { useEffect, useState } from "react";
-import Layout from "@/components/layout";
+import Layout from "@/components/sidebar/layout";
 import "../_lib/custom-calendar.css";
 import { redirect } from "next/navigation";
 import { fetchActivities } from "../_services/calendar-services";

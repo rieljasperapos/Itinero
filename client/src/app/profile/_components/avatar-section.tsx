@@ -1,4 +1,4 @@
-import { Avatar, AvatarImage, AvatarFallback } from "@/components/avatar";
+import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 
 export const AvatarSection = ({ name, username }: { name: string | undefined; username: string | undefined }) => (
   <div className="justify-center p-4 flex flex-col items-center gap-3">

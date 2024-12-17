@@ -1,6 +1,6 @@
 "use client";
 import { redirect, useSearchParams } from "next/navigation";
-import Layout from "@/components/layout";
+import Layout from "@/components/sidebar/layout";
 import * as z from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
@@ -12,15 +12,15 @@ import {
   FormField,
   FormItem,
   FormLabel,
-} from "@/components/form";
-import { Input } from "@/components/input";
+} from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/select"
+} from "@/components/ui/select"
 import { useSession } from "next-auth/react";
 import { useToast } from "@/hooks/use-toast";
 import { ToastAction } from "@/components/ui/toast";

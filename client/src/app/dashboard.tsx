@@ -1,8 +1,8 @@
 "use client";
 import React, { useEffect, useState } from "react";
-import { Button } from "@/components/button";
+import { Button } from "@/components/ui/button";
 import { CirclePlus } from "lucide-react";
-import ItineraryCard from "@/components/itinerary_card";
+import ItineraryCard from "@/components/itinerary/itinerary_card";
 import { useSession } from "next-auth/react";
 import { redirect } from "next/navigation";
 import * as VisuallyHidden from "@radix-ui/react-visually-hidden";
@@ -14,15 +14,15 @@ import {
   DialogFooter,
   DialogTitle,
   DialogTrigger,
-} from "@/components/dialog";
+} from "@/components/ui/dialog";
 import CreateItineraryForm from "./itinerary/create/page";
-import Layout from "@/components/layout";
+import Layout from "@/components/sidebar/layout";
 import {
   Sheet,
   SheetContent,
   SheetTrigger,
-} from "@/components/sheet";
-import ItineraryDetails from "@/components/itinerary_details";
+} from "@/components/ui/sheet";
+import ItineraryDetails from "@/components/itinerary/itinerary_details";
 import { Itinerary } from "@/types/itinerary-type";
 
 const Dashboard: React.FC = () => {

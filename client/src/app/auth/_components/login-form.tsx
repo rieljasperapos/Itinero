@@ -10,9 +10,9 @@ import {
   FormField,
   FormItem,
   FormLabel,
-} from "@/components/form";
-import { Input } from "@/components/input";
-import { Button } from "@/components/button";
+} from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
 import { signIn, useSession } from "next-auth/react";
 import { redirect } from "next/navigation";
 import Link from "next/link";
