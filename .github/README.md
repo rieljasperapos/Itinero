@@ -46,7 +46,7 @@ Ensure that you have the following installed:
     ```
     cp .env.example .env
     ```
-   Then, open the `.env` file and update the following variables as needed.
+    Then, open the newly created `.env` file and update the following variables as needed. ***Do NOT edit nor USE the `.env.example` file***.
 
 5. **Set up the database**:
    - For guidance on setting up PostgreSQL using pgAdmin, refer to the [pgAdmin documentation](https://www.pgadmin.org/docs/).
@@ -89,7 +89,7 @@ Ensure that you have the following installed:
     ```
     cp .env.example .env.local
     ```
-   Then, open the `.env.local` file and update the following variables as needed:
+   Then, open the newly created `.env.local`.  file and update the following variables as needed:
 
     - **AUTH_SECRET**: Your secret key for authentication.
     
