@@ -27,6 +27,7 @@ interface ItineraryDetailsActivityProps {
 }
 
 const ItineraryDetailsActivity: React.FC<ItineraryDetailsActivityProps> = ({ activities, itineraryId, refreshActivities, collaborators, dateStart, dateEnd }) => {
+  const [loadingMapClick, setLoadingMapClick] = useState<boolean>(false);
   const [openActivityId, setOpenActivityId] = useState<number | null>(null);
   const [collaboratorsByItinerary, setCollaboratorsByItinerary] = useState<any[]>(collaborators);
   const [isEditor, setIsEditor] = useState<boolean>(false);
@@ -84,6 +85,7 @@ const ItineraryDetailsActivity: React.FC<ItineraryDetailsActivityProps> = ({ act
   }, [session, collaboratorsByItinerary, createdBy]);
 
   const handleMapClick = (address: string) => async () => {
+    setLoadingMapClick(true);
     const prepareAddressForGeocoder = (addr: string) => {
       return encodeURIComponent(addr.replace(/\s+/g, '+'));
     };
@@ -105,6 +107,8 @@ const ItineraryDetailsActivity: React.FC<ItineraryDetailsActivityProps> = ({ act
       }
     } catch (error) {
       console.error('Error fetching geocode data:', error);
+    } finally {
+      setLoadingMapClick(false);
     }
   };
 
@@ -135,7 +139,7 @@ const ItineraryDetailsActivity: React.FC<ItineraryDetailsActivityProps> = ({ act
                   <TooltipProvider>
                     <Tooltip>
                       <TooltipTrigger asChild>
-                        <div className="flex items-center gap-2 flex-1 min-w-[150px] max-w-[150px] group cursor-pointer" onClick={handleMapClick(activity.address)}>
+                        <div className={`flex items-center gap-2 flex-1 min-w-[150px] max-w-[150px] group ${loadingMapClick ? "cursor-wait" : "cursor-pointer"}`} onClick={handleMapClick(activity.address)}>
                           <MapPin className="w-4 flex-shrink-0 text-gray-500 group-hover:animate-bounce group-hover:text-red-500 group-hover:font-bold" />
                           <p className="truncate text-sm group-hover:underline">{activity.address}</p>
                         </div>
