@@ -2,11 +2,20 @@
 
 ![](../images/itinero-banner.png)
 
+## What is `Itinero`?
+`Itinero` is a fully fleshed-out travel itinerary planner. Itinero is capable of the following features:
+- **Itineraries and Activities**: Users can create and modify itineraries and activities (e.g. notes, destinations).
+- **Collaboration**: Users are able to collaborate across itineraries, provided they are invited.
+- **Notifications**: Users will be notified on this page whether they are invited as a collaborator or viewer for an itinerary.
+- **Map Integration**: to visualize addresses of activities.
+
+
 ## Deployed Website
 For the fully deployed website, [click here](https://travel-itinero.vercel.app/) or paste this into your browser's URL:
 ```
 https://travel-itinero.vercel.app/
 ```
+*If you are having issues with the website, please try and use another browser.*
 
 ## Installation
 
@@ -118,6 +127,7 @@ Ensure that you have the following installed:
 
 - If you encounter issues with database connections, ensure that PostgreSQL is running and that your connection string is correct.
 - For any errors related to Prisma migrations, check your schema for any inconsistencies.
+- For any issues navigating the website, try to use another browser (e.g. Edge, Firefox, Chrome)
 
 
 
