@@ -7,6 +7,7 @@ import { loadNotifications, handleMarkAsRead } from "../_services/notification-a
 import { calculateTimeAgo } from "../_utils/calculate-time-ago";
 
 const Notifications = () => {
+  const [loading, setLoading] = useState(true);
   const { data: session, status } = useSession();
   const [notifications, setNotifications] = useState<any[]>([]);
 
@@ -18,6 +19,8 @@ const Notifications = () => {
           setNotifications(data);
         } catch (error) {
           console.error(error);
+        } finally {
+          setLoading(false);
         }
       };
       fetchData();
@@ -37,7 +40,7 @@ const Notifications = () => {
   };
 
   return (
-    status === "loading" ? (
+    status === "loading" || loading ? (
       <div className="flex justify-center items-center h-screen">
         <div className="animate-spin rounded-full h-12 w-12 border-t-4 border-blue-500 border-solid border-gray-300" />
         <span className="sr-only">Loading...</span>
