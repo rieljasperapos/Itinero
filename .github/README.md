@@ -26,7 +26,7 @@ Ensure that you have the following installed:
 1. Clone the repository:
 
     ```
-    git clone https://github.com/rieljasperapos/travel-itinerary-app.git
+    git clone https://github.com/rieljasperapos/Itinero.git
     ```
 
 2. Navigate to the *backend* directory:
