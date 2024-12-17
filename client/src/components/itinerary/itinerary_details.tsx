@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import '../app/globals.css';
+import '../../app/globals.css';
 import { Button } from '@/components/ui/button';
 import { CalendarDays, Link2, Pencil, CirclePlus } from 'lucide-react';
 import ItineraryDetailsPlanCard from './itinerary_details_plan_card';
