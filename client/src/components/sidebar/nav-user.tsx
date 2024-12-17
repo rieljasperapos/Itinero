@@ -16,7 +16,7 @@ import {
   Avatar,
   AvatarFallback,
   AvatarImage,
-} from "@/components/avatar"
+} from "@/components/ui/avatar"
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -25,16 +25,16 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from "@/components/dropdown-menu"
+} from "@/components/ui/dropdown-menu"
 import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
   useSidebar,
-} from "@/components/sidebar"
+} from "@/components/ui/sidebar"
 import { useSession, signOut } from "next-auth/react"
 import Link from "next/link"
-import { Button } from "./ui/button"
+import { Button } from "../ui/button"
 import { useTheme } from "next-themes"
 
 export function NavUser() {

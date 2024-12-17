@@ -1,10 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import '../app/globals.css';
-import { Button } from '@/components/button';
-import { CalendarDays, Link2, Pencil, CirclePlus, Trash2 } from 'lucide-react';
-import AvatarCircles from './avatar-circles';
+import { Button } from '@/components/ui/button';
+import { CalendarDays, Link2, Pencil, CirclePlus } from 'lucide-react';
 import ItineraryDetailsPlanCard from './itinerary_details_plan_card';
-import EditItineraryForm from "@/components/EditItineraryForm";
+import EditItineraryForm from "@/components/itinerary/EditItineraryForm";
 import * as VisuallyHidden from "@radix-ui/react-visually-hidden";
 import axios from 'axios';
 import CreateActivityForm from '@/app/activities/create/page';
@@ -14,11 +13,9 @@ import {
   Dialog,
   DialogContent,
   DialogDescription,
-  DialogFooter,
-  DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from '@/components/dialog';
+} from '@/components/ui/dialog';
 import { Activity } from '@/types/activity-type';
 import Link from 'next/link';
 import { Collaborator } from '@/types/collaborator-type';
@@ -32,12 +29,6 @@ interface ItineraryDetailsProps {
   collaborators: Collaborator[];
   onItineraryChange?: () => void; // New prop for dynamic refresh
 }
-
-const avatarUrls = [ // Readjust this once your backend is working
-  'https://avatars.githubusercontent.com/u/98586665',
-  'https://avatars.githubusercontent.com/u/20110627',
-  'https://avatars.githubusercontent.com/u/106103625',
-];
 
 const ItineraryDetails: React.FC<ItineraryDetailsProps> = ({
   itineraryId,
@@ -163,7 +154,6 @@ const ItineraryDetails: React.FC<ItineraryDetailsProps> = ({
       {/* MODIFY THIS */}
       <Link href={`/collaborators?itineraryId=${itineraryId}`}>
         <div className="flex flex-row items-center space-x-2 cursor-pointer group">
-          {/* <AvatarCircles numPeople={collaborators.length} avatarUrls={avatarUrls} /> */}
           <p className='group-hover:underline text-sm'>View collaborators</p>
         </div>
       </Link>

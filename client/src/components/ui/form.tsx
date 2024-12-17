@@ -7,7 +7,7 @@ import type { ControllerProps, FieldPath, FieldValues } from 'react-hook-form'
 import { Controller, FormProvider, useFormContext, useFormState } from 'react-hook-form'
 
 import { ny } from '@/lib/utils'
-import { Label } from '@/components/label'
+import { Label } from '@/components/ui/label'
 
 const Form = FormProvider
 

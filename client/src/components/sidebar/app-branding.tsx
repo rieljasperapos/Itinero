@@ -5,7 +5,7 @@ import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
-} from "@/components/sidebar";
+} from "@/components/ui/sidebar";
 
 export function AppBranding({
   brand,

@@ -1,5 +1,5 @@
 "use client";
-import Layout from "@/components/layout";
+import Layout from "@/components/sidebar/layout";
 import { useSession } from "next-auth/react";
 import { useState } from "react";
 import { useToast } from "@/hooks/use-toast";

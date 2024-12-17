@@ -9,16 +9,16 @@ import {
   Map
 } from "lucide-react";
 
-import { NavItems } from "@/components/nav-items";
-import { NavUser } from "@/components/nav-user";
-import { AppBranding } from "@/components/app-branding";
+import { NavItems } from "@/components/sidebar/nav-items";
+import { NavUser } from "@/components/sidebar/nav-user";
+import { AppBranding } from "@/components/sidebar/app-branding";
 import {
   Sidebar,
   SidebarContent,
   SidebarFooter,
   SidebarHeader,
   SidebarRail,
-} from "@/components/sidebar";
+} from "@/components/ui/sidebar";
 import { useEffect, useState } from "react";
 import axios from "axios";
 import { useSession } from "next-auth/react";

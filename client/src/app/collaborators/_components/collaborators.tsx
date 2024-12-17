@@ -1,6 +1,6 @@
 "use client";
-import Layout from "@/components/layout";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/avatar";
+import Layout from "@/components/sidebar/layout";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { useSession } from "next-auth/react";
 import axios from "axios";
 import { useEffect, useState } from "react";

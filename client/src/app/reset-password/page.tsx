@@ -1,11 +1,11 @@
 "use client";
-import { Input } from "@/components/input";
+import { Input } from "@/components/ui/input";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { ResetPasswordSchema } from "@/schemas";
 import { useState } from "react";
-import { Button } from "@/components/button";
+import { Button } from "@/components/ui/button";
 import axios from "axios";
 import {
   Form,
@@ -14,7 +14,7 @@ import {
   FormItem,
   FormLabel,
   FormMessage, // Import FormMessage for error messages
-} from "@/components/form";
+} from "@/components/ui/form";
 import { useToast } from "@/hooks/use-toast";
 
 const ResetPasswordPage = () => {

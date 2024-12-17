@@ -1,4 +1,4 @@
-import Layout from "@/components/layout";
+import Layout from "@/components/sidebar/layout";
 import dynamic from "next/dynamic";
 import { useMemo } from "react";
 import { MapPageProps } from "../_types/map-types";

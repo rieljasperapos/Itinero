@@ -1,10 +1,10 @@
 "use client";
 import React, { useEffect, useState } from 'react';
-import { Timeline, TimelineContent, TimelineDot, TimelineHeading, TimelineItem, TimelineLine } from './timeline';
-import { Button } from '@/components/button';
+import { Timeline, TimelineContent, TimelineDot, TimelineHeading, TimelineItem, TimelineLine } from '../ui/timeline';
+import { Button } from '@/components/ui/button';
 import { Pencil, MapPin, Clock, Footprints } from 'lucide-react';
 import CreateActivityForm from '@/app/activities/create/page';
-import { Dialog, DialogContent, DialogTrigger } from '@/components/dialog';
+import { Dialog, DialogContent, DialogTrigger } from '@/components/ui/dialog';
 import { Activity } from '@/types/activity-type';
 import { useSession } from 'next-auth/react';
 import axios from 'axios';
@@ -15,7 +15,7 @@ import {
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
-} from "@/components/tooltip"
+} from "@/components/ui/tooltip"
 
 interface ItineraryDetailsActivityProps {
   activities: Activity[];
