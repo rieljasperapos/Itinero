@@ -66,7 +66,15 @@ export const RegisterForm = () => {
         }
       })
       .catch((error) => {
-        console.error("Error creating account:", error);
+        if (!error.response.data.valid) {
+          toast({
+            variant: "destructive",
+            title: "Uh oh! Something went wrong",
+            description: error.response.data.error,
+            action: <ToastAction altText="Try again">Try again</ToastAction>
+          });
+        }
+        console.error("Error creating account:", error.response.data);
       })
   };
 
