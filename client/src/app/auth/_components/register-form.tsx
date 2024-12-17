@@ -158,7 +158,7 @@ export const RegisterForm = () => {
                           cursor: 'pointer',
                         }}
                       >
-                        {showPassword ? <Eye /> : <EyeOff />} {/* Adjust icons as needed */}
+                        {showPassword ? <EyeOff /> : <Eye />} {/* Adjust icons as needed */}
                       </span>
                     </div>
                   </FormControl>
@@ -189,7 +189,7 @@ export const RegisterForm = () => {
                           cursor: 'pointer',
                         }}
                       >
-                        {showConfirmPassword ? <Eye /> : <EyeOff />} {/* Adjust icons as needed */}
+                        {showConfirmPassword ? <EyeOff /> : <Eye />} {/* Adjust icons as needed */}
                       </span>
                     </div>
                   </FormControl>

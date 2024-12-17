@@ -99,7 +99,7 @@ export const LoginForm = () => {
                               cursor: 'pointer',
                             }}
                           >
-                            {showPassword ? <Eye /> : <EyeOff />} {/* Adjust icons as needed */}
+                            {showPassword ? <EyeOff /> : <Eye />} {/* Adjust icons as needed */}
                           </span>
                         </div>
                       </FormControl>
