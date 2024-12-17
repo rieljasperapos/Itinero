@@ -42,6 +42,7 @@ export const LoginForm = () => {
       password: data.password,
       redirect: false,
     });
+    setLoading(false);
 
     if (res?.error) {
       console.error("Sign-in error:", res.error);

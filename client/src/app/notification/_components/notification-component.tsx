@@ -5,6 +5,7 @@ import { redirect } from "next/navigation";
 import { useEffect, useState } from "react";
 import { loadNotifications, handleMarkAsRead } from "../_services/notification-action";
 import { calculateTimeAgo } from "../_utils/calculate-time-ago";
+import { DotLottieReact } from "@lottiefiles/dotlottie-react";
 
 const Notifications = () => {
   const [loading, setLoading] = useState(true);
@@ -42,7 +43,12 @@ const Notifications = () => {
   return (
     status === "loading" || loading ? (
       <div className="flex justify-center items-center h-screen">
-        <div className="animate-spin rounded-full h-12 w-12 border-t-4 border-blue-500 border-solid border-gray-300" />
+        <DotLottieReact
+          className="w-[50%]"
+          src="https://lottie.host/aa2eba8e-913d-420f-b307-890f5a41365f/EaQL3x2VpA.lottie"
+          loop
+          autoplay
+        />
         <span className="sr-only">Loading...</span>
       </div>
     ) : (

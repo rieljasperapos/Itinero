@@ -8,6 +8,7 @@ import "../_lib/custom-calendar.css";
 import { redirect } from "next/navigation";
 import { fetchActivities } from "../_services/calendar-services";
 import { Activity } from "../_types/types";
+import { DotLottieReact } from "@lottiefiles/dotlottie-react";
 
 const Calendar = () => {
   const [loading, setLoading] = useState(true);
@@ -28,15 +29,20 @@ const Calendar = () => {
     const activities = await fetchActivities(session.user.accessToken);
     setActivities(activities);
     setLoading(false);
-  }
+  };
 
   if (status === "loading" || loading) {
     return (
       <div className="flex justify-center items-center h-screen">
-        <div className="animate-spin rounded-full h-12 w-12 border-t-4 border-blue-500 border-solid border-gray-300" />
+        <DotLottieReact
+          className="w-[50%]"
+          src="https://lottie.host/aa2eba8e-913d-420f-b307-890f5a41365f/EaQL3x2VpA.lottie"
+          loop
+          autoplay
+        />
         <span className="sr-only">Loading...</span>
       </div>
-    )
+    );
   }
 
   return (
