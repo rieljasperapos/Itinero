@@ -164,7 +164,7 @@ const ItineraryDetails: React.FC<ItineraryDetailsProps> = ({
       <Link href={`/collaborators?itineraryId=${itineraryId}`}>
         <div className="flex flex-row items-center space-x-2 cursor-pointer group">
           {/* <AvatarCircles numPeople={collaborators.length} avatarUrls={avatarUrls} /> */}
-          <p className='group-hover:underline text-sm'>See collaborators</p>
+          <p className='group-hover:underline text-sm'>View collaborators</p>
         </div>
       </Link>
 
