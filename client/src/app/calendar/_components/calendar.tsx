@@ -10,6 +10,7 @@ import { fetchActivities } from "../_services/calendar-services";
 import { Activity } from "../_types/types";
 
 const Calendar = () => {
+  const [loading, setLoading] = useState(true);
   const [activities, setActivities] = useState<Activity[]>([]);
   const { data: session, status } = useSession();
 
@@ -26,10 +27,16 @@ const Calendar = () => {
 
     const activities = await fetchActivities(session.user.accessToken);
     setActivities(activities);
+    setLoading(false);
   }
 
-  if (status === "loading") {
-    return <div>Loading...</div>;
+  if (status === "loading" || loading) {
+    return (
+      <div className="flex justify-center items-center h-screen">
+        <div className="animate-spin rounded-full h-12 w-12 border-t-4 border-blue-500 border-solid border-gray-300" />
+        <span className="sr-only">Loading...</span>
+      </div>
+    )
   }
 
   return (
