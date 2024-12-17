@@ -93,7 +93,7 @@ Ensure that you have the following installed:
 
     - **AUTH_SECRET**: Your secret key for authentication.
     
-    - **NEXT_PUBLIC_API_BASE_URL**: Your API base URL.
+    - **NEXT_PUBLIC_API_BASE_URL**: This is your **server URL** that will be used as the base for all API requests.
     
     - **NEXT_PUBLIC_GEOCODER_KEY**: Your Geocoder API key.
 
