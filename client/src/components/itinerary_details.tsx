@@ -105,32 +105,31 @@ const ItineraryDetails: React.FC<ItineraryDetailsProps> = ({
   };
 
   return (
-    <div className="flex flex-col h-full gap-2">
+    <div className="flex flex-col h-full gap-2.5">
       <div className="flex flex-col gap-2 mb-2">
         <h2 className="text-2xl font-bold">{title}</h2>
         <p className="text-muted-foreground">{description}</p>
       </div>
 
-      <div className="flex items-center gap-2 mt-2">
-        <CalendarDays className="size-5" strokeWidth={1.5} />
-        <p>{formattedDateStart}</p>
+      <div className="flex items-center gap-2">
+        <CalendarDays className="size-4" strokeWidth={1.5} />
+        <p className="text-sm">{formattedDateStart}</p>
         <p>—</p>
         <p>{formattedDateEnd}</p>
       </div>
 
       <Link href={`/collaborators/invite?itineraryId=${itineraryId}`}>
-        <div className="flex items-center mt-2">
-          <Link2 className="mr-2 size-5" strokeWidth={1.5} />
-          <p>Invite Collaborators</p>
+        <div className="flex items-center group">
+          <Link2 className="mr-2 size-4" strokeWidth={1.5} />
+          <p className="text-sm group-hover:underline">Invite Collaborators</p>
         </div>
       </Link>
 
-      <div className="flex flex-row items-center space-x-2 mt-2">
+      <div className="flex flex-row items-center space-x-2">
         <Button
           variant="link"
           size="tight"
-          className="regulartext"
-          style={{ fontWeight: '600' }}
+          className="text-sm"
           onClick={() => setOpenEditDialog(true)}
         >
           <Pencil className="mr-2 size-4" strokeWidth={1.5} />
@@ -163,13 +162,13 @@ const ItineraryDetails: React.FC<ItineraryDetailsProps> = ({
 
       {/* MODIFY THIS */}
       <Link href={`/collaborators?itineraryId=${itineraryId}`}>
-        <div className="flex flex-row items-center space-x-2 mt-3 cursor-pointer group">
-          <AvatarCircles numPeople={collaborators.length} avatarUrls={avatarUrls} />
-          <p className='group-hover:underline'>Collaborators</p>
+        <div className="flex flex-row items-center space-x-2 cursor-pointer group">
+          {/* <AvatarCircles numPeople={collaborators.length} avatarUrls={avatarUrls} /> */}
+          <p className='group-hover:underline text-sm'>See collaborators</p>
         </div>
       </Link>
 
-      <div className="flex flex-row items-center justify-between w-full mt-6 mb-2">
+      <div className="flex flex-row items-center justify-between w-full mt-6">
         <p className="font-bold text-xl">Activities</p>
         <div className="flex flex-row items-center space-x-2">
           <Dialog open={openCreateDialog} onOpenChange={setOpenCreateDialog}>
