@@ -1,24 +1,25 @@
-import React, { useEffect, useState } from 'react';
-import '../../app/globals.css';
-import { Button } from '@/components/ui/button';
-import { CalendarDays, Link2, Pencil, CirclePlus } from 'lucide-react';
-import ItineraryDetailsPlanCard from './itinerary_details_plan_card';
+import React, { useEffect, useState } from "react";
+import "../../app/globals.css";
+import { Button } from "@/components/ui/button";
+import { CalendarDays, Link2, Pencil, CirclePlus } from "lucide-react";
+import ItineraryDetailsPlanCard from "./itinerary_details_plan_card";
 import EditItineraryForm from "@/components/itinerary/EditItineraryForm";
 import * as VisuallyHidden from "@radix-ui/react-visually-hidden";
-import axios from 'axios';
-import CreateActivityForm from '@/app/activities/create/page';
-import { format } from 'date-fns';
-import { useSession } from 'next-auth/react';
+import axios from "axios";
+import CreateActivityForm from "@/app/activities/create/page";
+import { format } from "date-fns";
+import { useSession } from "next-auth/react";
 import {
   Dialog,
   DialogContent,
   DialogDescription,
   DialogTitle,
   DialogTrigger,
-} from '@/components/ui/dialog';
-import { Activity } from '@/types/activity-type';
-import Link from 'next/link';
-import { Collaborator } from '@/types/collaborator-type';
+} from "@/components/ui/dialog";
+import { Activity } from "@/types/activity-type";
+import Link from "next/link";
+import { Collaborator } from "@/types/collaborator-type";
+import { DotLottieReact } from "@lottiefiles/dotlottie-react";
 
 interface ItineraryDetailsProps {
   itineraryId: number;
@@ -39,35 +40,48 @@ const ItineraryDetails: React.FC<ItineraryDetailsProps> = ({
   description,
   onItineraryChange, // Receive the new prop
 }) => {
-  const formattedDateStart = format(new Date(dateStart), 'MMMM d, yyyy');
-  const formattedDateEnd = format(new Date(dateEnd), 'MMMM d, yyyy');
+  const formattedDateStart = format(new Date(dateStart), "MMMM d, yyyy");
+  const formattedDateEnd = format(new Date(dateEnd), "MMMM d, yyyy");
   const { data: session } = useSession();
-  const [activitiesByDate, setActivitiesByDate] = useState<{ [date: string]: Activity[] }>({});
+  const [activitiesByDate, setActivitiesByDate] = useState<{
+    [date: string]: Activity[];
+  }>({});
   const [openCreateDialog, setOpenCreateDialog] = useState(false);
   const [openEditDialog, setOpenEditDialog] = useState<boolean>(false);
+  const [loading, setLoading] = useState<boolean>(true);
 
   const fetchActivities = async () => {
     try {
-      const response = await axios.get(`${process.env.NEXT_PUBLIC_API_BASE_URL}/activities`, {
-        headers: {
-          Authorization: `Bearer ${session?.user.accessToken}`,
-        },
-        params: { itineraryId },
-      });
+      const response = await axios.get(
+        `${process.env.NEXT_PUBLIC_API_BASE_URL}/activities`,
+        {
+          headers: {
+            Authorization: `Bearer ${session?.user.accessToken}`,
+          },
+          params: { itineraryId },
+        }
+      );
       const activities: Activity[] = response.data.data;
       // Group activities by date
-      const groupedActivities = activities.reduce((group: { [date: string]: Activity[] }, activity: Activity) => {
-        const localDate = new Date(activity.startTime).toLocaleDateString('en-CA'); // Formats to 'YYYY-MM-DD' in local timezone
-        if (!group[localDate]) {
-          group[localDate] = [];
-        }
-        group[localDate].push(activity);
-        return group;
-      }, {});
+      const groupedActivities = activities.reduce(
+        (group: { [date: string]: Activity[] }, activity: Activity) => {
+          const localDate = new Date(activity.startTime).toLocaleDateString(
+            "en-CA"
+          ); // Formats to 'YYYY-MM-DD' in local timezone
+          if (!group[localDate]) {
+            group[localDate] = [];
+          }
+          group[localDate].push(activity);
+          return group;
+        },
+        {}
+      );
 
       setActivitiesByDate(groupedActivities);
     } catch (error) {
-      console.error('Error fetching activities:', error);
+      console.error("Error fetching activities:", error);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -116,11 +130,12 @@ const ItineraryDetails: React.FC<ItineraryDetailsProps> = ({
         </div>
       </Link>
 
-      <div className="flex flex items-center space-x-2 group cursor-pointer" onClick={() => setOpenEditDialog(true)}>
+      <div
+        className="flex flex items-center space-x-2 group cursor-pointer"
+        onClick={() => setOpenEditDialog(true)}
+      >
         <Pencil className="size-4" strokeWidth={1.5} />
-        <span className="text-sm group-hover:underline">
-          Edit Trip Info
-        </span>
+        <span className="text-sm group-hover:underline">Edit Trip Info</span>
       </div>
 
       {/* Edit Itinerary Dialog */}
@@ -149,7 +164,7 @@ const ItineraryDetails: React.FC<ItineraryDetailsProps> = ({
       {/* MODIFY THIS */}
       <Link href={`/collaborators?itineraryId=${itineraryId}`}>
         <div className="flex flex-row items-center space-x-2 cursor-pointer group">
-          <p className='group-hover:underline text-sm'>View collaborators</p>
+          <p className="group-hover:underline text-sm">View collaborators</p>
         </div>
       </Link>
 
@@ -178,10 +193,14 @@ const ItineraryDetails: React.FC<ItineraryDetailsProps> = ({
         </div>
       </div>
 
-      {Object.keys(activitiesByDate).length === 0 ? (
-        <p className="text-center text-gray-400">
-          No activities found.
-        </p>
+      {loading ? (
+        <DotLottieReact
+          src="https://lottie.host/018376da-dc3a-4de9-b682-5b1606e99a7f/zgc6cY5hCe.lottie"
+          loop
+          autoplay
+        />
+      ) : Object.keys(activitiesByDate).length === 0 ? (
+        <p className="text-center text-gray-400">No activities found.</p>
       ) : (
         ""
       )}

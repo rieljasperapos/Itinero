@@ -24,6 +24,7 @@ import {
 } from "@/components/ui/sheet";
 import ItineraryDetails from "@/components/itinerary/itinerary_details";
 import { Itinerary } from "@/types/itinerary-type";
+import { DotLottieReact } from "@lottiefiles/dotlottie-react";
 
 const Dashboard: React.FC = () => {
   const [filter, setFilter] = useState<"upcoming" | "ongoing" | "past">(
@@ -159,7 +160,12 @@ const Dashboard: React.FC = () => {
 
         <div>
           {loading ? (
-            <p className="text-center text-gray-400">Loading...</p>
+            <DotLottieReact
+              className="w-[50%] mx-auto"
+              src="https://lottie.host/6025c0eb-2a63-4e6c-8091-85a3cf9f2e93/TxFn9kH1iO.lottie"
+              loop
+              autoplay
+            />
           ) : filteredItineraries.length === 0 ? (
             <p className="text-center text-gray-400">
               No {filter} Itineraries
