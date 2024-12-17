@@ -141,7 +141,10 @@ const ItineraryDetailsActivity: React.FC<ItineraryDetailsActivityProps> = ({ act
                         </div>
                       </TooltipTrigger>
                       <TooltipContent>
-                        <p>View on map</p>
+                        <div className="flex flex-col items-center gap-1.5">
+                          <p>{activity.address}</p>
+                          <p>View on map</p>
+                        </div>
                       </TooltipContent>
                     </Tooltip>
                   </TooltipProvider>
@@ -163,10 +166,19 @@ const ItineraryDetailsActivity: React.FC<ItineraryDetailsActivityProps> = ({ act
                   </div>
 
                   {/* Activity Name */}
-                  <div className="flex-1 min-w-[150px] max-w-[250px] flex items-center gap-2">
-                    <Footprints className="w-4 flex-shrink-0 text-gray-500" />
-                    <p className="font-bold truncate">{activity.activityName}</p>
-                  </div>
+                  <TooltipProvider>
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <div className="flex-1 min-w-[150px] max-w-[250px] flex items-center gap-2">
+                          <Footprints className="w-4 flex-shrink-0 text-gray-500" />
+                          <p className="font-bold truncate">{activity.activityName}</p>
+                        </div>
+                      </TooltipTrigger>
+                      <TooltipContent>
+                        <p>{activity.activityName}</p>
+                      </TooltipContent>
+                    </Tooltip>
+                  </TooltipProvider>
 
                   {/* Edit Activity Button */}
                   <div className="flex-shrink-0">

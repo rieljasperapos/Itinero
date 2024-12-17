@@ -66,7 +66,15 @@ export const RegisterForm = () => {
         }
       })
       .catch((error) => {
-        console.error("Error creating account:", error);
+        if (!error.response.data.valid) {
+          toast({
+            variant: "destructive",
+            title: "Uh oh! Something went wrong",
+            description: error.response.data.error,
+            action: <ToastAction altText="Try again">Try again</ToastAction>
+          });
+        }
+        console.error("Error creating account:", error.response.data);
       })
   };
 
@@ -150,7 +158,7 @@ export const RegisterForm = () => {
                           cursor: 'pointer',
                         }}
                       >
-                        {showPassword ? <EyeOff /> : <Eye />} {/* Adjust icons as needed */}
+                        {showPassword ? <Eye /> : <EyeOff />} {/* Adjust icons as needed */}
                       </span>
                     </div>
                   </FormControl>
@@ -181,7 +189,7 @@ export const RegisterForm = () => {
                           cursor: 'pointer',
                         }}
                       >
-                        {showConfirmPassword ? <EyeOff /> : <Eye />} {/* Adjust icons as needed */}
+                        {showConfirmPassword ? <Eye /> : <EyeOff />} {/* Adjust icons as needed */}
                       </span>
                     </div>
                   </FormControl>

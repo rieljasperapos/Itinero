@@ -70,6 +70,14 @@ const CreateActivityForm: React.FC<CreateActivityFormProps> = ({
       return;
     }
 
+    const formattedDate = format(data.date, "yyyy-MM-dd");
+    const startDateTime = new Date(`${formattedDate}T${data.startTime}`);
+    const endDateTime = new Date(`${formattedDate}T${data.endTime}`);
+
+    // Convert to UTC ISO string
+    const startTimeUTC = startDateTime.toISOString();
+    const endTimeUTC = endDateTime.toISOString();
+
     try {
       if (isEditMode && activity) {
         // Update existing activity
@@ -80,8 +88,8 @@ const CreateActivityForm: React.FC<CreateActivityFormProps> = ({
             locationName: data.locationName,
             address: data.address,
             date: data.date ? format(data.date, "yyyy-MM-dd") : null,
-            startTime: data.startTime,
-            endTime: data.endTime,
+            startTime: startTimeUTC,
+            endTime: endTimeUTC,
             itineraryId: data.itineraryId,
           },
           {
@@ -100,8 +108,8 @@ const CreateActivityForm: React.FC<CreateActivityFormProps> = ({
             locationName: data.locationName,
             address: data.address,
             date: data.date ? format(data.date, "yyyy-MM-dd") : null,
-            startTime: data.startTime,
-            endTime: data.endTime,
+            startTime: startTimeUTC,
+            endTime: endTimeUTC,
             itineraryId: data.itineraryId,
           },
           {

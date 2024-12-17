@@ -15,7 +15,14 @@ export const handleSubmitEditInfo = async (newName: string, newEmail: string, se
       });
       return response; // Return updated user data
     }
-  } catch (error) {
+  } catch (error: any) {
+    if (!error.response.data.sucess) {
+      toast({
+        variant: "destructive",
+        title: "Uh oh!",
+        description: error.response.data.message,
+      })
+    }
     console.error("Error in handleSubmitEditInfo:", error);
   }
 };

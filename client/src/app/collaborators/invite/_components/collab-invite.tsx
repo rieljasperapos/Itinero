@@ -24,7 +24,7 @@ import {
 import { useSession } from "next-auth/react";
 import { useToast } from "@/hooks/use-toast";
 import { ToastAction } from "@/components/ui/toast";
-import { inviteCollaborator } from "./_services/invite-services";
+import { inviteCollaborator } from "../_services/invite-service";
 
 const InviteCollaborator = () => {
   const { data: session, status } = useSession();
