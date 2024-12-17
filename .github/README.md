@@ -72,26 +72,37 @@ Ensure that you have the following installed:
 
 ### Frontend Setup
 
-1. Navigate to the `client` directory:
+1. **Navigate to the `client` directory:**
 
     ```
     cd client
     ```
 
-2. Install the dependencies:
+2. **Install the dependencies:**
 
     ```
     npm install
     ```
 
-3. Set up environment variables by copying the `.env.example` file to `.env.local`:
+3. **Set up environment variables by copying the `.env.example` file to `.env.local`:**
 
     ```
     cp .env.example .env.local
     ```
-   Then, open the `.env.local` file and update the following variables as needed.
+   Then, open the `.env.local` file and update the following variables as needed:
 
-4. Start the development server:
+    - **AUTH_SECRET**: Your secret key for authentication.
+    
+    - **NEXT_PUBLIC_API_BASE_URL**: Your API base URL.
+    
+    - **NEXT_PUBLIC_GEOCODER_KEY**: Your Geocoder API key.
+
+4. **To obtain your Geocoder API key:**
+   - Visit [opencagedata.com](https://opencagedata.com) and create an account.
+   - After registering, navigate to the dashboard to generate your API key.
+   - Copy the generated API key and paste it into the `NEXT_PUBLIC_GEOCODER_KEY` field in your `.env.local` file.
+
+5. **Start the development server:**
 
     ```
     npm run dev
