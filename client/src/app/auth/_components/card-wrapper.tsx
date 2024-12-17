@@ -5,8 +5,9 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { CardWrapperProps, RegisterProps, LoginProps } from "@/types/auth-type";
+import { CardWrapperProps } from "@/types/auth-type";
 import Image from "next/image";
+import Logo from "../../../../public/images/Logo.png"
 
 export const CardWrapper = ({
   children,
@@ -17,7 +18,7 @@ export const CardWrapper = ({
     <Card className="w-full max-w-lg p-4">
       <CardHeader className="flex items-center justify-center gap-4">
         <div>
-          <Image src="/images/logo.png" alt="logo" width={100} height={100} />
+          <Image src={Logo} alt="logo" width={100} height={100} />
         </div>
         <CardTitle className="text-center">{headerTitle}</CardTitle>
       </CardHeader>
