@@ -1,6 +1,7 @@
 "use client";
 import FullCalendar from "@fullcalendar/react";
 import dayGridPlugin from "@fullcalendar/daygrid";
+import timeGridPlugin from "@fullcalendar/timegrid";
 import { useSession } from "next-auth/react";
 import { useEffect, useState } from "react";
 import Layout from "@/components/sidebar/layout";
@@ -51,12 +52,12 @@ const Calendar = () => {
         <div className="mx-auto p-4">
           <FullCalendar
             timeZone="Asia/Manila"
-            plugins={[dayGridPlugin]}
+            plugins={[dayGridPlugin, timeGridPlugin]}
             initialView="dayGridMonth"
             headerToolbar={{
               left: "prev,next today",
               center: "title",
-              right: "dayGridMonth,dayGridWeek,dayGridYear",
+              right: "dayGridMonth,timeGridWeek,dayGridYear",
             }}
             initialDate={new Date()}
             dayMaxEventRows={3}

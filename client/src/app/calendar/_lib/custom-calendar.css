@@ -44,7 +44,15 @@
   width: 100% !important;
 }
 
+.fc .fc-timegrid-body {
+  width: 100% !important;
+}
+
 .fc .fc-scrollgrid-sync-table {
+  width: 100% !important;
+}
+
+table {
   width: 100% !important;
 }
 
