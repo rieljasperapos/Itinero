@@ -34,7 +34,7 @@
 }
 
 .fc .fc-daygrid-day-frame {
-  max-height: 20px; /* Restrict the maximum height */
+  max-height: 40px; /* Restrict the maximum height */
   overflow: hidden; /* Hide overflow content */
   text-overflow: ellipsis; /* Add "..." for truncated text */
   white-space: nowrap; /* Prevent text wrapping */
@@ -54,6 +54,11 @@
 
 table {
   width: 100% !important;
+}
+
+.fc .fc-view-harness {
+  max-height: 810px;
+  height: 100%;
 }
 
 .fc .fc-popover {
