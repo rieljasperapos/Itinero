@@ -12,6 +12,7 @@ export const useItineraryDetails = (
   const { data: session } = useSession();
   const [activitiesByDate, setActivitiesByDate] = useState<GroupedActivities>({});
   const [loading, setLoading] = useState<boolean>(true);
+  const [loadingRoles, setLoadingRoles] = useState<boolean>(true);
   const [isEditor, setIsEditor] = useState<boolean>(false);
   const [createdBy, setCreatedBy] = useState<Creator>({
     id: 0,
@@ -81,6 +82,8 @@ export const useItineraryDetails = (
         }
       } catch (error) {
         console.error("Error fetching itinerary:", error);
+      } finally {
+        setLoadingRoles(false);
       }
     };
 
@@ -100,6 +103,7 @@ export const useItineraryDetails = (
   return {
     activitiesByDate,
     loading,
+    loadingRoles,
     isEditor,
     createdBy,
     fetchActivities,

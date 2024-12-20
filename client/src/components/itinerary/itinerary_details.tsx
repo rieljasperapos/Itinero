@@ -36,6 +36,7 @@ const ItineraryDetails: React.FC<ItineraryDetailsProps> = ({
   const {
     activitiesByDate,
     loading,
+    loadingRoles,
     isEditor,
     createdBy,
     fetchActivities,
@@ -69,15 +70,23 @@ const ItineraryDetails: React.FC<ItineraryDetailsProps> = ({
       </div>
       <div className="flex items-center gap-1">
         <span className="text-sm text-muted-foreground">Created by:</span>
-        <span className="text-sm font-medium">{createdBy.name}</span>
+        {loadingRoles ? (
+          <span className="text-sm font-medium">Loading...</span>
+        ) : (
+          <span className="text-sm font-medium">{createdBy.name}</span>
+        )}
       </div>
       {session?.user.email !== createdBy.email && (
         <div className="flex items-center gap-1">
           <span className="text-sm text-muted-foreground">Role:</span>
-          <span className="text-sm font-medium">{isEditor ? 'Editor' : 'Viewer'}</span>
+          {loadingRoles ? (
+            <span className="text-sm font-medium">Loading...</span>
+          ) : (
+            <span className="text-sm font-medium">{isEditor ? 'Editor' : 'Viewer'}</span>
+          )}
         </div>
       )}
-      {isEditor && (
+      {!loadingRoles && isEditor && (
         <>
           <Link href={`/collaborators/invite?itineraryId=${itineraryId}`}>
             <div className="flex items-center group">
