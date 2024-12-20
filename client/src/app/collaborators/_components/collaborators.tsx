@@ -6,7 +6,7 @@ import axios from "axios";
 import { useEffect, useState } from "react";
 import { redirect } from "next/navigation";
 import { useSearchParams } from "next/navigation";
-import { Collaborator } from "@/types/collaborator-type";
+import { Collaborator } from "@/types/collaborator-types";
 
 const Collabs = () => {
   const searchParams = useSearchParams();

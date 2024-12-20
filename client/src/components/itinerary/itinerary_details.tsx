@@ -1,35 +1,23 @@
-import React, { useEffect, useState } from "react";
-import "../../app/globals.css";
-import { Button } from "@/components/ui/button";
-import { CalendarDays, Link2, Pencil, CirclePlus } from "lucide-react";
-import ItineraryDetailsPlanCard from "./itinerary_details_plan_card";
-import EditItineraryForm from "@/components/itinerary/EditItineraryForm";
-import * as VisuallyHidden from "@radix-ui/react-visually-hidden";
-import axios from "axios";
-import CreateActivityForm from "@/app/activities/create/page";
+import React, { useState } from "react";
 import { format } from "date-fns";
-import { useSession } from "next-auth/react";
+import { CalendarDays, Link2, Pencil, CirclePlus, Eye } from "lucide-react";
+import Link from "next/link";
+import { DotLottieReact } from "@lottiefiles/dotlottie-react";
+import * as VisuallyHidden from "@radix-ui/react-visually-hidden";
+import { Button } from "@/components/ui/button";
 import {
   Dialog,
   DialogContent,
-  DialogDescription,
   DialogTitle,
+  DialogDescription,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { Activity } from "@/types/activity-type";
-import Link from "next/link";
-import { Collaborator } from "@/types/collaborator-type";
-import { DotLottieReact } from "@lottiefiles/dotlottie-react";
-
-interface ItineraryDetailsProps {
-  itineraryId: number;
-  title: string;
-  description: string;
-  dateStart: string;
-  dateEnd: string;
-  collaborators: Collaborator[];
-  onItineraryChange?: () => void; // New prop for dynamic refresh
-}
+import { useItineraryDetails } from "@/hooks/useItineraryDetails";
+import { ItineraryDetailsProps } from "@/types/itinerary-types";
+import ItineraryDetailsPlanCard from "./itinerary_details_plan_card";
+import EditItineraryForm from "./EditItineraryForm";
+import CreateActivityForm from "@/app/activities/create/page";
+import "../../app/globals.css";
 
 const ItineraryDetails: React.FC<ItineraryDetailsProps> = ({
   itineraryId,
@@ -38,74 +26,30 @@ const ItineraryDetails: React.FC<ItineraryDetailsProps> = ({
   dateEnd,
   collaborators,
   description,
-  onItineraryChange, // Receive the new prop
+  onItineraryChange,
 }) => {
-  const formattedDateStart = format(new Date(dateStart), "MMMM d, yyyy");
-  const formattedDateEnd = format(new Date(dateEnd), "MMMM d, yyyy");
-  const { data: session } = useSession();
-  const [activitiesByDate, setActivitiesByDate] = useState<{
-    [date: string]: Activity[];
-  }>({});
   const [openCreateDialog, setOpenCreateDialog] = useState(false);
   const [openEditDialog, setOpenEditDialog] = useState<boolean>(false);
-  const [loading, setLoading] = useState<boolean>(true);
+  
+  const {
+    activitiesByDate,
+    loading,
+    isEditor,
+    createdBy,
+    fetchActivities,
+  } = useItineraryDetails(itineraryId, collaborators);
 
-  const fetchActivities = async () => {
-    try {
-      const response = await axios.get(
-        `${process.env.NEXT_PUBLIC_API_BASE_URL}/activities`,
-        {
-          headers: {
-            Authorization: `Bearer ${session?.user.accessToken}`,
-          },
-          params: { itineraryId },
-        }
-      );
-      const activities: Activity[] = response.data.data;
-      // Group activities by date
-      const groupedActivities = activities.reduce(
-        (group: { [date: string]: Activity[] }, activity: Activity) => {
-          const localDate = new Date(activity.startTime).toLocaleDateString(
-            "en-CA"
-          ); // Formats to 'YYYY-MM-DD' in local timezone
-          if (!group[localDate]) {
-            group[localDate] = [];
-          }
-          group[localDate].push(activity);
-          return group;
-        },
-        {}
-      );
-
-      setActivitiesByDate(groupedActivities);
-    } catch (error) {
-      console.error("Error fetching activities:", error);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  // Use fetchActivities in useEffect
-  useEffect(() => {
-    if (session && itineraryId) {
-      fetchActivities();
-    }
-  }, [itineraryId, session]);
+  const formattedDateStart = format(new Date(dateStart), "MMMM d, yyyy");
+  const formattedDateEnd = format(new Date(dateEnd), "MMMM d, yyyy");
 
   const handleDeleteSuccess = () => {
-    setOpenEditDialog(false); // Close the edit dialog
-    if (onItineraryChange) {
-      onItineraryChange(); // Notify parent to refresh itineraries
-    }
-    // Optionally, you can add more actions like redirecting to dashboard
+    setOpenEditDialog(false);
+    onItineraryChange?.();
   };
 
   const handleEditSuccess = () => {
-    setOpenEditDialog(false); // Close the edit dialog
-    if (onItineraryChange) {
-      onItineraryChange(); // Notify parent to refresh itineraries
-    }
-    // Optionally, refresh activities or other related data
+    setOpenEditDialog(false);
+    onItineraryChange?.();
     fetchActivities();
   };
 
@@ -115,30 +59,66 @@ const ItineraryDetails: React.FC<ItineraryDetailsProps> = ({
         <h2 className="text-2xl font-bold">{title}</h2>
         <p className="text-muted-foreground">{description}</p>
       </div>
-
       <div className="flex items-center gap-2">
         <CalendarDays className="size-4" strokeWidth={1.5} />
         <p className="text-sm">{formattedDateStart}</p>
         <p>—</p>
         <p>{formattedDateEnd}</p>
       </div>
-
-      <Link href={`/collaborators/invite?itineraryId=${itineraryId}`}>
-        <div className="flex items-center group">
-          <Link2 className="mr-2 size-4" strokeWidth={1.5} />
-          <p className="text-sm group-hover:underline">Invite Collaborators</p>
+      <div className="flex items-center gap-1">
+        <span className="text-sm text-muted-foreground">Created by:</span>
+        <span className="text-sm font-medium">{createdBy.name}</span>
+      </div>
+      <div className="flex items-center gap-1">
+        <span className="text-sm text-muted-foreground">Role:</span>
+        <span className="text-sm font-medium">{isEditor ? 'Editor' : 'Viewer'}</span>
+      </div>
+      {isEditor && (
+        <>
+          <Link href={`/collaborators/invite?itineraryId=${itineraryId}`}>
+            <div className="flex items-center group">
+              <Link2 className="mr-2 size-4" strokeWidth={1.5} />
+              <p className="text-sm group-hover:underline">Invite Collaborators</p>
+            </div>
+          </Link>
+          <div
+            className="flex items-center space-x-2 group cursor-pointer"
+            onClick={() => setOpenEditDialog(true)}
+          >
+            <Pencil className="size-4" strokeWidth={1.5} />
+            <span className="text-sm group-hover:underline">Edit Trip Info</span>
+          </div>
+        </>
+      )}
+      <Link href={`/collaborators?itineraryId=${itineraryId}`}>
+        <div className="flex flex-row items-center space-x-2 cursor-pointer group">
+          <p className="group-hover:underline text-sm">View collaborators</p>
         </div>
       </Link>
-
-      <div
-        className="flex flex items-center space-x-2 group cursor-pointer"
-        onClick={() => setOpenEditDialog(true)}
-      >
-        <Pencil className="size-4" strokeWidth={1.5} />
-        <span className="text-sm group-hover:underline">Edit Trip Info</span>
+      <div className="flex flex-row items-center justify-between w-full mt-6">
+        <p className="font-bold text-xl">Activities</p>
+        {isEditor && (
+          <Dialog open={openCreateDialog} onOpenChange={setOpenCreateDialog}>
+            <DialogTrigger asChild>
+              <Button variant="outline">
+                <CirclePlus className="mr-2 size-4" strokeWidth={1.5} />
+                Add Activity
+              </Button>
+            </DialogTrigger>
+            <DialogContent className="sm:max-w-[825px]">
+              <CreateActivityForm
+                itineraryId={itineraryId}
+                itineraryDateStart={formattedDateStart}
+                itineraryDateEnd={formattedDateEnd}
+                onSuccess={() => {
+                  fetchActivities();
+                  setOpenCreateDialog(false);
+                }}
+              />
+            </DialogContent>
+          </Dialog>
+        )}
       </div>
-
-      {/* Edit Itinerary Dialog */}
       <Dialog open={openEditDialog} onOpenChange={setOpenEditDialog}>
         <DialogContent className="sm:max-w-[825px]">
           <VisuallyHidden.Root>
@@ -155,44 +135,11 @@ const ItineraryDetails: React.FC<ItineraryDetailsProps> = ({
               startDate: new Date(dateStart),
               endDate: new Date(dateEnd),
             }}
-            onSuccess={handleEditSuccess} // Handle edit success
-            onDeleteSuccess={handleDeleteSuccess} // Handle delete success
+            onSuccess={handleEditSuccess}
+            onDeleteSuccess={handleDeleteSuccess}
           />
         </DialogContent>
       </Dialog>
-
-      {/* MODIFY THIS */}
-      <Link href={`/collaborators?itineraryId=${itineraryId}`}>
-        <div className="flex flex-row items-center space-x-2 cursor-pointer group">
-          <p className="group-hover:underline text-sm">View collaborators</p>
-        </div>
-      </Link>
-
-      <div className="flex flex-row items-center justify-between w-full mt-6">
-        <p className="font-bold text-xl">Activities</p>
-        <div className="flex flex-row items-center space-x-2">
-          <Dialog open={openCreateDialog} onOpenChange={setOpenCreateDialog}>
-            <DialogTrigger asChild>
-              <Button variant="outline">
-                <CirclePlus className="mr-2 size-4" strokeWidth={1.5} />
-                Add Activity
-              </Button>
-            </DialogTrigger>
-            <DialogContent className="sm:max-w-[825px]">
-              <CreateActivityForm
-                itineraryId={itineraryId}
-                itineraryDateStart={formattedDateStart}
-                itineraryDateEnd={formattedDateEnd}
-                onSuccess={() => {
-                  fetchActivities(); // Refresh activities list
-                  setOpenCreateDialog(false); // Close the dialog
-                }}
-              />
-            </DialogContent>
-          </Dialog>
-        </div>
-      </div>
-
       {loading ? (
         <DotLottieReact
           src="https://lottie.host/018376da-dc3a-4de9-b682-5b1606e99a7f/zgc6cY5hCe.lottie"
@@ -202,23 +149,21 @@ const ItineraryDetails: React.FC<ItineraryDetailsProps> = ({
       ) : Object.keys(activitiesByDate).length === 0 ? (
         <p className="text-center text-gray-400">No activities found.</p>
       ) : (
-        ""
+        <div className="flex-1 overflow-y-auto">
+          {Object.keys(activitiesByDate).map((date) => (
+            <ItineraryDetailsPlanCard
+              key={date}
+              date={date}
+              activities={activitiesByDate[date]}
+              itineraryId={itineraryId}
+              refreshActivities={fetchActivities}
+              dateStart={dateStart}
+              dateEnd={dateEnd}
+              isEditor={isEditor}
+            />
+          ))}
+        </div>
       )}
-
-      <div className="flex-1 overflow-y-auto">
-        {Object.keys(activitiesByDate).map((date) => (
-          <ItineraryDetailsPlanCard
-            key={date}
-            date={date}
-            activities={activitiesByDate[date]}
-            itineraryId={itineraryId}
-            refreshActivities={fetchActivities}
-            collaborators={collaborators}
-            dateStart={dateStart}
-            dateEnd={dateEnd}
-          />
-        ))}
-      </div>
     </div>
   );
 };

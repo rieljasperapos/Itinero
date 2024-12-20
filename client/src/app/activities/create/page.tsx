@@ -14,7 +14,7 @@ import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover
 import { Calendar } from "@/components/ui/calendar";
 import { CalendarIcon } from "lucide-react";
 import { createActivitySchema } from "@/schemas";
-import { Activity } from "@/types/activity-type";
+import { Activity } from "@/types/activity-types";
 
 // Define the schema (ensure this matches your validation requirements)
 interface CreateActivityFormProps {

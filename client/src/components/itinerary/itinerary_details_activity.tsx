@@ -1,14 +1,12 @@
 "use client";
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { Timeline, TimelineContent, TimelineDot, TimelineHeading, TimelineItem, TimelineLine } from '../ui/timeline';
 import { Button } from '@/components/ui/button';
 import { Pencil, MapPin, Clock, Footprints } from 'lucide-react';
 import CreateActivityForm from '@/app/activities/create/page';
 import { Dialog, DialogContent, DialogTrigger } from '@/components/ui/dialog';
-import { Activity } from '@/types/activity-type';
-import { useSession } from 'next-auth/react';
+import { Activity } from '@/types/activity-types';
 import axios from 'axios';
-import { Collaborator } from '@/types/collaborator-type';
 import { useRouter } from 'next/navigation';
 import {
   Tooltip,
@@ -21,18 +19,14 @@ interface ItineraryDetailsActivityProps {
   activities: Activity[];
   itineraryId: number;
   refreshActivities: () => void;
-  collaborators: Collaborator[];
   dateStart: string;
   dateEnd: string;
+  isEditor: boolean;
 }
 
-const ItineraryDetailsActivity: React.FC<ItineraryDetailsActivityProps> = ({ activities, itineraryId, refreshActivities, collaborators, dateStart, dateEnd }) => {
+const ItineraryDetailsActivity: React.FC<ItineraryDetailsActivityProps> = ({ activities, itineraryId, refreshActivities, dateStart, dateEnd, isEditor }) => {
   const [loadingMapClick, setLoadingMapClick] = useState<boolean>(false);
   const [openActivityId, setOpenActivityId] = useState<number | null>(null);
-  const [collaboratorsByItinerary, setCollaboratorsByItinerary] = useState<any[]>(collaborators);
-  const [isEditor, setIsEditor] = useState<boolean>(false);
-  const [createdBy, setCreatedBy] = useState<any>("");
-  const { data: session, status } = useSession();
   const router = useRouter();
 
   const getActivityStatus = (startTime: string, endTime: string): 'current' | 'done' | 'default' => {
@@ -49,41 +43,6 @@ const ItineraryDetailsActivity: React.FC<ItineraryDetailsActivityProps> = ({ act
     }
   };
 
-  useEffect(() => {
-    const fetchItinerarieById = async () => {
-      try {
-        const response = await axios.get(`${process.env.NEXT_PUBLIC_API_BASE_URL}/itineraries/${itineraryId}`)
-
-        setCollaboratorsByItinerary(response.data.data.collaborators);
-        setCreatedBy(response.data.data.createdBy.email);
-      } catch (error) {
-        console.error("Error fetching itineraries:", error);
-      }
-    }
-
-    fetchItinerarieById();
-  }, [session, status]);
-
-  useEffect(() => {
-    if (session?.user?.email) {
-      // Check if the user is the creator
-      const userIsCreator = createdBy === session.user.email;
-
-      if (userIsCreator) {
-        setIsEditor(true); // Automatically set as editor
-      } else {
-        // Check if the user is an editor among collaborators
-        const userIsEditor = collaboratorsByItinerary.some(
-          (collaborator) =>
-            collaborator.user.email === session.user.email && collaborator.role === 'EDITOR'
-        );
-        setIsEditor(userIsEditor); // Set the boolean state
-      }
-    } else {
-      setIsEditor(false); // Reset if no user session
-    }
-  }, [session, collaboratorsByItinerary, createdBy]);
-
   const handleMapClick = (address: string) => async () => {
     setLoadingMapClick(true);
     const prepareAddressForGeocoder = (addr: string) => {
@@ -99,8 +58,6 @@ const ItineraryDetailsActivity: React.FC<ItineraryDetailsActivityProps> = ({ act
 
       if (response.data.results && response.data.results.length > 0) {
         const { lat, lng } = response.data.results[0].geometry;
-
-        // Redirect to the map page with query parameters
         router.push(`/map?Lat=${lat}&Lng=${lng}`);
       } else {
         console.error('No results found for the given address.');
@@ -208,17 +165,15 @@ const ItineraryDetailsActivity: React.FC<ItineraryDetailsActivityProps> = ({ act
                           itineraryDateEnd={dateEnd}
                           activity={activity}
                           onSuccess={() => {
-                            refreshActivities(); // Refresh activities list
-                            setOpenActivityId(null); // Close the dialog
+                            refreshActivities();
+                            setOpenActivityId(null);
                           }}
                         />
                       </DialogContent>
                     </Dialog>
                   </div>
-
                 </div>
               </TimelineContent>
-
             </TimelineItem>
           );
         })}
