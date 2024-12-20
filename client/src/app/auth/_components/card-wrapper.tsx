@@ -5,7 +5,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { CardWrapperProps } from "@/types/auth-type";
+import { CardWrapperProps } from "@/types/auth-types";
 import Image from "next/image";
 import Logo from "../../../../public/images/Logo.png"
 

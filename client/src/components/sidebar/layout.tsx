@@ -12,7 +12,7 @@ import {
   SidebarProvider,
   SidebarTrigger,
 } from "@/components/ui/sidebar";
-import { LayoutProps } from "@/types/layout-type";
+import { LayoutProps } from "@/types/layout-types";
 import DotPattern from "../ui/dot-pattern";
 import { Moon, Sun } from "lucide-react"
 import { useTheme } from "next-themes"
