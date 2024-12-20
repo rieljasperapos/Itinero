@@ -31,16 +31,7 @@ const Collabs = () => {
               },
             }
           );
-
-          // Map the response data to the format you need
-          const fetchedCollaborators = response.data.data.collaborators.map(
-            (collaborator: any) => ({
-              name: collaborator.user.name,
-              email: collaborator.user.email,
-              role: collaborator.role, // Include any other relevant fields
-            })
-          );
-          setCollaborators(fetchedCollaborators);
+          setCollaborators(response.data.data.collaborators);
         } catch (error) {
           console.error("Error fetching collaborators:", error);
         } finally {
