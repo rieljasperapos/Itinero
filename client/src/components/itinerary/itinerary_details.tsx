@@ -18,6 +18,7 @@ import ItineraryDetailsPlanCard from "./itinerary_details_plan_card";
 import EditItineraryForm from "./EditItineraryForm";
 import CreateActivityForm from "@/app/activities/create/page";
 import "../../app/globals.css";
+import { useSession } from "next-auth/react";
 
 const ItineraryDetails: React.FC<ItineraryDetailsProps> = ({
   itineraryId,
@@ -30,6 +31,7 @@ const ItineraryDetails: React.FC<ItineraryDetailsProps> = ({
 }) => {
   const [openCreateDialog, setOpenCreateDialog] = useState(false);
   const [openEditDialog, setOpenEditDialog] = useState<boolean>(false);
+  const { data: session, status } = useSession();
   
   const {
     activitiesByDate,
@@ -69,10 +71,12 @@ const ItineraryDetails: React.FC<ItineraryDetailsProps> = ({
         <span className="text-sm text-muted-foreground">Created by:</span>
         <span className="text-sm font-medium">{createdBy.name}</span>
       </div>
-      <div className="flex items-center gap-1">
-        <span className="text-sm text-muted-foreground">Role:</span>
-        <span className="text-sm font-medium">{isEditor ? 'Editor' : 'Viewer'}</span>
-      </div>
+      {session?.user.email !== createdBy.email && (
+        <div className="flex items-center gap-1">
+          <span className="text-sm text-muted-foreground">Role:</span>
+          <span className="text-sm font-medium">{isEditor ? 'Editor' : 'Viewer'}</span>
+        </div>
+      )}
       {isEditor && (
         <>
           <Link href={`/collaborators/invite?itineraryId=${itineraryId}`}>
