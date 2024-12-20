@@ -23,7 +23,7 @@ import {
   SheetTrigger,
 } from "@/components/ui/sheet";
 import ItineraryDetails from "@/components/itinerary/itinerary_details";
-import { Itinerary } from "@/types/itinerary-type";
+import { Itinerary } from "@/types/itinerary-types";
 import { DotLottieReact } from "@lottiefiles/dotlottie-react";
 
 const Dashboard: React.FC = () => {
