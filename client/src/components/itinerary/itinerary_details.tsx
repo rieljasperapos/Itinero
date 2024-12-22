@@ -62,9 +62,9 @@ const ItineraryDetails: React.FC<ItineraryDetailsProps> = ({
         <h2 className="text-2xl font-bold">{title}</h2>
         <p className="text-muted-foreground">{description}</p>
       </div>
-      <div className="flex items-center gap-2">
+      <div className="flex items-center gap-2 text-sm">
         <CalendarDays className="size-4" strokeWidth={1.5} />
-        <p className="text-sm">{formattedDateStart}</p>
+        <p>{formattedDateStart}</p>
         <p>—</p>
         <p>{formattedDateEnd}</p>
       </div>
