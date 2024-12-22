@@ -5,17 +5,38 @@ import { StatusCodes } from "http-status-codes";
 
 export const getNotifications = async (req: CustomRequest, res: Response) => {
   const userId = req.user?.id;
+  const page = Number(req.query.page) || 1;
+  const limit = Number(req.query.limit) || 8;
+  const skip = (page - 1) * limit;
 
   try {
-    const notifications = await prisma.notifaction.findMany({
-      where: {
-        userId: Number(userId),
-      },
-      orderBy: {
-        createdAt: "desc",
-      },
+    const [notifications, total] = await Promise.all([
+      prisma.notifaction.findMany({
+        where: {
+          userId: Number(userId),
+        },
+        orderBy: {
+          createdAt: "desc",
+        },
+        take: limit,
+        skip: skip,
+      }),
+      prisma.notifaction.count({
+        where: {
+          userId: Number(userId),
+        },
+      }),
+    ]);
+
+    res.status(StatusCodes.OK).send({ 
+      data: notifications,
+      pagination: {
+        total,
+        currentPage: page,
+        totalPages: Math.ceil(total / limit),
+        hasMore: skip + notifications.length < total
+      }
     });
-    res.status(StatusCodes.OK).send({ data: notifications });
   } catch (error) {
     console.error("Error fetching notifications:", error);
     res.status(StatusCodes.INTERNAL_SERVER_ERROR).send({ error: "An error occurred while fetching notifications." });
@@ -25,7 +46,6 @@ export const getNotifications = async (req: CustomRequest, res: Response) => {
 export const markNotificationAsRead = async (req: CustomRequest, res: Response) => {
   const { id } = req.params;
 
-  // Validate that the ID is provided and is a number
   if (!id || isNaN(Number(id))) {
     res.status(StatusCodes.BAD_REQUEST).send({ error: "Invalid notification ID." });
     return

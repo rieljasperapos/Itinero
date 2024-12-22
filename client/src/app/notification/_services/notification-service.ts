@@ -1,17 +1,18 @@
 import axios from "axios";
 
-export async function fetchNotifications(token: string) {
+export async function fetchNotifications(token: string, page: number = 1, limit: number = 8) {
   try {
     const response = await axios.get(
       `${process.env.NEXT_PUBLIC_API_BASE_URL}/notifications`,
       {
+        params: { page, limit },
         headers: { Authorization: `Bearer ${token}` },
       }
     );
-    return response.data.data; // Assuming API returns data in this structure
+    return response.data;
   } catch (error) {
     console.error("Error fetching notifications:", error);
-    return [];
+    return { data: [], pagination: { total: 0, currentPage: 1, totalPages: 1, hasMore: false } };
   }
 }
 

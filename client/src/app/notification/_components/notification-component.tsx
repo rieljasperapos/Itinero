@@ -6,29 +6,45 @@ import { useEffect, useState } from "react";
 import { loadNotifications, handleMarkAsRead } from "../_services/notification-action";
 import { calculateTimeAgo } from "../_utils/calculate-time-ago";
 import { DotLottieReact } from "@lottiefiles/dotlottie-react";
+import { Button } from "@/components/ui/button";
 
 const Notifications = () => {
   const [loading, setLoading] = useState(true);
+  const [page, setPage] = useState(1);
+  const [hasMore, setHasMore] = useState(true);
   const { data: session, status } = useSession();
   const [notifications, setNotifications] = useState<any[]>([]);
 
+  const fetchData = async (pageNum: number) => {
+    try {
+      const response = await loadNotifications(session?.user.accessToken as string, pageNum);
+      if (pageNum === 1) {
+        setNotifications(response.data);
+      } else {
+        setNotifications(prev => [...prev, ...response.data]);
+      }
+      setHasMore(response.pagination.hasMore);
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   useEffect(() => {
     if (status === "authenticated") {
-      const fetchData = async () => {
-        try {
-          const data = await loadNotifications(session?.user.accessToken as string);
-          setNotifications(data);
-        } catch (error) {
-          console.error(error);
-        } finally {
-          setLoading(false);
-        }
-      };
-      fetchData();
+      fetchData(1);
     } else if (status === "unauthenticated") {
       redirect("/auth/signin");
     }
   }, [session, status]);
+
+  const loadMore = () => {
+    if (!loading && hasMore) {
+      setPage(prev => prev + 1);
+      fetchData(page + 1);
+    }
+  };
 
   const markAsRead = async (id: number) => {
     await handleMarkAsRead(id, session?.user.accessToken as string, (idToUpdate) => {
@@ -67,10 +83,9 @@ const Notifications = () => {
                 onClick={() => markAsRead(notification.id)}
                 className={`border-b rounded-xl p-4 flex flex-col gap-2 cursor-pointer transition duration-200`}
               >
-                {/* Notification Title */}
                 <div className="flex items-center">
                   {notification.isRead ? null : (
-                    <span className="w-2.5 h-2.5 bg-red-500 rounded-full mr-2"></span> // Red indicator for unread notifications
+                    <span className="w-2.5 h-2.5 bg-red-500 rounded-full mr-2"></span>
                   )}
                   <h1
                     className={`text-lg ${notification.isRead ? "" : "font-bold"}`}
@@ -84,7 +99,6 @@ const Notifications = () => {
                     {calculateTimeAgo(notification.createdAt)}
                   </span>
                 </div>
-                {/* Notification Content */}
                 <div>
                   <p className={`${notification.isRead ? "text-gray-400" : ""}`}>
                     {notification.message}
@@ -92,6 +106,17 @@ const Notifications = () => {
                 </div>
               </div>
             ))}
+            
+            {hasMore && (
+              <Button
+                variant="text"
+                onClick={loadMore}
+                disabled={loading}
+                className="text-sm text-gray-400 hover:text-gray-500 hover:underline hover:underline-offset-4 hover:decoration-gray-500 hover:font-bold hover:cursor-pointer hover:bg-transparent"
+              >
+                {loading ? 'Loading...' : 'Load More'}
+              </Button>
+            )}
           </div>
         )}
       </Layout>
