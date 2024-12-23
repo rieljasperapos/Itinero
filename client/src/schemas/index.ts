@@ -22,7 +22,7 @@ export const LoginSchema = z.object({
 });
 
 export const createItinerarySchema = z.object({
-  title: z.string(),
+  title: z.string().min(1, "Title is required"),
   description: z.string(),
   startDate: z.date(),
   endDate: z.date(),
