@@ -59,7 +59,18 @@ const ItineraryDetails: React.FC<ItineraryDetailsProps> = ({
   return (
     <div className="flex flex-col h-full gap-2.5">
       <div className="flex flex-col gap-2 mb-2">
-        <h2 className="text-2xl font-bold">{title}</h2>
+        <div className="flex items-center gap-2">
+          <h2 className="text-2xl font-bold">{title}</h2>
+          {session?.user.email === createdBy.email && !loadingRoles && (
+            <Button 
+              variant="ghost" 
+              size="icon"
+              onClick={() => setOpenEditDialog(true)}
+            >
+              <Pencil className="size-4" strokeWidth={1.5} />
+            </Button>
+          )}
+        </div>
         <p className="text-muted-foreground">{description}</p>
       </div>
       <div className="flex items-center gap-2 text-sm">
@@ -94,13 +105,6 @@ const ItineraryDetails: React.FC<ItineraryDetailsProps> = ({
               <p className="text-sm group-hover:underline">Invite Collaborators</p>
             </div>
           </Link>
-          <div
-            className="flex items-center space-x-2 group cursor-pointer"
-            onClick={() => setOpenEditDialog(true)}
-          >
-            <Pencil className="size-4" strokeWidth={1.5} />
-            <span className="text-sm group-hover:underline">Edit Trip Info</span>
-          </div>
         </>
       )}
       <Link href={`/collaborators?itineraryId=${itineraryId}`}>
