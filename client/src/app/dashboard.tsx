@@ -108,8 +108,8 @@ const Dashboard = () => {
         {/* Actions Row */}
         <div className="flex flex-wrap items-center justify-between gap-4 bg-card/50 p-4 rounded-lg border border-border/50 backdrop-blur supports-[backdrop-filter]:bg-background/60">
           <Link href="/itinerary/create">
-            <Button 
-              variant="default" 
+            <Button
+              variant="default"
               size="lg"
               className="group hover:shadow-lg transition-all duration-300"
             >
@@ -199,8 +199,8 @@ const Dashboard = () => {
                       />
                     </div>
                   </SheetTrigger>
-                  <SheetContent 
-                    side="right" 
+                  <SheetContent
+                    side="right"
                     className="w-full sm:max-w-[825px] p-0 sm:p-6 border-l"
                   >
                     <ItineraryDetails

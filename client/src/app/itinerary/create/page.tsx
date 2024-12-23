@@ -81,7 +81,8 @@ const CreateItineraryForm = () => {
       toast({
         variant: "destructive",
         title: "Error",
-        description: error.response?.data?.message || "Failed to create itinerary",
+        description:
+          error.response?.data?.message || "Failed to create itinerary",
       });
     }
   };
@@ -105,15 +106,21 @@ const CreateItineraryForm = () => {
           className="max-w-3xl mx-auto space-y-8"
         >
           <div className="space-y-2">
-            <h1 className="text-4xl font-bold tracking-tight">Create Itinerary</h1>
+            <h1 className="text-4xl font-bold tracking-tight">
+              Create Itinerary
+            </h1>
             <p className="text-muted-foreground">
-              Plan your next adventure with ease. Fill in the details below to get started.
+              Plan your next adventure with ease. Fill in the details below to
+              get started.
             </p>
           </div>
 
           <div className="bg-card border rounded-lg p-6 space-y-8">
             <Form {...form}>
-              <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+              <form
+                onSubmit={form.handleSubmit(onSubmit)}
+                className="space-y-6"
+              >
                 <FormField
                   control={form.control}
                   name="title"
@@ -168,7 +175,9 @@ const CreateItineraryForm = () => {
                                 )}
                               >
                                 <CalendarIcon className="mr-3 h-4 w-4" />
-                                {field.value ? format(field.value, "PPP") : "Select date"}
+                                {field.value
+                                  ? format(field.value, "PPP")
+                                  : "Select date"}
                               </Button>
                             </FormControl>
                           </PopoverTrigger>
@@ -213,7 +222,9 @@ const CreateItineraryForm = () => {
                                 )}
                               >
                                 <CalendarIcon className="mr-3 h-4 w-4" />
-                                {field.value ? format(field.value, "PPP") : "Select date"}
+                                {field.value
+                                  ? format(field.value, "PPP")
+                                  : "Select date"}
                               </Button>
                             </FormControl>
                           </PopoverTrigger>
