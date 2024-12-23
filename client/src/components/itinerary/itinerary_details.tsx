@@ -100,7 +100,6 @@ const ItineraryDetails: React.FC<ItineraryDetailsProps> = ({
             </Badge>
           </div>
         </motion.div>
-
         <div className="space-y-3 rounded-lg">
           <div className="flex items-center gap-3">
             <Avatar className="size-7 ring-2 ring-primary/10">
@@ -211,7 +210,6 @@ const ItineraryDetails: React.FC<ItineraryDetailsProps> = ({
             </Dialog>
           )}
         </div>
-
         <ScrollArea className="flex-1 h-[calc(100dvh-20rem)] sm:h-[calc(100vh-24rem)] pr-4">
           {loading ? (
             <div className="flex items-center justify-center h-full">
@@ -258,7 +256,6 @@ const ItineraryDetails: React.FC<ItineraryDetailsProps> = ({
           )}
         </ScrollArea>
       </div>
-
       <Dialog open={openEditDialog} onOpenChange={setOpenEditDialog}>
         <DialogContent className="sm:max-w-[825px]">
           <VisuallyHidden.Root>
