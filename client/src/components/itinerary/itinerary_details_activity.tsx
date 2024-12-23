@@ -90,7 +90,7 @@ const ItineraryDetailsActivity: React.FC<ItineraryDetailsActivityProps> = ({ act
 
 
               <TimelineContent className="flex w-full">
-                <div className="flex items-center justify-between w-full gap-4">
+                <div className="flex items-center justify-between flex-wrap w-full gap-4">
 
                   {/* Activity Address */}
                   <TooltipProvider>
@@ -111,7 +111,7 @@ const ItineraryDetailsActivity: React.FC<ItineraryDetailsActivityProps> = ({ act
                   </TooltipProvider>
 
                   {/* Activity Start and End Time */}
-                  <div className="flex-1 min-w-[100px] max-w-[250px] text-center flex items-center gap-2">
+                  <div className="flex-1 min-w-[100px] max-w-[150px] text-center flex items-center gap-2">
                     <Clock className="w-4 flex-shrink-0 text-gray-500" />
                     <p className="text-sm">
                       {new Date(activity.startTime).toLocaleTimeString([], {
@@ -130,7 +130,7 @@ const ItineraryDetailsActivity: React.FC<ItineraryDetailsActivityProps> = ({ act
                   <TooltipProvider>
                     <Tooltip>
                       <TooltipTrigger asChild>
-                        <div className="flex-1 min-w-[150px] max-w-[250px] flex items-center gap-2">
+                        <div className="flex-1 min-w-[150px] max-w-[100px] flex items-center gap-2">
                           <Footprints className="w-4 flex-shrink-0 text-gray-500" />
                           <p className="font-bold truncate">{activity.activityName}</p>
                         </div>
@@ -142,21 +142,16 @@ const ItineraryDetailsActivity: React.FC<ItineraryDetailsActivityProps> = ({ act
                   </TooltipProvider>
 
                   {/* Edit Activity Button */}
-                  <div className="flex-shrink-0">
+                  <div className="flex-shrink-0 mr-6">
                     <Dialog
                       open={openActivityId === activity.id}
                       onOpenChange={(open) => setOpenActivityId(open ? activity.id : null)}
                     >
                       <DialogTrigger asChild>
-                        <Button
-                          variant="ghost"
-                          className={`font-bold transition-colors ${!isEditor ? 'opacity-20 cursor-not-allowed invisible' : ''
-                            }`}
-                          disabled={!isEditor}
-                        >
-                          <Pencil className="mr-1 size-4" strokeWidth={2} />
+                        <span className={`flex items-center gap-2 transition-colors cursor-pointer ${!isEditor ? 'opacity-20 cursor-not-allowed invisible' : ''}`}>
+                          <Pencil className="mr-2 size-4" strokeWidth={2} />
                           Edit
-                        </Button>
+                        </span>
                       </DialogTrigger>
                       <DialogContent className="sm:max-w-[825px]">
                         <CreateActivityForm

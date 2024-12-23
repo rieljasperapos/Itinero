@@ -1,7 +1,7 @@
 "use client";
 import React, { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
-import { CirclePlus, Filter, Calendar, History, PlayCircle } from "lucide-react";
+import { CirclePlus, Filter, Calendar, History, PlayCircle, ArrowUpDown } from "lucide-react";
 import ItineraryCard from "@/components/itinerary/itinerary_card";
 import { useSession } from "next-auth/react";
 import { redirect } from "next/navigation";
@@ -25,10 +25,9 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 
-const Dashboard: React.FC = () => {
-  const [filter, setFilter] = useState<"upcoming" | "ongoing" | "past">(
-    "ongoing"
-  );
+const Dashboard = () => {
+  const [filter, setFilter] = useState<"upcoming" | "ongoing" | "past">("ongoing");
+  const [sort, setSort] = useState<"newest" | "oldest" | "title">("newest");
   const { data: session, status } = useSession();
   const [itineraries, setItineraries] = useState<Itinerary[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
@@ -78,7 +77,22 @@ const Dashboard: React.FC = () => {
     }
   };
 
-  const filteredItineraries = itineraries.filter(filterItineraries);
+  const sortItineraries = (itineraries: Itinerary[]) => {
+    return [...itineraries].sort((a, b) => {
+      switch (sort) {
+        case "newest":
+          return new Date(b.startDate).getTime() - new Date(a.startDate).getTime();
+        case "oldest":
+          return new Date(a.startDate).getTime() - new Date(b.startDate).getTime();
+        case "title":
+          return a.title.localeCompare(b.title);
+        default:
+          return 0;
+      }
+    });
+  };
+
+  const filteredItineraries = sortItineraries(itineraries.filter(filterItineraries));
 
   return (
     <Layout breadcrumb="Dashboard">
@@ -90,32 +104,60 @@ const Dashboard: React.FC = () => {
               Add Itinerary
             </Button>
           </Link>
-          <Select value={filter} onValueChange={(value: "upcoming" | "ongoing" | "past") => setFilter(value)}>
-            <SelectTrigger className="w-[140px]">
-              <Filter className="mr-2 h-3 w-3" />
-              <SelectValue placeholder="Filter trips" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="ongoing">
-                <div className="flex items-center">
-                  <PlayCircle className="mr-2 h-3 w-3" />
-                  Ongoing
-                </div>
-              </SelectItem>
-              <SelectItem value="upcoming">
-                <div className="flex items-center">
-                  <Calendar className="mr-2 h-3 w-3" />
-                  Upcoming
-                </div>
-              </SelectItem>
-              <SelectItem value="past">
-                <div className="flex items-center">
-                  <History className="mr-2 h-3 w-3" />
-                  Past
-                </div>
-              </SelectItem>
-            </SelectContent>
-          </Select>
+
+          <div className="flex items-center gap-2">
+            {/* Filter options */}
+            <Select value={filter} onValueChange={(value: "upcoming" | "ongoing" | "past") => setFilter(value)}>
+              <SelectTrigger className="w-auto sm:w-[140px]">
+                <Filter className="mr-2 h-3 w-3" />
+                <SelectValue placeholder="Filter trips" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="ongoing">
+                  <div className="flex items-center text-xs sm:text-sm">
+                    <PlayCircle className="mr-2 h-3 w-3" />
+                    Ongoing
+                  </div>
+                </SelectItem>
+                <SelectItem value="upcoming">
+                  <div className="flex items-center text-xs sm:text-sm">
+                    <Calendar className="mr-2 h-3 w-3" />
+                    Upcoming
+                  </div>
+                </SelectItem>
+                <SelectItem value="past">
+                  <div className="flex items-center text-xs sm:text-sm">
+                    <History className="mr-2 h-3 w-3" />
+                    Past
+                  </div>
+                </SelectItem>
+              </SelectContent>
+            </Select>
+            {/* Sort options */}
+            <Select value={sort} onValueChange={(value: "newest" | "oldest" | "title") => setSort(value)}>
+              <SelectTrigger className="w-auto sm:w-[140px]">
+                <ArrowUpDown className="mr-2 h-3 w-3" />
+                <SelectValue placeholder="Sort by" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="newest">
+                  <div className="flex items-center text-xs sm:text-sm">
+                    Newest First
+                  </div>
+                </SelectItem>
+                <SelectItem value="oldest">
+                  <div className="flex items-center text-xs sm:text-sm">
+                    Oldest First
+                  </div>
+                </SelectItem>
+                <SelectItem value="title">
+                  <div className="flex items-center text-xs sm:text-sm">
+                    Title A-Z
+                  </div>
+                </SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
         </div>
 
         <div>
@@ -145,7 +187,7 @@ const Dashboard: React.FC = () => {
                       />
                     </div>
                   </SheetTrigger>
-                  <SheetContent side="right">
+                  <SheetContent side="right" className="w-[100dvw] sm:w-full sm:max-w-[825px] p-0 sm:p-6">
                     <ItineraryDetails
                       itineraryId={itinerary.id}
                       title={itinerary.title}
