@@ -1,22 +1,12 @@
 "use client";
 import React, { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
-import { CirclePlus } from "lucide-react";
+import { CirclePlus, Filter, Calendar, History, PlayCircle } from "lucide-react";
 import ItineraryCard from "@/components/itinerary/itinerary_card";
 import { useSession } from "next-auth/react";
 import { redirect } from "next/navigation";
 import * as VisuallyHidden from "@radix-ui/react-visually-hidden";
 import axios from "axios";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
-import CreateItineraryForm from "./itinerary/create/page";
-import Layout from "@/components/sidebar/layout";
 import {
   Sheet,
   SheetContent,
@@ -25,6 +15,15 @@ import {
 import ItineraryDetails from "@/components/itinerary/itinerary_details";
 import { Itinerary } from "@/types/itinerary-types";
 import { DotLottieReact } from "@lottiefiles/dotlottie-react";
+import Layout from "@/components/sidebar/layout";
+import Link from "next/link";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 const Dashboard: React.FC = () => {
   const [filter, setFilter] = useState<"upcoming" | "ongoing" | "past">(
@@ -32,27 +31,11 @@ const Dashboard: React.FC = () => {
   );
   const { data: session, status } = useSession();
   const [itineraries, setItineraries] = useState<Itinerary[]>([]);
-  const [isDialogOpen, setIsDialogOpen] = useState<boolean>(false); // State to control dialog
   const [loading, setLoading] = useState<boolean>(true);
 
   if (!session?.user) {
     redirect("/auth/signin");
   }
-
-  const fetchUser = async () => {
-    try {
-      const response = await axios.get(
-        `${process.env.NEXT_PUBLIC_API_BASE_URL}/users`,
-        {
-          headers: {
-            Authorization: `Bearer ${session?.user.accessToken}`,
-          },
-        }
-      );
-    } catch (error) {
-      console.error("Error fetching users:", error);
-    }
-  };
 
   const fetchItineraries = async () => {
     try {
@@ -74,7 +57,6 @@ const Dashboard: React.FC = () => {
 
   useEffect(() => {
     if (session && session.user && session.user.accessToken) {
-      fetchUser();
       fetchItineraries();
     }
   }, [session]);
@@ -101,61 +83,39 @@ const Dashboard: React.FC = () => {
   return (
     <Layout breadcrumb="Dashboard">
       <div className="flex flex-col gap-8 p-4">
-        <div className="mediumtext flex gap-2">
-          <Button
-            variant={`${filter === "ongoing" ? "default" : "outline"}`}
-            onClick={() => setFilter("ongoing")}
-            className="w-full max-w-[100px]"
-          >
-            Ongoing
-          </Button>
-          <Button
-            variant={`${filter === "upcoming" ? "default" : "outline"}`}
-            onClick={() => setFilter("upcoming")}
-            className="w-full max-w-[100px]"
-          >
-            Upcoming
-          </Button>
-          <Button
-            variant={`${filter === "past" ? "default" : "outline"}`}
-            onClick={() => setFilter("past")}
-            className="w-full max-w-[100px]"
-          >
-            Past
-          </Button>
-        </div>
-
-        {/* Add Itinerary Dialog */}
-        <div>
-          <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-            <DialogTrigger asChild>
-              <Button variant="link" size="tight" className="mediumtext">
-                <CirclePlus className="mr-1 size-6" strokeWidth={1} />
-                Add Itinerary
-              </Button>
-            </DialogTrigger>
-            <DialogContent className="sm:max-w-[825px]">
-              {/* Don't touch this */}
-              <VisuallyHidden.Root>
-                <DialogDescription />
-                <DialogTitle />
-              </VisuallyHidden.Root>
-
-              {/* Form Popup */}
-              <CreateItineraryForm
-                onSuccess={() => {
-                  fetchItineraries(); // Refresh itineraries list
-                  setIsDialogOpen(false); // Close the dialog
-                }}
-              >
-                <DialogFooter>
-                  <div className="mt-4">
-                    <Button type="submit">Create Itinerary</Button>
-                  </div>
-                </DialogFooter>
-              </CreateItineraryForm>
-            </DialogContent>
-          </Dialog>
+        <div className="flex items-center flex-wrap justify-between gap-4">
+          <Link href="/itinerary/create">
+            <Button variant="link" size="tight" className="mediumtext">
+              <CirclePlus className="mr-1 size-6" strokeWidth={1} />
+              Add Itinerary
+            </Button>
+          </Link>
+          <Select value={filter} onValueChange={(value: "upcoming" | "ongoing" | "past") => setFilter(value)}>
+            <SelectTrigger className="w-[140px]">
+              <Filter className="mr-2 h-3 w-3" />
+              <SelectValue placeholder="Filter trips" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="ongoing">
+                <div className="flex items-center">
+                  <PlayCircle className="mr-2 h-3 w-3" />
+                  Ongoing
+                </div>
+              </SelectItem>
+              <SelectItem value="upcoming">
+                <div className="flex items-center">
+                  <Calendar className="mr-2 h-3 w-3" />
+                  Upcoming
+                </div>
+              </SelectItem>
+              <SelectItem value="past">
+                <div className="flex items-center">
+                  <History className="mr-2 h-3 w-3" />
+                  Past
+                </div>
+              </SelectItem>
+            </SelectContent>
+          </Select>
         </div>
 
         <div>
@@ -171,13 +131,14 @@ const Dashboard: React.FC = () => {
               No {filter} Itineraries
             </p>
           ) : (
-            <>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {filteredItineraries.map((itinerary) => (
                 <Sheet key={itinerary.id}>
                   <SheetTrigger asChild>
-                    <div>
+                    <div className="cursor-pointer w-full">
                       <ItineraryCard
                         title={itinerary.title}
+                        description={itinerary.description}
                         dateStart={itinerary.startDate}
                         dateEnd={itinerary.endDate}
                         collaborators={itinerary.collaborators.length}
@@ -197,7 +158,7 @@ const Dashboard: React.FC = () => {
                   </SheetContent>
                 </Sheet>
               ))}
-            </>
+            </div>
           )}
         </div>
       </div>
