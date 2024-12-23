@@ -5,7 +5,6 @@ import { CirclePlus, Filter, Calendar, History, PlayCircle, ArrowUpDown } from "
 import ItineraryCard from "@/components/itinerary/itinerary_card";
 import { useSession } from "next-auth/react";
 import { redirect } from "next/navigation";
-import * as VisuallyHidden from "@radix-ui/react-visually-hidden";
 import axios from "axios";
 import {
   Sheet,
