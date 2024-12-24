@@ -125,6 +125,19 @@ export const deleteItineraryService = async (
     };
   }
 
+  // Check for collaborators
+  const collaboratorCount = await prisma.collaborator.count({
+    where: { itineraryId: id },
+  });
+
+  if (collaboratorCount > 0) {
+    return {
+      status: 400,
+      error: true,
+      message: "You must remove all collaborators before deleting this itinerary."
+    };
+  }
+
   await prisma.itinerary.delete({ where: { id } });
 
   return { status: 200, error: false };
