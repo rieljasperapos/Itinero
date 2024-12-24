@@ -122,7 +122,7 @@ const ItineraryDetails: React.FC<ItineraryDetailsProps> = ({
               <span className="text-xs text-muted-foreground">
                 {isEditor
                   ? "You can edit this itinerary"
-                  : "You can view this itinerary"}
+                  : "You can only view this itinerary"}
               </span>
             </div>
           )}
