@@ -6,6 +6,7 @@ import {
   FormField,
   FormItem,
   FormLabel,
+  FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { format } from "date-fns";
@@ -19,17 +20,28 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import { Calendar } from "@/components/ui/calendar";
-import { CalendarIcon } from "lucide-react";
+import { CalendarIcon, Plane } from "lucide-react";
 import axios from "axios";
 import { useSession } from "next-auth/react";
+import Layout from "@/components/sidebar/layout";
+import { DotLottieReact } from "@lottiefiles/dotlottie-react";
+import { Button } from "@/components/ui/button";
+import { redirect, useRouter } from "next/navigation";
+import { useToast } from "@/hooks/use-toast";
+import { Textarea } from "@/components/ui/textarea";
+import { ny } from "@/lib/utils";
+import { motion } from "framer-motion";
+import { useQueryClient } from "@tanstack/react-query";
 
-interface CreateItineraryFormProps {
-  children?: React.ReactNode;
-  onSuccess?: () => void;
-}
+const CreateItineraryForm = () => {
+  const queryClient = useQueryClient();
+  const { data: session, status } = useSession();
+  const { toast } = useToast();
+  const router = useRouter();
 
-const CreateItineraryForm: React.FC<CreateItineraryFormProps> = ({ children, onSuccess }) => {
-  const { data: session } = useSession();
+  if (status === "unauthenticated") {
+    redirect("/auth/signin");
+  }
 
   const form = useForm<z.infer<typeof createItinerarySchema>>({
     resolver: zodResolver(createItinerarySchema),
@@ -42,13 +54,12 @@ const CreateItineraryForm: React.FC<CreateItineraryFormProps> = ({ children, onS
   });
 
   const onSubmit = async (data: z.infer<typeof createItinerarySchema>) => {
-    // Post request to server using axios
     try {
       const response = await axios.post(
         `${process.env.NEXT_PUBLIC_API_BASE_URL}/itineraries/create`,
         {
-          title: data.title,
-          description: data.description,
+          title: data.title.trim(),
+          description: data.description?.trim(),
           startDate: data.startDate,
           endDate: data.endDate,
         },
@@ -58,165 +69,203 @@ const CreateItineraryForm: React.FC<CreateItineraryFormProps> = ({ children, onS
           },
         }
       );
-      // Invoke the onSuccess callback
-      if (onSuccess) {
-        onSuccess();
+
+      if (response.data.data) {
+        queryClient.invalidateQueries({ queryKey: ["itineraries"] });
+        toast({
+          title: "Success",
+          description: "Itinerary created successfully",
+        });
+        router.push("/");
+        router.refresh();
       }
-    } catch (error) {
+    } catch (error: any) {
       console.error("Error creating itinerary:", error);
-      // Optionally, handle error (e.g., display error message)
+      toast({
+        variant: "destructive",
+        title: "Error",
+        description:
+          error.response?.data?.message || "Failed to create itinerary",
+      });
     }
   };
 
-  return (
-    <div className="p-8">
-      <div className="border-b py-2">
-        <h1 className="heading">Create Itinerary</h1>
-      </div>
-      <div>
-        <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)}>
-            {/* Form Fields */}
-            <div>
-              {/* Title Field */}
-              <FormField
-                control={form.control}
-                name="title"
-                render={({ field }) => (
-                  <FormItem>
-                    <p className="tripname_small mt-3"> Title </p>
-                    <FormControl>
-                      <Input
-                        type="text"
-                        placeholder="Enter your title"
-                        {...field}
-                      />
-                    </FormControl>
-                  </FormItem>
-                )}
-              />
-              {/* Description Field */}
-              <FormField
-                control={form.control}
-                name="description"
-                render={({ field }) => (
-                  <FormItem>
-                    <p className="tripname_small mt-3"> Description </p>
-                    <FormControl>
-                      <Input
-                        type="text"
-                        placeholder="Enter your description"
-                        {...field}
-                      />
-                    </FormControl>
-                  </FormItem>
-                )}
-              />
-
-              <div className="flex space-x-2">
-                {/* Start Date Field */}
-                <FormField
-                  control={form.control}
-                  name="startDate"
-                  render={({ field }) => (
-                    <FormItem className="flex-4 min-w-[180px]">
-                      <Popover>
-                        <PopoverTrigger asChild>
-                          <FormControl>
-                            <button type="button" className="button">
-                              <div className="flex items-center mt-4 space-x-2">
-                                <span className="tripname_small">Start Date</span>
-                                <CalendarIcon className="size-4 opacity-50 self-center" />
-                              </div>
-                              {field.value ? (
-                                <span>{format(field.value, "PPP")}</span>
-                              ) : (
-                                <span>Pick a date</span>
-                              )}
-                            </button>
-                          </FormControl>
-                        </PopoverTrigger>
-                        <PopoverContent className="w-auto p-0" align="start">
-                          <Calendar
-                            mode="single"
-                            selected={field.value}
-                            onSelect={field.onChange}
-                            disabled={(date) => {
-                              // Normalize the time of both dates to midnight
-                              const normalizeToMidnight = (d: Date) => {
-                                const normalized = new Date(d);
-                                normalized.setHours(0, 0, 0, 0); // Set time to 00:00:00
-                                return normalized;
-                              };
-
-                              const today = normalizeToMidnight(new Date()); // Today's date at midnight
-                              const minDate = new Date("1900-01-01");
-
-                              return date < today || date < minDate;
-                            }}
-                            initialFocus
-                          />
-                        </PopoverContent>
-                      </Popover>
-                    </FormItem>
-                  )}
-                />
-                {/* End Date Field */}
-                <FormField
-                  control={form.control}
-                  name="endDate"
-                  render={({ field }) => (
-                    <FormItem className="flex-4 min-w-[180px]">
-                      <Popover>
-                        <PopoverTrigger asChild>
-                          <FormControl>
-                            <button type="button" className="button">
-                              <div className="flex items-center mt-4 space-x-2">
-                                <span className="tripname_small">End Date</span>
-                                <CalendarIcon className="size-4 opacity-50 self-center" />
-                              </div>
-                              {field.value ? (
-                                <span>{format(field.value, "PPP")}</span>
-                              ) : (
-                                <span>Pick a date</span>
-                              )}
-                            </button>
-                          </FormControl>
-                        </PopoverTrigger>
-                        <PopoverContent className="w-auto p-0" align="start">
-                          <Calendar
-                            mode="single"
-                            selected={field.value}
-                            onSelect={field.onChange}
-                            disabled={(date) => {
-                              // Normalize the time of both dates to midnight
-                              const normalizeToMidnight = (d: Date) => {
-                                const normalized = new Date(d);
-                                normalized.setHours(0, 0, 0, 0); // Set time to 00:00:00
-                                return normalized;
-                              };
-
-                              const today = normalizeToMidnight(new Date()); // Today's date at midnight
-                              const minDate = new Date("1900-01-01");
-
-                              return date < today || date < minDate;
-                            }}
-                            initialFocus
-                          />
-                        </PopoverContent>
-                      </Popover>
-                    </FormItem>
-                  )}
-                />
-              </div>
-            </div>
-
-            {/* Render Children (e.g., Submit Button) */}
-            {children}
-          </form>
-        </Form>
-      </div>
+  return status === "loading" ? (
+    <div className="flex justify-center items-center h-screen">
+      <DotLottieReact
+        className="w-[50%]"
+        src="https://lottie.host/aa2eba8e-913d-420f-b307-890f5a41365f/EaQL3x2VpA.lottie"
+        loop
+        autoplay
+      />
+      <span className="sr-only">Loading...</span>
     </div>
+  ) : (
+    <Layout breadcrumb="Create Itinerary">
+      <div className="min-h-[calc(100vh-5rem)] p-6 md:p-8">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="max-w-3xl mx-auto space-y-8"
+        >
+          <div className="space-y-2">
+            <h1 className="text-4xl font-bold tracking-tight">
+              Create Itinerary
+            </h1>
+            <p className="text-muted-foreground">
+              Plan your next adventure with ease. Fill in the details below to
+              get started.
+            </p>
+          </div>
+
+          <div className="bg-card border rounded-lg p-6 space-y-8">
+            <Form {...form}>
+              <form
+                onSubmit={form.handleSubmit(onSubmit)}
+                className="space-y-6"
+              >
+                <FormField
+                  control={form.control}
+                  name="title"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Title</FormLabel>
+                      <FormControl>
+                        <Input
+                          placeholder="Enter a memorable title for your trip"
+                          className="h-11"
+                          {...field}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
+                  name="description"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Description</FormLabel>
+                      <FormControl>
+                        <Textarea
+                          placeholder="Brief description of your journey"
+                          className="resize-none"
+                          {...field}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <div className="grid gap-6 sm:grid-cols-2">
+                  <FormField
+                    control={form.control}
+                    name="startDate"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Start Date</FormLabel>
+                        <Popover>
+                          <PopoverTrigger asChild>
+                            <FormControl>
+                              <Button
+                                variant="outline"
+                                className={ny(
+                                  "h-11 w-full justify-start text-left font-normal",
+                                  !field.value && "text-muted-foreground"
+                                )}
+                              >
+                                <CalendarIcon className="mr-3 h-4 w-4" />
+                                {field.value
+                                  ? format(field.value, "PPP")
+                                  : "Select date"}
+                              </Button>
+                            </FormControl>
+                          </PopoverTrigger>
+                          <PopoverContent className="w-auto p-0" align="start">
+                            <Calendar
+                              mode="single"
+                              selected={field.value}
+                              onSelect={field.onChange}
+                              disabled={(date) => {
+                                const normalizeToMidnight = (d: Date) => {
+                                  const normalized = new Date(d);
+                                  normalized.setHours(0, 0, 0, 0);
+                                  return normalized;
+                                };
+                                const today = normalizeToMidnight(new Date());
+                                const minDate = new Date("1900-01-01");
+                                return date < today || date < minDate;
+                              }}
+                              initialFocus
+                            />
+                          </PopoverContent>
+                        </Popover>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+
+                  <FormField
+                    control={form.control}
+                    name="endDate"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>End Date</FormLabel>
+                        <Popover>
+                          <PopoverTrigger asChild>
+                            <FormControl>
+                              <Button
+                                variant="outline"
+                                className={ny(
+                                  "h-11 w-full justify-start text-left font-normal",
+                                  !field.value && "text-muted-foreground"
+                                )}
+                              >
+                                <CalendarIcon className="mr-3 h-4 w-4" />
+                                {field.value
+                                  ? format(field.value, "PPP")
+                                  : "Select date"}
+                              </Button>
+                            </FormControl>
+                          </PopoverTrigger>
+                          <PopoverContent className="w-auto p-0" align="start">
+                            <Calendar
+                              mode="single"
+                              selected={field.value}
+                              onSelect={field.onChange}
+                              disabled={(date) => {
+                                const normalizeToMidnight = (d: Date) => {
+                                  const normalized = new Date(d);
+                                  normalized.setHours(0, 0, 0, 0);
+                                  return normalized;
+                                };
+                                const today = normalizeToMidnight(new Date());
+                                const minDate = new Date("1900-01-01");
+                                return date < today || date < minDate;
+                              }}
+                              initialFocus
+                            />
+                          </PopoverContent>
+                        </Popover>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </div>
+
+                <Button type="submit" className="w-full h-11">
+                  <Plane className="mr-2 h-4 w-4" />
+                  Create Itinerary
+                </Button>
+              </form>
+            </Form>
+          </div>
+        </motion.div>
+      </div>
+    </Layout>
   );
 };
 

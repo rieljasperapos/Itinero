@@ -8,6 +8,12 @@ const nextConfig = {
         port: '',
         pathname: '/**', // Use a wildcard to allow paths from the domain
       },
+      {
+        protocol: 'https',
+        hostname: 'images.unsplash.com',
+        port: '',
+        pathname: '/**',
+      },
     ],
   },
 };
