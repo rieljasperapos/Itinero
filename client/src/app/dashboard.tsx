@@ -1,5 +1,5 @@
 "use client";
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { CirclePlus, Filter, Calendar, History, PlayCircle, ArrowUpDown } from "lucide-react";
 import ItineraryCard from "@/components/itinerary/itinerary_card";
@@ -23,20 +23,21 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 
 const Dashboard = () => {
+  const queryClient = useQueryClient();
   const [filter, setFilter] = useState<"upcoming" | "ongoing" | "past">("ongoing");
   const [sort, setSort] = useState<"newest" | "oldest" | "title">("newest");
-  const { data: session, status } = useSession();
-  const [itineraries, setItineraries] = useState<Itinerary[]>([]);
-  const [loading, setLoading] = useState<boolean>(true);
+  const { data: session } = useSession();
 
   if (!session?.user) {
     redirect("/auth/signin");
   }
 
-  const fetchItineraries = async () => {
-    try {
+  const { data: itineraries = [], isLoading } = useQuery({
+    queryKey: ['itineraries', session?.user?.accessToken],
+    queryFn: async () => {
       const response = await axios.get(
         `${process.env.NEXT_PUBLIC_API_BASE_URL}/itineraries`,
         {
@@ -45,19 +46,10 @@ const Dashboard = () => {
           },
         }
       );
-      setItineraries(response.data.data);
-    } catch (error) {
-      console.error("Error fetching itineraries:", error);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  useEffect(() => {
-    if (session && session.user && session.user.accessToken) {
-      fetchItineraries();
-    }
-  }, [session]);
+      return response.data.data;
+    },
+    enabled: !!session?.user?.accessToken,
+  });
 
   const filterItineraries = (itinerary: Itinerary) => {
     const now = new Date();
@@ -161,7 +153,7 @@ const Dashboard = () => {
 
         {/* Content Area */}
         <div className="relative min-h-[300px]">
-          {loading ? (
+          {isLoading ? (
             <div className="absolute inset-0 flex items-center justify-center">
               <DotLottieReact
                 className="w-40 h-40"
@@ -209,7 +201,9 @@ const Dashboard = () => {
                       dateStart={itinerary.startDate}
                       dateEnd={itinerary.endDate}
                       collaborators={itinerary.collaborators}
-                      onItineraryChange={fetchItineraries}
+                      onItineraryChange={() => {
+                        queryClient.invalidateQueries({ queryKey: ['itineraries'] })
+                      }}
                     />
                   </SheetContent>
                 </Sheet>
