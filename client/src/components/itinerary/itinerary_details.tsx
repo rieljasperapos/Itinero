@@ -210,7 +210,7 @@ const ItineraryDetails: React.FC<ItineraryDetailsProps> = ({
             </Dialog>
           )}
         </div>
-        <ScrollArea className="flex-1 h-[calc(100dvh-20rem)] sm:h-[calc(100vh-24rem)] pr-4">
+        <ScrollArea className="flex-1 h-[calc(100dvh-20rem)] sm:h-[calc(100vh-24rem)]">
           {loading ? (
             <div className="flex items-center justify-center h-full">
               <DotLottieReact
