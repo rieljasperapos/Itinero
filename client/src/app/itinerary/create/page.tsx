@@ -31,8 +31,10 @@ import { useToast } from "@/hooks/use-toast";
 import { Textarea } from "@/components/ui/textarea";
 import { ny } from "@/lib/utils";
 import { motion } from "framer-motion";
+import { useQueryClient } from "@tanstack/react-query";
 
 const CreateItineraryForm = () => {
+  const queryClient = useQueryClient();
   const { data: session, status } = useSession();
   const { toast } = useToast();
   const router = useRouter();
@@ -69,6 +71,7 @@ const CreateItineraryForm = () => {
       );
 
       if (response.data.data) {
+        queryClient.invalidateQueries({ queryKey: ["itineraries"] });
         toast({
           title: "Success",
           description: "Itinerary created successfully",
